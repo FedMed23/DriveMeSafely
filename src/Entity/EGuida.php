@@ -81,7 +81,7 @@
     {
         return [
             'numeroGuida' => $this->numeroGuida,
-            // 3. Formatta l'oggetto DateTimeImmutable in una stringa leggibile
+            // Formatta l'oggetto DateTimeImmutable in una stringa leggibile
             'dataOra' => $this->dataOra->format('Y-m-d H:i:s'), 
         ];
     }
