@@ -7,7 +7,6 @@
  * - cognomeTitolare: cognome del titolare della carta di credito
  * - dataScadenza: data di scadenza della carta di credito
  * - numeroCarta: numero della carta di credito
- * - codiceCVC: codice CVC della carta di credito
  * @access public
  * @author Camasso-Medelago
  * @package Entity
