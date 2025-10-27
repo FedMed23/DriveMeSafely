@@ -106,7 +106,7 @@
         return [
             'nomeTitolare' => $this->nomeTitolare,
             'cognomeTitolare' => $this->cognomeTitolare,
-            // 3. Formatta l'oggetto DateTimeImmutable in una stringa leggibile
+            // Formatta l'oggetto DateTimeImmutable in una stringa leggibile
             'dataScadenza' => $this->dataScadenza->format('m-Y'),
             'numeroCartaMascherato'=> $this->getNumeroCartaMascherato(),
             ];
