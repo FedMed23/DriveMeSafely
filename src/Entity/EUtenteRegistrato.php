@@ -49,6 +49,12 @@ class EUtenteRegistrato implements JsonSerializable {
     private string $email;
 
     /**
+     * username dell'utente
+     * @var string
+     */
+    private string $username;
+
+    /**
 	 * password dell'utente
 	 * @var string
 	 */
@@ -62,12 +68,13 @@ class EUtenteRegistrato implements JsonSerializable {
 
 //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $_nome, string $_cognome, string $_email, string $_password) {
+    public function __construct(string $_nome, string $_cognome, string $_username, string $_email, string $_password) {
 
         //$this->id=$_id;
         $this->nomeUtente=$_nome;
         $this->cognomeUtente=$_cognome;
         //Path alla foto di default $this->fotoProfilo=
+        $this->username=$_username;
         $this->email=$_email;
         $this->password= password_hash($_password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
@@ -85,6 +92,13 @@ class EUtenteRegistrato implements JsonSerializable {
     public function getCognomeUtente(): string {
        return $this->cognomeUtente;
     }
+
+    /**
+    * @return String nome utente dell'utente
+    */
+    public function getUsername(): string {
+       return $this->username;
+   }
     /**
     * @return String email dell'utente
     */
@@ -105,6 +119,13 @@ class EUtenteRegistrato implements JsonSerializable {
     }
 
     //-----------------------------METODI SET-----------------------------
+   /**
+    * @param String username utente
+    */
+    public function setUsername(string $_username): void {
+    $this->username=$_username;
+    }
+
     /**
     * @param String $email email utente
     */
@@ -134,6 +155,7 @@ class EUtenteRegistrato implements JsonSerializable {
 			[
 				'nomeUtente'   => $this->getNomeUtente(),
 				'cognomeUtente' => $this->getCognomeUtente(),
+                'username'   => $this->getUsername(),
 				'email' => $this->getEmail(),
 				'statoUtente' => $this->getStatoUtente()
 			];
@@ -174,7 +196,7 @@ class EUtenteRegistrato implements JsonSerializable {
      * @return $print String
      */
     public function __toString(): string  {
-        $print =" Nome: ".$this->getNomeUtente()."\n"." Cognome: ".$this->getCognomeUtente()."\n"." Email: ".$this->getEmail()."\n"." Stato: ".$this->StatoToString()."\n";
+        $print =" Nome: ".$this->getNomeUtente()."\n"." Cognome: ".$this->getCognomeUtente()."\n"." Username: ".$this->getUsername()."\n"." Email: ".$this->getEmail()."\n"." Stato: ".$this->StatoToString()."\n";
 
        return $print;
     }
