@@ -1,0 +1,83 @@
+<?php
+
+/**
+ * La classe EPatente contiene le proprietà e gli attributi riguardanti una patente di guida.
+ * L'attributo che la descrive è:
+ * - tipo: categoria della patente (es. B, A, C, ecc.)
+ * 
+ * @access public
+ * @author Camasso-Medelago
+ * @package Entity
+ */
+
+class EPatente implements JsonSerializable
+{
+    /**
+     * Tipo della patente (es. B, A, C)
+     * @var string
+     */
+    private string $tipo;
+
+
+   // ---------------- COSTRUTTORE ----------------
+
+    /**
+     * Crea una nuova istanza della classe EPatente
+     * 
+     * @param string $tipo categoria della patente
+     */
+    public function __construct(string $tipo)
+    {
+        $this->tipo = $tipo;
+    }
+
+   // ---------------- METODI GET ----------------
+
+    /**
+     * Restituisce il tipo della patente
+     * @return string
+     */
+    public function getTipo(): string
+    {
+        return $this->tipo;
+    }
+
+   // ---------------- METODI SET ----------------
+
+    /**
+     * Imposta il tipo della patente
+     * @param string $tipo
+     */
+    public function setTipo(string $tipo): void
+    {
+        $this->tipo = $tipo;
+    }
+
+  // ------------------ TOSTRING ---------------------------
+
+    /**
+     * Stampa i dettagli della patente
+     * @return string
+     */
+    public function __toString(): string
+    {
+        // Restituisce una stringa che include i dettagli chiave
+        return "Tipo di Patente: {$this->tipo}\n";
+    }
+
+  // --- Implementazione per la serializzazione JSON ---
+
+    /**
+     * Serializza l'oggetto in formato JSON
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        return [
+            'tipo' => $this->tipo
+        ];
+    }
+}
+
+?> 
+
