@@ -46,12 +46,20 @@
         $this->dataOra= $dataOra;
      }
     //----------------------METODI GET/SET (ID)-----------------------------
-    
+ /**
+ * Restituisce l'identificativo univoco della guida.
+ * 
+ * @return int|null ID della guida se già assegnato, altrimenti null.
+ */ 
    public function getId(): ?int
     {
         return $this->idGuida;
     }
-
+    **
+ * Imposta l'identificativo univoco della guida.
+ * 
+ * @param int $id Identificativo della guida da assegnare.
+ */
     public function setId(int $id): void
     {
         $this->idGuida = $id;
