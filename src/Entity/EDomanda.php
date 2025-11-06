@@ -3,7 +3,8 @@
 /**
  * La classe EDomanda rappresenta il contenuto di una domanda del quiz e la sua risposta corretta.
  */
-* @access public
+ * @access public
+ * @author Camasso-Medelago
  * @package Entity
  */
 class EDomanda implements JsonSerializable {
