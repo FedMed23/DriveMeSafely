@@ -93,7 +93,7 @@ class EQuiz implements JsonSerializable {
         $numero=0;
         foreach ($this->domande as $domanda) {
             $numero++;
-            $output .= (string)$domanda . "\n";
+            $output .= "Domanda {$numero}:\n" .(string)$domanda . "\n";
         }
         return $output;
     }
