@@ -9,67 +9,152 @@
 
 class EEffettuazioneEsami implements JsonSerializable {
 
+    /**
+     * Identificativo univoco dell’effettuazione esame (può essere null finché non salvato)
+     * @var int|null
+     */
     private ?int $idEffEs = null;
-    private EEsame $esame;                        // L'esame effettuato
-    private int $idIscritto;          // L'iscritto che ha fatto la prova
-    private int $tentativi;      // Tentativi svolgimento esami
-    private bool $superato;                     // Esito finale (True/False)
+
+    /**
+     * Esame associato all’effettuazione
+     * @var EEsame
+     */
+    private EEsame $esame;
+
+    /**
+     * ID dell’iscritto che ha svolto l’esame
+     * @var int
+     */
+    private int $idIscritto;
+
+    /**
+     * Numero di tentativi effettuati
+     * @var int
+     */
+    private int $tentativi;
+
+    /**
+     * Esito dell’esame (true se superato, false altrimenti)
+     * @var bool
+     */
+    private bool $superato;
 
     //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(EEsame $esame, EIscritto $_iscritto, int $_tentativi, bool $_superato) {
+    /**
+     * Costruttore della classe EEffettuazioneEsami
+     * 
+     * @param EEsame $esame Esame svolto
+     * @param EIscritto $_iscritto Oggetto dell’iscritto che ha sostenuto l’esame
+     * @param int $_tentativi Numero di tentativi effettuati
+     * @param bool $_superato Esito dell’esame (true/false)
+     */
+    public function __construct(EEsame $esame, EIscritto $_iscritto, int $_tentativi, bool $_superato)
+    {
         $this->esame = $esame;
-        $this->idIscritto = $_iscritto.getId();
+        $this->idIscritto = $_iscritto->getId();
         $this->tentativi = $_tentativi;
         $this->superato = $_superato;
     }
     
     //----------------------METODI GET/SET (ID)-----------------------------
     
-    public function getId(): ?int { return $this->idEffEs; }
-    public function setId(int $id): void { $this->idEffEs = $id; } 
+     /**
+     * Restituisce l'ID dell’effettuazione esame
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->idEffEs;
+    }
+
+    /**
+     * Imposta l'ID dell’effettuazione esame
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->idEffEs = $id;
+    }
+
 
     //----------------------METODI GET-----------------------------
     
-    public function getEsame(): int { return $this->esame; }
-    public function getIdIscritto(): int { return $this->idIscritto; }
-    public function getTentativi(): int { return $this->tentativi; }
-    public function isSuperato(): bool { return $this->superato; }
-
-// ---------------- METODI SET ----------------
-
-    public function setIscritto(EIscritto $idIscritto): void
+    /**
+     * Restituisce l’esame associato
+     * @return EEsame
+     */
+    public function getEsame(): EEsame
     {
-        $this->idIscritto= $idIscritto.getId();
+        return $this->esame;
     }
 
-    public function setEsame(EEsame $Esame): void
+    /**
+     * Restituisce l’ID dell’iscritto che ha sostenuto l’esame
+     * @return int
+     */
+    public function getIdIscritto(): int
+    {
+        return $this->idIscritto;
+    }
+
+    /**
+     * Restituisce il numero di tentativi effettuati
+     * @return int
+     */
+    public function getTentativi(): int
+    {
+        return $this->tentativi;
+    }
+
+    /**
+     * Restituisce true se l’esame è stato superato
+     * @return bool
+     */
+    public function isSuperato(): bool
+    {
+        return $this->superato;
+    }
+
+    //---------------------- METODI SET -----------------------------
+
+    /**
+     * Imposta l’iscritto (salvando solo l’ID)
+     * @param EIscritto $iscritto
+     */
+    public function setIscritto(EIscritto $iscritto): void
+    {
+        $this->idIscritto = $iscritto->getId();
+    }
+
+    /**
+     * Imposta l’esame associato
+     * @param EEsame $esame
+     */
+    public function setEsame(EEsame $esame): void
     {
         $this->esame = $esame;
     }
-    
+
+    /**
+     * Imposta il numero di tentativi
+     * @param int $tentativi
+     */
     public function setTentativi(int $tentativi): void
     {
         $this->tentativi = $tentativi;
     }
 
-    public function isSuperato(bool $superato): void
+    /**
+     * Imposta l’esito dell’esame (true = superato, false = non superato)
+     * @param bool $superato
+     */
+    public function setSuperato(bool $superato): void
     {
         $this->superato = $superato;
     }
-    //---------------------JSON-------------------------------
 
-    public function jsonSerialize(): array {
-        return [
-            'idEffEs' => $this->idEffEs,
-            'Esame' => $this->esame,
-            'iscrittoId' => $this->idIscritto,
-            'tentativi' => $this->tentativi,
-            'superato' => $this->superato,
-        ];
-    }
-
-//--------------------METODO TOSTRING--------------
+//--------------------TOSTRING--------------
 
 /**
  * Stampa i dettagli dello svolgimento del quiz.
@@ -78,6 +163,20 @@ class EEffettuazioneEsami implements JsonSerializable {
 public function __toString(): string
     {
         return "idEffettuazioneEsame: {$this->getId()}\nIscritto: {$this->idIscritto}\n Esame: {$this->esame}\nTentativi: {$this->tentativi}\nSuperato: {$this->superato}\n";
+    }
+ //---------------------IMPLEMENTAZIONE JSON-------------------------------
+     /**
+     * Implementazione del metodo JsonSerializable
+     * @return array
+     */
+    public function jsonSerialize(): array {
+        return [
+            'idEffEs' => $this->idEffEs,
+            'Esame' => $this->esame,
+            'iscrittoId' => $this->idIscritto,
+            'tentativi' => $this->tentativi,
+            'superato' => $this->superato,
+        ];
     }
 }
 ?>
