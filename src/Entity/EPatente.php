@@ -3,6 +3,7 @@
 /**
  * La classe EPatente contiene le proprietà e gli attributi riguardanti una patente di guida.
  * L'attributo che la descrive è:
+ * - idPa: id della Patente
  * - tipo: categoria della patente (es. B, A, C, ecc.)
  * 
  * @access public
@@ -13,7 +14,7 @@
 class EPatente implements JsonSerializable
 {
     /**
-     * id identificativo della patente
+     * idPa identificativo della patente
      * @var int
      * */
      private ?int $idPa= null; 
@@ -29,19 +30,27 @@ class EPatente implements JsonSerializable
 
     /**
      * Crea una nuova istanza della classe EPatente
-     * 
+     * @param int $idPa id della patente
      * @param string $tipo categoria della patente
      */
-    public function __construct(string $tipo)
+    public function __construct(string $_tipo)
     {
-        $this->tipo = $tipo;
+        $this->tipo = $_tipo;
     }
  //----------------------METODI GET/SET (ID)-----------------------------
-    
+    /**
+     * Restituisce l'id della patente
+     * @return int
+     */
     public function getId(): ?int { return $this->idPa; }
-    public function setId(int $id): void { $this->idPa= $id; } 
 
-   // ---------------- METODI GET ----------------
+    /**
+     * Imposta l'id della patente
+     * @param int
+     */
+    public function setId(int $_id): void { $this->idPa= $_id; } 
+
+// ---------------- METODI GET ----------------
 
     /**
      * Restituisce il tipo della patente
@@ -52,7 +61,7 @@ class EPatente implements JsonSerializable
         return $this->tipo;
     }
 
-   // ---------------- METODI SET ----------------
+// ---------------- METODI SET ----------------
 
     /**
      * Imposta il tipo della patente
@@ -63,7 +72,7 @@ class EPatente implements JsonSerializable
         $this->tipo = $tipo;
     }
 
-  // ------------------ TOSTRING ---------------------------
+// ------------------ TOSTRING ---------------------------
 
     /**
      * Stampa i dettagli della patente
@@ -72,7 +81,7 @@ class EPatente implements JsonSerializable
     public function __toString(): string
     {
         // Restituisce una stringa che include i dettagli chiave
-        return "idPatente: {$this->getId()}\n Tipo di Patente: {$this->tipo}\n";
+        return "idPatente: {$this->idPa}\n Tipo di Patente: {$this->tipo}\n";
     }
 
   // --- Implementazione per la serializzazione JSON ---
