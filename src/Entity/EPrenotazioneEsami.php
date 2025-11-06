@@ -5,8 +5,8 @@
  * 
  * Gli attributi che la descrivono sono:
  * - idPrenotazioneEsame: id della prenotazione dell'esame
- * - idDipendente: oggetto della classe EDipendente
- * - idEsame: oggetto della classe EEsame
+ * - idDipendente: l'id del dipendente
+ * - idEsame: l'id dell'esame
  * - data: data della prenotazione
  * - stato: stato della prenotazione (es. completato, in attesa, fallito)
  * 
@@ -23,8 +23,8 @@ class EPrenotazioneEsami implements JsonSerializable
      private ?int $idPrEs= null; 
 
     /**
-     * Utente che effettua la prenotazione
-     * @var EIscritto
+     * Dipendente che effettua la prenotazione
+     * @var int
      */
     private int $idDipendente;
 
@@ -50,9 +50,8 @@ class EPrenotazioneEsami implements JsonSerializable
 
     /**
      * Crea una nuova istanza della classe EPrenotazioneEsami
-     * 
-     * @param EDipendente $idDipendente dipendente che effettua la prenotazione
-     * @param EEsame $idEsame esame prenotato
+     * @param EDipendente $dipendente dipendente che effettua la prenotazione
+     * @param EEsame $esame esame prenotato
      * @param DateTimeImmutable $data data della prenotazione
      * @param string $stato stato della prenotazione
 
@@ -63,8 +62,8 @@ class EPrenotazioneEsami implements JsonSerializable
         DateTimeImmutable $data,
         string $stato
     ) {
-        $this->idDipendente = $dipendente.getId();
-        $this->idEsame = $esame.getId();
+        $this->idDipendente = $dipendente->getId();
+        $this->idEsame = $esame->getId();
         $this->dataPrEs = $data;
         $this->stato = $stato;
     }
@@ -100,12 +99,12 @@ class EPrenotazioneEsami implements JsonSerializable
 
     public function setIdDipendente(EDipendente $dipendente): void
     {
-        $this->idDipendente= $dipendente.getId();
+        $this->idDipendente= $dipendente->getId();
     }
 
     public function setIdEsame(EEsame $esame): void
     {
-        $this->idEsame = $esame.getId();
+        $this->idEsame = $esame->getId();
     }
 
     public function setData(DateTimeImmutable $data): void
@@ -136,7 +135,7 @@ class EPrenotazioneEsami implements JsonSerializable
     {
         return [
             'idPrEs' => $this->idPrEs,
-            'Dipendente' => $this->idDipendente,
+            'idDipendente' => $this->idDipendente,
             'idEsame' => $this->idEsame,
             'data' => $this->dataPrEs->format('Y-m-d'),
             'stato' => $this->stato,
