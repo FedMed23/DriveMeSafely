@@ -85,9 +85,47 @@
         return $numeroCartaMascherato;
     }
 
+   // ---------------------------- METODI SET ----------------------------
+
+    /**
+     * Imposta il nome del titolare della carta
+     * @param string $nomeTitolare
+     */
+    public function setNomeTitolareCarta(string $nomeTitolare): void
+    {
+        $this->nomeTitolare = $nomeTitolare;
+    }
+
+    /**
+     * Imposta il cognome del titolare della carta
+     * @param string $cognomeTitolare
+     */
+    public function setCognomeTitolareCarta(string $cognomeTitolare): void
+    {
+        $this->cognomeTitolare = $cognomeTitolare;
+    }
+
+    /**
+     * Imposta la data di scadenza della carta
+     * @param \DateTimeImmutable $dataScadenza
+     */
+    public function setDataScadenza(\DateTimeImmutable $dataScadenza): void
+    {
+        $this->dataScadenza = $dataScadenza;
+    }
+
+    /**
+     * Imposta il numero della carta di credito
+     * @param string $numeroCarta
+     */
+    public function setNumeroCarta(string $numeroCarta): void
+    {
+        $this->numeroCarta = $numeroCarta;
+    }
+
 // ------------------ TOSTRING ---------------------------
     /**
-    * Stampa i dettagli della guida
+    * Stampa i dettagli della carta di credito
     * @return string
     */
     public function __toString(): string
