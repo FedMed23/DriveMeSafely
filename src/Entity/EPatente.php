@@ -30,12 +30,11 @@ class EPatente implements JsonSerializable
 
     /**
      * Crea una nuova istanza della classe EPatente
-     * @param int $idPa id della patente
      * @param string $tipo categoria della patente
      */
-    public function __construct(string $_tipo)
+    public function __construct(string $tipo)
     {
-        $this->tipo = $_tipo;
+        $this->tipo = $tipo;
     }
  //----------------------METODI GET/SET (ID)-----------------------------
     /**
@@ -48,7 +47,7 @@ class EPatente implements JsonSerializable
      * Imposta l'id della patente
      * @param int
      */
-    public function setId(int $_id): void { $this->idPa= $_id; } 
+    public function setId(int $id): void { $this->idPa= $id; } 
 
 // ---------------- METODI GET ----------------
 
@@ -93,7 +92,7 @@ class EPatente implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->idPa,
+            'idPa' => $this->idPa,
             'tipo' => $this->tipo
         ];
     }
