@@ -38,9 +38,8 @@ class EUtenteRegistrato implements JsonSerializable {
 	/**
 	 * foto profilo dell'utente (URL)
 	 * @var string
-	 
-    private string $fotoProfilo;
-    */
+	 * private string $fotoProfilo;
+     */
 
     /**
 	 * email dell'utente
@@ -157,7 +156,11 @@ class EUtenteRegistrato implements JsonSerializable {
     public function setStatoAttivato(): void {
         $this->statoUtente=true;
     }
-    
+//---------------------Altri metodi-----------------------
+    public function verificaPassword(string $password): bool {
+         return password_verify($password, $this->password);
+}
+
 //---------------------JSON-------------------------------
 	public function jsonSerialize(): array
 	{
