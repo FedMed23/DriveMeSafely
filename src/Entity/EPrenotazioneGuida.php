@@ -97,12 +97,12 @@ class EPrenotazioneGuida implements JsonSerializable
 
     // ---------------- METODI SET ----------------
 
-    public function setIscritto(EIscritto $iscritto): void
+    public function setIdIscritto(EIscritto $iscritto): void
     {
         $this->idIscritto= $iscritto->getId();
     }
 
-    public function setGuida(EGuida $guida): void
+    public function setIdGuida(EGuida $guida): void
     {
         $this->idGuida = $guida->getId();
     }
