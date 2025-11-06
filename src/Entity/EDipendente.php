@@ -3,9 +3,12 @@
  * La classe EDipendente estende la classe EUtenteRegistrato e aggiunge
  * i dati specifici per il personale interno della Scuola Guida (es. il ruolo e lo stipendio).
  */
+* @access public
+ * @author Camasso-Medelago
+ * @package Entity
+ */
 class EDipendente extends EUtenteRegistrato {
-
-	/**
+    /**
 	 * Ruolo del dipendente (e.g., Istruttore, Amministratore, Segretario).
 	 * @var string
 	 */
