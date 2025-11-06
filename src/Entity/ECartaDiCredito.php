@@ -14,6 +14,12 @@
 
  class ECartaDiCredito implements JsonSerializable {
      /**
+     * Numero della Carta
+     * @var string
+     */  
+     private string $numeroCarta;
+
+     /**
      * Nome del titolare della Carta
      * @var string
      */  
@@ -31,13 +37,7 @@
      */  
      private DateTimeImmutable $dataScadenza;
 
-     /**
-     * Numero della Carta
-     * @var string
-     */  
-     private string $numeroCarta;
-
-
+     
 // -----------------------------COSTRUTTORE-----------------
      /** 
      * Crea una nuova istanza della classe ECartaDiCredito

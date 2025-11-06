@@ -4,6 +4,7 @@
  * La classe EEsame contiene le proprietà e gli attributi riguardanti un esame di guida.
  * Gli attributi che la descrivono sono:
  * - idEsame: identificativo univoco dell'esame
+ *  - data: data dell'esame
  * - tipologia: tipo di esame (es. teorico o pratico)
  * 
  * @access public
@@ -20,11 +21,29 @@ class EEsame implements JsonSerializable
     private int $idEsame;
 
     /**
+     * Data dell'esame
+     * @var DateTimeImmutable
+     */
+    private DateTimeImmutable $dataEs;
+
+    /**
      * Tipologia dell'esame (es. teorico o pratico)
      * @var string
      */
     private string $tipologia;
 
+// ---------------- COSTRUTTORE ----------------
+
+    /**
+     * Crea una nuova istanza della classe EEsame
+     *
+     * @param string $tipologia tipo di esame
+     */
+    public function __construct(string $tipologia, DateTimeImmutable $dataEs)
+    {
+        $this->tipologia = $tipologia;
+        $this->dataEs = $dataEs; 
+    }
 
   // ---------------- METODI GET ----------------
 
@@ -35,6 +54,11 @@ class EEsame implements JsonSerializable
     public function getIdEsame(): int
     {
         return $this->idEsame;
+    }
+
+    public function getDataEsame(): DateTimeImmutable
+    {
+        return $this->dataEs;
     }
 
     /**
@@ -57,6 +81,11 @@ class EEsame implements JsonSerializable
         $this->idEsame = $idEsame;
     }
 
+    public function setDataEsame(DateTimeImmutable $data): void
+    {
+        $this->dataEs = $data;
+    }
+
     /**
      * Imposta la tipologia dell'esame
      * @param string $tipologia
@@ -73,8 +102,9 @@ class EEsame implements JsonSerializable
      * @return string
      */
     public function __toString(): string
-    {
-        return "ID Esame: {$this->idEsame}\nTipologia: {$this->tipologia}\n";
+    {   
+        $dataFormattata = $this->dataEs->format('d-m-Y');
+        return "ID Esame: {$this->idEsame}\nData: {$dataFormattata}\nTipologia: {$this->tipologia}\n";
     }
 
     // --- Implementazione per la serializzazione JSON ---
@@ -87,6 +117,7 @@ class EEsame implements JsonSerializable
     {
         return [
             'idEsame' => $this->idEsame,
+            'data' => $this->dataEs->format('Y-m-d'),
             'tipologia' => $this->tipologia
         ];
     }

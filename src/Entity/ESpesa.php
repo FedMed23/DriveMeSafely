@@ -1,11 +1,10 @@
+<?php 
 /**
  * La classe ESpesa contiene le proprietà e gli attributi riguardanti una spesa legata alla patente di guida.
  * Gli attributi che la descrivono sono:
  * - idSpesa: identificativo univoco della spesa
  * - tipologia: tipo di spesa (es. tassa, bollo, assicurazione, ecc.)
  * - importo: importo della spesa
- * - tipPatente: tipo di patente a cui la spesa è riferita
- * 
  * @access public
  * @author Camasso-Medelago
  * @package Entity
@@ -31,11 +30,6 @@ class ESpesa implements JsonSerializable
      */
     private float $importo;
 
-    /**
-     * Tipo di patente associata alla spesa
-     * @var string
-     */
-    private string $tipPatente;
 
     // ---------------- COSTRUTTORE ----------------
 
@@ -45,14 +39,12 @@ class ESpesa implements JsonSerializable
      * @param int $idSpesa identificativo univoco della spesa
      * @param string $tipologia tipo di spesa
      * @param float $importo importo della spesa
-     * @param string $tipPatente tipo di patente associata
      */
-    public function __construct(int $idSpesa, string $tipologia, float $importo, string $tipPatente)
+    public function __construct(int $idSpesa, string $tipologia, float $importo)
     {
         $this->idSpesa = $idSpesa;
         $this->tipologia = $tipologia;
         $this->importo = $importo;
-        $this->tipPatente = $tipPatente;
     }
 
     // ---------------- METODI GET ----------------
@@ -72,11 +64,6 @@ class ESpesa implements JsonSerializable
         return $this->importo;
     }
 
-    public function getTipPatente(): string
-    {
-        return $this->tipPatente;
-    }
-
     // ---------------- METODI SET ----------------
 
     public function setIdSpesa(int $idSpesa): void
@@ -94,11 +81,6 @@ class ESpesa implements JsonSerializable
         $this->importo = $importo;
     }
 
-    public function setTipPatente(string $tipPatente): void
-    {
-        $this->tipPatente = $tipPatente;
-    }
-
     // ------------------ TOSTRING ---------------------------
 
     /**
@@ -107,7 +89,7 @@ class ESpesa implements JsonSerializable
      */
     public function __toString(): string
     {
-        return "ID Spesa: {$this->idSpesa}\nTipologia: {$this->tipologia}\nImporto: €{$this->importo}\nTipo Patente: {$this->tipPatente}\n";
+        return "ID Spesa: {$this->idSpesa}\nTipologia: {$this->tipologia}\nImporto: €{$this->importo}\n";
     }
 
     // --- Implementazione per la serializzazione JSON ---
@@ -122,7 +104,6 @@ class ESpesa implements JsonSerializable
             'idSpesa' => $this->idSpesa,
             'tipologia' => $this->tipologia,
             'importo' => $this->importo,
-            'tipPatente' => $this->tipPatente
         ];
     }
 }

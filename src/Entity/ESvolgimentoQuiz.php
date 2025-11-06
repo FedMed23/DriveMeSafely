@@ -63,7 +63,7 @@ class ESvolgimentoQuiz implements JsonSerializable {
      * Determina se il quiz è superato (massimo 4 errori).
      */
     private function calcolaEsito(): void {
-        $this->superato = ($this->errori <= 4); 
+        $this->superato = ($this->errori <= 3); 
     }
     
     //----------------------METODI GET/SET (ID)-----------------------------

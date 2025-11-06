@@ -16,12 +16,11 @@
  */
 class EUtenteRegistrato implements JsonSerializable {
 	/**
-	 * Da vedere meglio se mettere o meno l'id e come incrementarlo
 	 * id identificativo dell'utente
 	 * @var int
+     * */
 	 private ?int $id= null; 
-	 perchè inizialmente è nullo, la gestione dell'incremento deve essere affidata al service layer
-     */
+     
 
 	/**
 	 * nome dell'utente
@@ -79,6 +78,10 @@ class EUtenteRegistrato implements JsonSerializable {
         $this->password= password_hash($_password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
     }
+    //----------------------METODI GET/SET (ID)-----------------------------
+    
+    public function getId(): ?int { return $this->id; }
+    public function setId(int $id): void { $this->id= $id; } 
 //----------------------METODI GET-----------------------------
     /**
     * @return String nome dell'utente

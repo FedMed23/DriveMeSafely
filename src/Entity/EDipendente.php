@@ -10,22 +10,20 @@ class EDipendente extends EUtenteRegistrato {
 	 * @var string
 	 */
 	private string $ruolo;
+	private float $stipendio;
 	
     //-------------------------COSTRUTTORE-------------------------
     
 	public function __construct(
-		string $_nome,
-		string $_cognome,
-		string $_username,
-		string $_email,
-		string $_password,
-		string $_ruolo
+		string $_ruolo,
+		ESpesa $_spesa
 	) {
 		//Costruttore genitore
 		parent::__construct($_nome, $_cognome, $_username, $_email, $_password);
         
         //Inizializzazione attributi propri
 		$this->ruolo = $_ruolo;
+		$this->stipendio= $_spesa.getImporto();
 	}
 
     //----------------------METODI GET-----------------------------
@@ -34,24 +32,35 @@ class EDipendente extends EUtenteRegistrato {
 		return $this->ruolo;
 	}
 
+	public function getStipendio(): float
+    {
+        return $this->stipendio;
+    }
+
     //-----------------------------METODI SET-----------------------------
 
 	public function setRuolo(string $_ruolo): void {
 		$this->ruolo = $_ruolo;
 	}
-    
+
+    public function setStipendio(float $_stipendio): void
+    {
+        $this->stipendio = $_stipendio;
+    }
     //---------------------SERIALIZZAZIONE E STAMPA-------------------------------
 
 	public function jsonSerialize(): array {
         // Unisce l'array del genitore con i nuovi attributi
 		return parent::jsonSerialize() + [
-			'ruolo' => $this->ruolo
+			'ruolo' => $this->ruolo,
+			'stipendio' => $this->stipendio,
 		];
 	}
 
 	public function __toString(): string {
 		$print = parent::__toString();
 		$print .= "Ruolo: {$this->ruolo}\n";
+		$print .= "Stipendio: €{$this->stipendio}\n";
 		return $print;
 	}
 }

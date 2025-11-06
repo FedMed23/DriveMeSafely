@@ -13,6 +13,12 @@
 class EPatente implements JsonSerializable
 {
     /**
+     * id identificativo della patente
+     * @var int
+     * */
+     private ?int $idPa= null; 
+
+    /**
      * Tipo della patente (es. B, A, C)
      * @var string
      */
@@ -30,6 +36,10 @@ class EPatente implements JsonSerializable
     {
         $this->tipo = $tipo;
     }
+ //----------------------METODI GET/SET (ID)-----------------------------
+    
+    public function getId(): ?int { return $this->idPa; }
+    public function setId(int $id): void { $this->idPa= $id; } 
 
    // ---------------- METODI GET ----------------
 
@@ -62,7 +72,7 @@ class EPatente implements JsonSerializable
     public function __toString(): string
     {
         // Restituisce una stringa che include i dettagli chiave
-        return "Tipo di Patente: {$this->tipo}\n";
+        return "idPatente: {$this->getId()}\n Tipo di Patente: {$this->tipo}\n";
     }
 
   // --- Implementazione per la serializzazione JSON ---
@@ -74,6 +84,7 @@ class EPatente implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->idPa,
             'tipo' => $this->tipo
         ];
     }
