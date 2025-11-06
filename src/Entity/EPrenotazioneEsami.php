@@ -126,10 +126,10 @@ class EPrenotazioneEsami implements JsonSerializable
     public function __toString(): string
     {
         $dataFormattata = $this->dataPrEs->format('d-m-Y');
-        return "idPrenotazioneEsame: {$this->getId()}\nDipendente: {$this->idDipendente}\nID Esame: {$this->idEsame}\nData: {$dataFormattata}\nStato: {$this->stato}\n";
+        return "idPrenotazioneEsame: {$this->idPrEs}\nDipendente: {$this->idDipendente}\nID Esame: {$this->idEsame}\nData: {$dataFormattata}\nStato: {$this->stato}\n";
     }
-
-    // --- Implementazione per la serializzazione JSON ---
+ 
+    // ------- Implementazione per la serializzazione JSON --------
 
     public function jsonSerialize(): array
     {
