@@ -1,14 +1,25 @@
 <?php
 /**
-*La classe ETentativoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
+*La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
 *alla scuola guida.
+*Gli attributi che la descrivono sono:
+* -idSvolgimento: id dello svolgimento del quiz
+* -quiz: oggetto della classe EQuiz
+* -idIscritto: l'id dell'iscritto che ha effettuato il quiz
+* -dataSvolgimento: data e ora dello svolgimento del quiz
+* -errori: errori commessi nel quiz
+* -tentativiRisposta: array delle risposte dell'utente alle domande del quiz
+* -superato: riporta se il quiz è statu superato o meno (True/False)
+* @access public
+* @package Entity
+* @author Camasso-Medelago
 */
 
 class ESvolgimentoQuiz implements JsonSerializable {
 
     private ?int $idSvolgimento = null;
     private EQuiz $quiz;                        // L'oggetto Quiz effettuato
-    private EIscritto $iscritto;          // L'iscritto che ha fatto la prova
+    private int $idIscritto;                      // L'iscritto che ha fatto la prova
     private \DateTimeImmutable $dataSvolgimento; // Data e ora di esecuzione
     private int $errori = 0;                    // Numero di risposte errate
     private array $tentativiRisposta = [];      // Array di oggetti ETentativoRisposta
@@ -16,13 +27,13 @@ class ESvolgimentoQuiz implements JsonSerializable {
 
     //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(EQuiz $_quiz, EIscritto $_iscritto, array $_risposteUtente) {
-        $this->quiz = $_quiz;
-        $this->iscritto = $_iscritto;
+    public function __construct(EQuiz $quiz, EIscritto $iscritto, array $risposteUtente) {
+        $this->quiz = $quiz;
+        $this->idIscritto = $iscritto->getId();
         $this->dataSvolgimento = new \DateTimeImmutable(); // Registra l'ora della creazione
         
         // Elabora le risposte fornite per creare gli oggetti ETentativoRisposta
-        $this->elaboraRisposte($_risposteUtente);
+        $this->elaboraRisposte($risposteUtente);
         
         // Calcola l'esito finale
         $this->calcolaEsito();
@@ -32,9 +43,9 @@ class ESvolgimentoQuiz implements JsonSerializable {
 
     /**
      * Elabora l'array di risposte e crea gli oggetti ETentativoRisposta.
-     * @param array $_risposteUtente Array associativo [ID_Domanda => 'Risposta Utente']
+     * @param array $risposteUtente Array associativo [ID_Domanda => 'Risposta Utente']
      */
-    private function elaboraRisposte(array $_risposteUtente): void {
+    private function elaboraRisposte(array $risposteUtente): void {
         
         // Cerca le domande del quiz per ID per un accesso più rapido
         $domandePerId = [];
@@ -43,7 +54,7 @@ class ESvolgimentoQuiz implements JsonSerializable {
         }
         
         //Per ogni risposta dell'utente associata ad una domanda, ricava la risposta e insieme alla domanda viene passata al costruttore del TentativoRisposta
-        foreach ($_risposteUtente as $domandaId => $risposta) {
+        foreach ($risposteUtente as $domandaId => $risposta) {
             if (isset($domandePerId[$domandaId])) {
                 $domanda = $domandePerId[$domandaId];
                 
@@ -60,7 +71,7 @@ class ESvolgimentoQuiz implements JsonSerializable {
     }
     
     /**
-     * Determina se il quiz è superato (massimo 4 errori).
+     * Determina se il quiz è superato (massimo 3 errori).
      */
     private function calcolaEsito(): void {
         $this->superato = ($this->errori <= 3); 
@@ -74,7 +85,7 @@ class ESvolgimentoQuiz implements JsonSerializable {
     //----------------------METODI GET-----------------------------
     
     public function getQuiz(): EQuiz { return $this->quiz; }
-    public function getIscritto(): EUtenteIscritto { return $this->iscritto; }
+    public function getIdIscritto(): int { return $this->idIscritto; }
     public function getDataSvolgimento(): \DateTimeImmutable { return $this->dataSvolgimento; }
     public function getErrori(): int { return $this->errori; }
     public function isSuperato(): bool { return $this->superato; }
@@ -84,20 +95,28 @@ class ESvolgimentoQuiz implements JsonSerializable {
      */
     public function getTentativiRisposta(): array { return $this->tentativiRisposta; }
 
+    //----------------------METODI SET-----------------------------
+    
+    public function setQuiz(EQuiz $quiz): void { $this->quiz= $quiz; }
+    public function setIdIscritto(EIscritto $iscritto): void { $this->idIscritto= $iscritto->getId(); }
+    public function setDataSvolgimento(\DateTimeImmutable $data): void { $this->dataSvolgimento= $data; }
+    public function setErrori(int $errori): void { $this->errori= $errori; }
+    public function setSuperato(bool $superato): void { $this->superato= $superato; }
+    
+
     //---------------------JSON-------------------------------
 
     public function jsonSerialize(): array {
         return [
             'idSvolgimento' => $this->idSvolgimento,
             'quizId' => $this->quiz->getId(),
-            'iscrittoId' => $this->iscritto->getId(),
+            'iscrittoId' => $this->idIscritto,
             'dataSvolgimento' => $this->dataSvolgimento->format('Y-m-d H:i:s'),
             'errori' => $this->errori,
             'superato' => $this->superato,
             'risposte' => $this->tentativiRisposta // Serializza l'array dei tentativi
         ];
     }
-    // ... (I metodi precedenti sono corretti e omessi per brevità) ...
 
 //--------------------METODO TOSTRING--------------
 
@@ -107,11 +126,11 @@ class ESvolgimentoQuiz implements JsonSerializable {
  */
 public function __toString(): string {
     $idStr = $this->getId() === null ? "[NUOVO]" : $this->getId();
-    $esito = $this->isSuperato() ? "SUPERATO" : "BOCCIATO";
+    $esito = $this->getSuperato() ? "SUPERATO" : "BOCCIATO";
 
     $print = "=== SVOLGIMENTO QUIZ ID: {$idStr} ===\n";
     $print .= "Quiz: {$this->getQuiz()->getNomeQuiz()} (ID: {$this->getQuiz()->getId()})\n";
-    $print .= "Iscritto ID: {$this->getIscritto()->getId()}\n";
+    $print .= "Iscritto ID: {$this->getIdIscritto()}\n";
     $print .= "Data Svolgimento: {$this->getDataSvolgimento()->format('Y-m-d H:i:s')}\n";
     $print .= "---------------------------------------\n";
     $print .= "Errori Totali: {$this->getErrori()}\n";
