@@ -88,56 +88,90 @@ class EUtenteIscritto extends EUtenteRegistrato {
     }
 
     // ---------------------- METODI GET -----------------------------
-
+    /**
+     * Restituisce il codice fiscale dell'iscritto.
+     * @return string
+     */
     public function getCodiceFiscale(): string
     {
         return $this->codiceFiscale;
     }
-
+     /**
+     * Restituisce la data di nascita dell'iscritto.
+     * @return DateTimeImmutable
+     */
     public function getDataNascita(): DateTimeImmutable
     {
         return $this->dataNascita;
     }
-
+     /**
+     * Restituisce il luogo di nascita dell'iscritto.
+     * @return string
+     */
     public function getLuogoNascita(): string
     {
         return $this->luogoNascita;
     }
-
+     /**
+     * Restituisce l'indirizzo di residenza dell'iscritto.
+     * @return string
+     */
     public function getIndirizzo(): string
     {
         return $this->indirizzo;
     }
-
+     /**
+     * Restituisce il numero di telefono dell'iscritto.
+     * @return string
+     */
     public function getNumeroTelefono(): string
     {
         return $this->numeroTelefono;
     }
-
+     /**
+     * Restituisce l'oggetto EPatente associato all'iscritto.
+     * @return EPatente
+     */
     public function getTipoPatente(): EPatente
     {
         return $this->tipoPatente;
     }
 
     // ---------------------- METODI SET -----------------------------
-
+      /**
+     * Imposta l'indirizzo dell'iscritto.
+     * @param string $_indirizzo
+     */
     public function setIndirizzo(string $_indirizzo): void
     {
         $this->indirizzo = $_indirizzo;
     }
-
+     /**
+     * Imposta il numero di telefono dell'iscritto.
+     * @param string $_telefono
+     */
     public function setNumeroTelefono(string $_telefono): void
     {
         $this->numeroTelefono = $_telefono;
     }
-
+    
+    /**
+     * Imposta la patente posseduta dall'iscritto.
+     * @param EPatente $_patente
+     */
     public function setTipoPatente(EPatente $_patente): void
     {
         $this->tipoPatente = $_patente;
     }
 
 	//--------------------TOSTRING--------------
-
+    /**
+     * Restituisce una rappresentazione in formato stringa dell'iscritto.
+     * Include tutte le informazioni principali ereditate da EUtenteRegistrato
+     * e gli attributi specifici dell'iscritto (CF, data di nascita, contatti, ecc.).
+     *
+     * @return string Dettagli formattati dell'iscritto.
+     */
 	 public function __toString(): string
     {
         $print = parent::__toString();
@@ -151,7 +185,13 @@ class EUtenteIscritto extends EUtenteRegistrato {
         return $print;
     }
 	 //---------------------Implementazione per la serializzazione JSON-------------------------------
-
+     /**
+     * Serializza l'oggetto EIscritto in formato JSON.
+     * Combina le informazioni ereditate da EUtenteRegistrato con gli
+     * attributi specifici dell'iscritto.
+     *
+     * @return array Array associativo contenente i dati dell'iscritto.
+     */
 	 public function jsonSerialize(): array
     {
         return parent::jsonSerialize() + [
