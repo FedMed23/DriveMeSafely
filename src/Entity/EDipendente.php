@@ -47,7 +47,7 @@ class EDipendente extends EUtenteRegistrato {
     {
         $this->stipendio = $_stipendio;
     }
-    //---------------------SERIALIZZAZIONE E STAMPA-------------------------------
+    //---------------------Implementazione per la serializzazione JSON-------------------------------
 
 	public function jsonSerialize(): array {
         // Unisce l'array del genitore con i nuovi attributi
@@ -56,7 +56,7 @@ class EDipendente extends EUtenteRegistrato {
 			'stipendio' => $this->stipendio,
 		];
 	}
-
+// ---------------------------- TOSTRING ----------------------------
 	public function __toString(): string {
 		$print = parent::__toString();
 		$print .= "Ruolo: {$this->ruolo}\n";
