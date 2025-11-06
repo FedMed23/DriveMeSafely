@@ -11,6 +11,7 @@ class EUtenteIscritto extends EUtenteRegistrato {
 	private string $luogoNascita;
 	private string $indirizzo;
 	private string $numeroTelefono;
+	private string $tipoPatente;
     
 
     //-------------------------COSTRUTTORE-------------------------
@@ -25,7 +26,8 @@ class EUtenteIscritto extends EUtenteRegistrato {
 		DateTimeImmutable $_dataNascita,
 		string $_luogoNascita,
 		string $_indirizzo,
-		string $_telefono
+		string $_telefono,
+		EPatente $_patente
 	) {
 	
 		parent::__construct($_nome, $_cognome, $_username, $_email, $_password);
@@ -36,6 +38,7 @@ class EUtenteIscritto extends EUtenteRegistrato {
 		$this->luogoNascita = $_luogoNascita;
 		$this->indirizzo = $_indirizzo;
 		$this->numeroTelefono = $_telefono;
+		$this->tipoPatente= $_patente.getTipo();
 	}
 
     //----------------------METODI GET-----------------------------
@@ -59,7 +62,11 @@ class EUtenteIscritto extends EUtenteRegistrato {
 	public function getNumeroTelefono(): string {
 		return $this->numeroTelefono;
 	}
-
+    
+    public function getTipoPatente(): EPatente
+    {
+        return $this->tipoPatente;
+    }
     //-----------------------------METODI SET-----------------------------
 
 	public function setIndirizzo(string $_indirizzo): void {
@@ -69,7 +76,15 @@ class EUtenteIscritto extends EUtenteRegistrato {
 	public function setNumeroTelefono(string $_telefono): void {
 		$this->numeroTelefono = $_telefono;
 	}
-    
+
+    /**
+     * Imposta il tipo della patente
+     * @param string $tipo
+     */
+    public function setTipoPatente(EPatente $_patente): void
+    {
+        $this->tipoPatente = $_patente.getTipo();
+    }
     //---------------------JSON-------------------------------
 
 	public function jsonSerialize(): array {
@@ -81,6 +96,7 @@ class EUtenteIscritto extends EUtenteRegistrato {
 			'luogoNascita' => $this->luogoNascita,
 			'indirizzo' => $this->indirizzo,
 			'numeroTelefono' => $this->numeroTelefono,
+			'tipoPatente' => $this->tipoPatente
 		];
 	}
 
@@ -94,6 +110,7 @@ class EUtenteIscritto extends EUtenteRegistrato {
 		$print .= "Luogo Nascita: {$this->luogoNascita}\n";
 		$print .= "Indirizzo: {$this->indirizzo}\n";
 		$print .= "Telefono: {$this->numeroTelefono}\n";
+		$print .= 'Tipo Patente' {$this->tipoPatente}\n";
 
 		return $print;
 	}

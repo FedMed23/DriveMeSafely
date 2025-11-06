@@ -19,6 +19,12 @@
 class EPagamento implements JsonSerializable
 {
     /**
+     * id identificativo del pagamento
+     * @var int
+     * */
+     private ?int $idPag= null; 
+
+    /**
      * Utente che effettua il pagamento
      * @var EUtenteRegistrato
      */
@@ -72,7 +78,10 @@ class EPagamento implements JsonSerializable
         $this->stato = $stato;
         $this->cartaDiCredito = $cartaDiCredito;
     }
-
+//----------------------METODI GET/SET (ID)-----------------------------
+    
+    public function getId(): ?int { return $this->idPag; }
+    public function setId(int $id): void { $this->idPag= $id; } 
     // ---------------- METODI GET ----------------
 
     public function getIdUtenteRegistrato(): EUtenteRegistrato
@@ -136,7 +145,7 @@ class EPagamento implements JsonSerializable
     public function __toString(): string
     {
         $dataFormattata = $this->data->format('d-m-Y');
-        return "Utente: {$this->idUtenteRegistrato}\nSpesa: {$this->idSpesa}\nData: {$dataFormattata}\nStato: {$this->stato}\nCarta di Credito: {$this->cartaDiCredito}\n";
+        return "idPagamento: {$this->getId()}\nUtente: {$this->idUtenteRegistrato}\nSpesa: {$this->idSpesa}\nData: {$dataFormattata}\nStato: {$this->stato}\nCarta di Credito: {$this->cartaDiCredito}\n";
     }
 
     // --- Implementazione per la serializzazione JSON ---
@@ -144,6 +153,7 @@ class EPagamento implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
+            'id' => $this->idPag,
             'idUtenteRegistrato' => $this->idUtenteRegistrato,
             'idSpesa' => $this->idSpesa,
             'data' => $this->data->format('Y-m-d'),
