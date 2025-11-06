@@ -1,16 +1,17 @@
 <?php
 
-//Nota: punti da vedere: id e path foto profilo 
+//Nota: punto da vedere: path foto profilo 
 /**
- * La classe EUtenteRegistrato contiene tutti gli attributi e metodi base riguardanti gli utenti registrati alla scuolaguida.
+ * La classe EUtenteRegistrato contiene tutti gli attributi e metodi base riguardanti gli utenti registrati alla scuola guida.
  * Contiene i seguenti attributi (e i relativi metodi):
- * -id: è un identificativo autoincrement, relativo agli utenti registrati;
- * -nomeUtente: nome dell'utente;
- * -cognomeUtente: cognome dell'utente.
+ * -id: è un identificativo relativo agli utenti registrati
+ * -nomeUtente: nome dell'utente
+ * -cognomeUtente: cognome dell'utente
  * -fotoProfilo: foto profilo dell'utente
+ * -username: username dell'utente
  * -email: email dell'utente
  * -password: password dell'utente
- * -stato: se l'account è attivo o meno
+ * -statoUtente: se l'account è attivo o meno
  *  @author Camasso-Medelago
  *  @package Entity
  */
@@ -67,15 +68,14 @@ class EUtenteRegistrato implements JsonSerializable {
 
 //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $_nome, string $_cognome, string $_username, string $_email, string $_password) {
+    public function __construct(string $nome, string $cognome, string $username, string $email, string $password) {
 
-        //$this->id=$_id;
-        $this->nomeUtente=$_nome;
-        $this->cognomeUtente=$_cognome;
+        $this->nomeUtente=$nome;
+        $this->cognomeUtente=$cognome;
         //Path alla foto di default $this->fotoProfilo=
-        $this->username=$_username;
-        $this->email=$_email;
-        $this->password= password_hash($_password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
+        $this->username=$username;
+        $this->email=$email;
+        $this->password= password_hash($password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
     }
     //----------------------METODI GET/SET (ID)-----------------------------
@@ -125,42 +125,49 @@ class EUtenteRegistrato implements JsonSerializable {
    /**
     * @param String username utente
     */
-    public function setUsername(string $_username): void {
-    $this->username=$_username;
+    public function setUsername(string $username): void {
+    $this->username=$username;
     }
 
     /**
     * @param String $email email utente
     */
-    public function setEmail(string $_email): void {
-    $this->email=$_email;
+    public function setEmail(string $email): void {
+    $this->email=$email;
     }
 
     /**
     * @param String $password password utente
     */
-    public function setPassword(string $_newpassword): void{
-    	$newpassword = password_hash($_newpassword, PASSWORD_DEFAULT);
+    public function setPassword(string $newpassword): void{
+    	$newpassword = password_hash($newpassword, PASSWORD_DEFAULT);
         $this->password=$newpassword;
     }
 
     /**
-    * Cambia lo stato in true (attivo)
+    * Cambia lo stato in false (disattivo)
     */
     public function setStatoDisattivato(): void {
         $this->statoUtente=false;
+    }
+
+	/**
+    * Cambia lo stato in true (attivo)
+    */
+    public function setStatoAttivato(): void {
+        $this->statoUtente=true;
     }
     
 //---------------------JSON-------------------------------
 	public function jsonSerialize(): array
 	{
 		return
-			[
-				'nomeUtente'   => $this->getNomeUtente(),
-				'cognomeUtente' => $this->getCognomeUtente(),
-                'username'   => $this->getUsername(),
-				'email' => $this->getEmail(),
-				'statoUtente' => $this->getStatoUtente()
+			[   'id' => $this->id,
+			    'nomeUtente'   => $this->nomeUtente,
+				'cognomeUtente' => $this->cognomeUtente,
+                'username'   => $this->username,
+				'email' => $this->email,
+				'statoUtente' => $this->statoUtente
 			];
 	}
 
@@ -171,35 +178,23 @@ class EUtenteRegistrato implements JsonSerializable {
     */
     public function StatoToString (): string {
         $account = null;
-        if ($this->getStatoUtente())
+        if ($this->statoUtente)
             $account = "attivo";
         else
             $account = "disattivo";
         return $account;
     }
-    /**
-     * Potrebbe servire
-    * Stampa tutti gli emelemnti di un array come un unica stringa
-    * @return String
-    
-    protected function ArrayToString ($arr) {
-        $str = null;
-        if (is_array($arr))
-           foreach ($arr as $val) {
-              $str = $str."-".$val;
-           }
-        else 
-            $str = $arr;
-        return $str;
-    }
-    */
 
     /**
      * Stampa i dettagli dell'utente
      * @return $print String
      */
     public function __toString(): string  {
-        $print =" Nome: ".$this->getNomeUtente()."\n"." Cognome: ".$this->getCognomeUtente()."\n"." Username: ".$this->getUsername()."\n"." Email: ".$this->getEmail()."\n"." Stato: ".$this->StatoToString()."\n";
+        $print =" Nome: ".$this->nomeUtente."\n".
+			    " Cognome: ".$this->cognomeUtente."\n".
+			    " Username: ".$this->username."\n".
+			    " Email: ".$this->email."\n".
+			    " Stato: ".$this->StatoToString()."\n";
 
        return $print;
     }
