@@ -1,9 +1,9 @@
 <?php 
 /**
- * La classe ESpesa contiene le proprietà e gli attributi riguardanti una spesa legata alla patente di guida.
+ * La classe ESpesa contiene le proprietà e gli attributi riguardanti le spese che dve sostenere una scuola guida.
  * Gli attributi che la descrivono sono:
  * - idSpesa: identificativo univoco della spesa
- * - tipologia: tipo di spesa (es. tassa, bollo, assicurazione, ecc.)
+ * - tipologia: tipo di spesa (es. tassa, bollo, assicurazione, stipendio, iscrizione ecc.)
  * - importo: importo della spesa
  * @access public
  * @author Camasso-Medelago
@@ -16,10 +16,10 @@ class ESpesa implements JsonSerializable
      * Identificativo univoco della spesa
      * @var int
      */
-    private int $idSpesa;
+    private ?int $idSpesa=null;
 
     /**
-     * Tipologia della spesa (es. tassa, bollo, ecc.)
+     * Tipologia della spesa (es. tassa, bollo, stipendio, iscrizione ecc.)
      * @var string
      */
     private string $tipologia;
@@ -35,21 +35,19 @@ class ESpesa implements JsonSerializable
 
     /**
      * Crea una nuova istanza della classe ESpesa
-     * 
-     * @param int $idSpesa identificativo univoco della spesa
+     *
      * @param string $tipologia tipo di spesa
      * @param float $importo importo della spesa
      */
-    public function __construct(int $idSpesa, string $tipologia, float $importo)
+    public function __construct(string $tipologia, float $importo)
     {
-        $this->idSpesa = $idSpesa;
         $this->tipologia = $tipologia;
         $this->importo = $importo;
     }
 
     // ---------------- METODI GET ----------------
 
-    public function getIdSpesa(): int
+    public function getIdSpesa(): ?int
     {
         return $this->idSpesa;
     }
