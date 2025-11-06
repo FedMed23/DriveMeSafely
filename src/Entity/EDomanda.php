@@ -113,7 +113,7 @@ class EDomanda implements JsonSerializable {
         
         return $print;
     }
-     //---------------------IMPLEMENTAZIONE JSON-------------------------------
+     //---------------------Implementazione per la serializzazione JSON-------------------------------
 /**
      * Implementazione del metodo JsonSerializable
      * @return array
