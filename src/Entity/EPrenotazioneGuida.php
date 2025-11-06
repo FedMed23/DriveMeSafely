@@ -1,12 +1,12 @@
 <?php
 /**
  * La classe EPrenotazioneGuida rappresenta una prenotazione effettuata da un iscritto
- * per una determinata spesa, tramite una carta di credito.
+ * per una determinata guida.
  * 
  * Gli attributi che la descrivono sono:
- * - idPrenotazione: id della prenotazione
- * - idIscritto: oggetto della classe EIscritto
- * - idGuida: oggetto della classe EGuida
+ * - idPr: id della prenotazione della guida
+ * - idIscritto: id dell'iscritto che effettua la guida
+ * - idGuida: id della guida da effettuare
  * - data: data della prenotazione
  * - stato: stato della prenotazione (es. completato, in attesa, fallito)
  * 
@@ -23,22 +23,22 @@ class EPrenotazioneGuida implements JsonSerializable
      private ?int $idPr= null; 
 
     /**
-     * Utente che effettua la prenotazione
-     * @var EIscritto
+     * Iscritto che effettua la prenotazione
+     * @var int
      */
-    private EIscritto $idIscritto;
+    private int $idIscritto;
 
     /**
      * Guida associata alla prenotazione
-     * @var EGuida
+     * @var int
      */
-    private EGuida $idGuida;
+    private int $idGuida;
 
     /**
      * Data della prenotazione
      * @var DateTimeImmutable
      */
-    private DateTimeImmutable $dataP;
+    private DateTimeImmutable $dataPr;
 
     /**
      * Stato della prenotazione (es. completato, in attesa)
@@ -50,22 +50,21 @@ class EPrenotazioneGuida implements JsonSerializable
 
     /**
      * Crea una nuova istanza della classe EPrenotazioneGuida
-     * 
-     * @param EIscritto $idIscritto utente che effettua la prenotazione
-     * @param EGuida $idGuida guida prenotata
+     * @param EIscritto $iscritto iscritto che effettua la prenotazione della guida
+     * @param EGuida $guida guida prenotata
      * @param DateTimeImmutable $data data della prenotazione
      * @param string $stato stato della prenotazione
 
      */
     public function __construct(
-        EIscritto  $idIscritto ,
-        EGuida $idGuida,
+        EIscritto  $iscritto ,
+        EGuida $guida,
         DateTimeImmutable $data,
         string $stato
     ) {
-        $this->idIscritto = $idIscritto;
-        $this->idGuida = $idGuida;
-        $this->dataP = $data;
+        $this->idIscritto = $iscritto->getId();
+        $this->idGuida = $guida->getId();
+        $this->dataPr = $data;
         $this->stato = $stato;
     }
     //----------------------METODI GET/SET (ID)-----------------------------
@@ -76,19 +75,19 @@ class EPrenotazioneGuida implements JsonSerializable
 
     // ---------------- METODI GET ----------------
 
-    public function getIdIscritto(): EIscritto
+    public function getIdIscritto(): int
     {
         return $this->idIscritto;
     }
 
-    public function getIdGuida(): EGuida
+    public function getIdGuida(): int
     {
         return $this->idGuida;
     }
 
     public function getData(): DateTimeImmutable
     {
-        return $this->dataP;
+        return $this->dataPr;
     }
 
     public function getStato(): string
@@ -98,19 +97,19 @@ class EPrenotazioneGuida implements JsonSerializable
 
     // ---------------- METODI SET ----------------
 
-    public function setIscritto(EIscritto $idIscritto): void
+    public function setIscritto(EIscritto $iscritto): void
     {
-        $this->idIscritto= $idIscritto;
+        $this->idIscritto= $iscritto->getId();
     }
 
-    public function setIdGuida(EGuida $idGuida): void
+    public function setGuida(EGuida $guida): void
     {
-        $this->idGuida = $idGuida;
+        $this->idGuida = $guida->getId();
     }
 
     public function setData(DateTimeImmutable $data): void
     {
-        $this->dataP = $data;
+        $this->dataPr = $data;
     }
 
     public function setStato(string $stato): void
@@ -121,13 +120,13 @@ class EPrenotazioneGuida implements JsonSerializable
     // ------------------ TOSTRING ---------------------------
 
     /**
-     * Stampa i dettagli del pagamento
+     * Stampa i dettagli della prenotazione guida
      * @return string
      */
     public function __toString(): string
     {
-        $dataFormattata = $this->dataP->format('d-m-Y');
-        return "idPrenotazioneGuida: {$this->getId()}\nIscritto: {$this->idIscritto}\n Guida: {$this->idGuida}\nData: {$dataFormattata}\nStato: {$this->stato}\n";
+        $dataFormattata = $this->dataPr->format('d-m-Y');
+        return "idPrenotazioneGuida: {$this->idPr}\nIscritto: {$this->idIscritto}\n Guida: {$this->idGuida}\nData Prenotazione: {$dataFormattata}\nStato: {$this->stato}\n";
     }
 
     // --- Implementazione per la serializzazione JSON ---
@@ -135,10 +134,10 @@ class EPrenotazioneGuida implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'id' => $this->idPr,
+            'idPrenotazioneGuida' => $this->idPr,
             'idIscritto' => $this->idIscritto,
             'idGuida' => $this->idGuida,
-            'data' => $this->dataP->format('Y-m-d'),
+            'dataPrenotazione' => $this->dataPr->format('Y-m-d'),
             'stato' => $this->stato,
         ];
     }
