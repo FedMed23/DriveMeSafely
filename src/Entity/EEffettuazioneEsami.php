@@ -2,6 +2,10 @@
 /**
 *La classe EEffettuazioneEsami rappresenta lo svolgimento dell'esame da parte dell'utente iscritto alla scuola guida.
 */
+* @access public
+ * @author Camasso-Medelago
+ * @package Entity
+ */
 
 class EEffettuazioneEsami implements JsonSerializable {
 
