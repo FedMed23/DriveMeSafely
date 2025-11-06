@@ -164,7 +164,7 @@ public function __toString(): string
     {
         return "idEffettuazioneEsame: {$this->getId()}\nIscritto: {$this->idIscritto}\n Esame: {$this->esame}\nTentativi: {$this->tentativi}\nSuperato: {$this->superato}\n";
     }
- //---------------------IMPLEMENTAZIONE JSON-------------------------------
+ //---------------------Implementazione per la serializzazione JSON-------------------------------
      /**
      * Implementazione del metodo JsonSerializable
      * @return array
