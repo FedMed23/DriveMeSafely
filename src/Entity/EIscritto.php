@@ -3,6 +3,10 @@
  * La classe EIscritto estende la classe EUtenteRegistrato con i dati specifici dell'iscritto per la Scuola Guida.
  * Eredita id, nome, cognome, username, email, password e stato.
  */
+* @access public
+ * @author Camasso-Medelago
+ * @package Entity
+ */
 
 class EUtenteIscritto extends EUtenteRegistrato {
 
