@@ -31,17 +31,8 @@ class EDomanda implements JsonSerializable {
     public function setContenuto(string $contenuto): void { $this->contenuto = $contenuto; }
     public function setRispostaCorretta(bool $risposta): void { $this->rispostaCorretta = $risposta; }
     
-    //---------------------JSON-------------------------------
 
-    public function jsonSerialize(): array {
-        return [
-            'idDomanda' => $this->idDomanda,
-            'contenuto' => $this->contenuto,
-            'rispostaCorretta' => $this->rispostaCorretta
-        ];
-    }
-
-    //--------------------METODO TOSTRING--------------
+    //--------------------TOSTRING--------------
 
     /**
      * Stampa i dettagli della domanda.
@@ -52,5 +43,14 @@ class EDomanda implements JsonSerializable {
         "rispostaCorretta : ".$this->getRispostaCorretta()."\n";
         
         return $print;
+    }
+     //---------------------IMPLEMENTAZIONE JSON-------------------------------
+
+    public function jsonSerialize(): array {
+        return [
+            'idDomanda' => $this->idDomanda,
+            'contenuto' => $this->contenuto,
+            'rispostaCorretta' => $this->rispostaCorretta
+        ];
     }
 }
