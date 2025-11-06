@@ -7,14 +7,14 @@
 class EProprietario extends EUtenteRegistrato {
     
     public function __construct(
-        string $_nome,
-        string $_cognome,
-        string $_username,
-        string $_email,
-        string $_password
+        string $nome,
+        string $cognome,
+        string $username,
+        string $email,
+        string $password
     ) {
         // Costruttore del genitore per inizializzare tutti gli attributi base
-        parent::__construct($_nome, $_cognome, $_username, $_email, $_password);
+        parent::__construct($nome, $cognome, $username, $email, $password);
     }
 
 }
