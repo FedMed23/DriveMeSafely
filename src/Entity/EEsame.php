@@ -16,9 +16,9 @@ class EEsame implements JsonSerializable
 {
     /**
      * Identificativo univoco dell'esame
-     * @var int
+     * @var int|null
      */
-    private int $idEsame;
+    private ?int $idEsame = null;
 
     /**
      * Data dell'esame
@@ -38,6 +38,7 @@ class EEsame implements JsonSerializable
      * Crea una nuova istanza della classe EEsame
      *
      * @param string $tipologia tipo di esame
+     * @param DateTimeImmutable $dataEs Data in cui si svolge l'esame
      */
     public function __construct(string $tipologia, DateTimeImmutable $dataEs)
     {
@@ -49,9 +50,9 @@ class EEsame implements JsonSerializable
 
     /**
      * Restituisce l'ID dell'esame
-     * @return int
+     * @return int|null
      */
-    public function getIdEsame(): int
+    public function getIdEsame(): ?int
     {
         return $this->idEsame;
     }
@@ -104,9 +105,10 @@ class EEsame implements JsonSerializable
     public function __toString(): string
     {   
         $dataFormattata = $this->dataEs->format('d-m-Y');
-        return "ID Esame: {$this->idEsame}\nData: {$dataFormattata}\nTipologia: {$this->tipologia}\n";
+        $id = $this->idEsame ?? 'N/D';
+        return "ID Esame: {$id}\nData: {$dataFormattata}\nTipologia: {$this->tipologia}\n";
     }
-
+    
     // --- Implementazione per la serializzazione JSON ---
 
     /**

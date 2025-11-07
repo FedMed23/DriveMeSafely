@@ -2,7 +2,14 @@
 
 /**
  * La classe EQuiz rappresenta un set di domande.
- * Contiene una collezione di oggetti EDomanda.
+ * Gli attributi che la definiscono sono:
+ * -idQuiz: l'id del Quiz
+ * -nomeQuiz: il nome del quiz
+ * -domande: l'array di domande che compongono il quiz
+ *
+ * @access public
+ * @package Entity
+ * @author Camasso-Medelago
  */
 class EQuiz implements JsonSerializable {
 
@@ -12,11 +19,11 @@ class EQuiz implements JsonSerializable {
 
     //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $_nome, array $_domandeIniziali = []) {
-        $this->nomeQuiz = $_nome;
+    public function __construct(string $nome, array $domandeIniziali = []) {
+        $this->nomeQuiz = $nome;
         
         // Verifica dell'array 
-        foreach ($_domandeIniziali as $domanda) {
+        foreach ($domandeIniziali as $domanda) {
             if (!($domanda instanceof EDomanda)) {
                 throw new \InvalidArgumentException("L'array del quiz deve contenere solo oggetti EDomanda.");
             }
@@ -69,7 +76,7 @@ class EQuiz implements JsonSerializable {
 
     public function jsonSerialize(): array {
         return [
-            'id' => $this->idQuiz,
+            'idQuiz' => $this->idQuiz,
             'nomeQuiz' => $this->nomeQuiz,
             // Serializzazione ID 
             'domandeId' => array_map(fn($d) => $d->getId(), $this->domande)
@@ -82,9 +89,13 @@ class EQuiz implements JsonSerializable {
      * @return string
      */
     public function __toString(): string  {
-        $idStr = $this->getId() === null ? "[NUOVO]" : $this->getId();
-        $print =" Nome Quiz: ".$this->getNomeQuiz()."\n"." Id domande : ".$idStr."\n".;
-        
-        return $print;
+        $output = "idQuiz: {$this->idQuiz}\nNome Quiz: {$this->nomeQuiz}\n--- Domande ---\n";
+        $numero=0;
+        foreach ($this->domande as $domanda) {
+            $numero++;
+            $output .= "Domanda {$numero}:\n" .(string)$domanda . "\n";
+        }
+        return $output;
     }
 }
+?>
