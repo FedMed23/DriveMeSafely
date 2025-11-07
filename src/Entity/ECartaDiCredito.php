@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM;
+
 /** 
 *La classe ECartaDiCredito contiene le proprietà e gli attributi riguardanti una carta di credito
 * Gli attributi che la descrivono sono:
@@ -10,143 +12,115 @@
  * @access public
  * @author Camasso-Medelago
  * @package Entity
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="carta_di_credito")
  */
+class ECartaDiCredito implements JsonSerializable {
 
- class ECartaDiCredito implements JsonSerializable {
-     /**
-     * Numero della Carta
+    /**
+     * Numero della Carta (chiave primaria)
      * @var string
+     * @ORM\Id
+     * @ORM\Column(type="string", length=16)
      */  
-     private string $numeroCarta;
+    private string $numeroCarta;
 
-     /**
+    /**
      * Nome del titolare della Carta
      * @var string
+     * @ORM\Column(type="string", length=100)
      */  
-     private string $nomeTitolare;
+    private string $nomeTitolare;
 
-     /**
+    /**
      * Cognome del titolare della Carta
      * @var string
+     * @ORM\Column(type="string", length=100)
      */  
-     private string $cognomeTitolare;
+    private string $cognomeTitolare;
 
-     /**
+    /**
      * Data della scadenza della carta 
      * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      */  
-     private DateTimeImmutable $dataScadenza;
+    private DateTimeImmutable $dataScadenza;
 
      
 // -----------------------------COSTRUTTORE-----------------
-     /** 
+    /** 
      * Crea una nuova istanza della classe ECartaDiCredito
      * @param string $nomeTitolare  nome del titolare
      * @param string $cognomeTitolare  cognome del titolare
      * @param \DateTimeImmutable $dataScadenza data scadenza carta di credito
      * @param string $numeroCarta numero della carta di credito
      */
-     public function __construct(string $nomeTitolare, string $cognomeTitolare, DateTimeImmutable $dataScadenza, string $numeroCarta) {
+    public function __construct(string $nomeTitolare, string $cognomeTitolare, DateTimeImmutable $dataScadenza, string $numeroCarta) {
 
-        //Algoritmo che cripta il numero della carta da implementare(?)
+       //Algoritmo che cripta il numero della carta da implementare(?)
 
-        $this->nomeTitolare= $nomeTitolare;
-        $this->cognomeTitolare= $cognomeTitolare;
-        $this->dataScadenza= $dataScadenza;
-        $this->numeroCarta= $numeroCarta;
-     }
+       $this->nomeTitolare= $nomeTitolare;
+       $this->cognomeTitolare= $cognomeTitolare;
+       $this->dataScadenza= $dataScadenza;
+       $this->numeroCarta= $numeroCarta;
+    }
 // ---------------------------- METODI GET ------------------------
-     /**
-     * @return string nome del titolare carta di credito
-     */
     public function getNomeTitolareCarta(): string {
-        return $this->nomeTitolare;
+       return $this->nomeTitolare;
     }
 
-    /**
-     * @return string cognome del titolare carta di credito
-     */
     public function getCognomeTitolareCarta(): string {
-        return $this->cognomeTitolare;
+       return $this->cognomeTitolare;
     }
 
-    /**
-     * @return \DateTimeImmutable Data (Mese/Anno) di scadenza della carta di credito
-     */
     public function getDataScadenza(): \DateTimeImmutable {
-        return $this->dataScadenza;
+       return $this->dataScadenza;
     }
 
-     /**
-     * @return string numero della carta di credito
-     */
     public function getNumeroCartaMascherato(): string {
-        $numeroCartaMascherato = 'XXXX-XXXX-XXXX-' . substr($this->numeroCarta, -4);
-        return $numeroCartaMascherato;
+       $numeroCartaMascherato = 'XXXX-XXXX-XXXX-' . substr($this->numeroCarta, -4);
+       return $numeroCartaMascherato;
     }
 
-   // ---------------------------- METODI SET ----------------------------
-
-    /**
-     * Imposta il nome del titolare della carta
-     * @param string $nomeTitolare
-     */
+  // ---------------------------- METODI SET ----------------------------
     public function setNomeTitolareCarta(string $nomeTitolare): void
     {
-        $this->nomeTitolare = $nomeTitolare;
+       $this->nomeTitolare = $nomeTitolare;
     }
 
-    /**
-     * Imposta il cognome del titolare della carta
-     * @param string $cognomeTitolare
-     */
     public function setCognomeTitolareCarta(string $cognomeTitolare): void
     {
-        $this->cognomeTitolare = $cognomeTitolare;
+       $this->cognomeTitolare = $cognomeTitolare;
     }
 
-    /**
-     * Imposta la data di scadenza della carta
-     * @param \DateTimeImmutable $dataScadenza
-     */
     public function setDataScadenza(\DateTimeImmutable $dataScadenza): void
     {
-        $this->dataScadenza = $dataScadenza;
+       $this->dataScadenza = $dataScadenza;
     }
 
-    /**
-     * Imposta il numero della carta di credito
-     * @param string $numeroCarta
-     */
     public function setNumeroCarta(string $numeroCarta): void
     {
-        $this->numeroCarta = $numeroCarta;
+       $this->numeroCarta = $numeroCarta;
     }
 
 // ------------------ TOSTRING ---------------------------
-    /**
-    * Stampa i dettagli della carta di credito
-    * @return string
-    */
     public function __toString(): string
     {
-        // Restituisce una stringa che include i dettagli chiave
-        $dataFormattata = $this->dataScadenza->format('m-Y');
-        
-        return "Nome Titolare: {$this->nomeTitolare}\n Cognome Titolare:{$this->cognomeTitolare}\n Data Scadenza: {$dataFormattata}\n Numero Carta: {$this->getNumeroCartaMascherato()}\n";
-
+       $dataFormattata = $this->dataScadenza->format('m-Y');
+       return "Nome Titolare: {$this->nomeTitolare}\n Cognome Titolare:{$this->cognomeTitolare}\n Data Scadenza: {$dataFormattata}\n Numero Carta: {$this->getNumeroCartaMascherato()}\n";
     }
-// --- Implementazione per la serializzazione JSON ---
 
+// --- Implementazione per la serializzazione JSON ---
     public function jsonSerialize(): array
     {
-        return [
-            'nomeTitolare' => $this->nomeTitolare,
-            'cognomeTitolare' => $this->cognomeTitolare,
-            // Formatta l'oggetto DateTimeImmutable in una stringa leggibile
-            'dataScadenza' => $this->dataScadenza->format('m-Y'),
-            'numeroCartaMascherato'=> $this->getNumeroCartaMascherato(),
-            ];
+       return [
+           'nomeTitolare' => $this->nomeTitolare,
+           'cognomeTitolare' => $this->cognomeTitolare,
+           'dataScadenza' => $this->dataScadenza->format('m-Y'),
+           'numeroCartaMascherato'=> $this->getNumeroCartaMascherato(),
+       ];
     }
- 
- ?>
+
+}
+?>
