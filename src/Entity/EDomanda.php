@@ -1,47 +1,107 @@
 <?php
 
 /**
- * La classe EDomanda rappresenta il contenuto di una domanda e la sua risposta corretta.
+ * La classe EDomanda rappresenta il contenuto di una domanda del quiz e la sua risposta corretta.
+ */
+ * @access public
+ * @author Camasso-Medelago
+ * @package Entity
  */
 class EDomanda implements JsonSerializable {
+ /**
+     * Identificativo univoco della domanda (può essere null se non ancora salvata su DB)
+     * @var int|null
+     */
+    private ?int $idDomanda = null;
 
-    private ?int $idDomanda= null; 
-    private string $contenuto; // Testo della domanda 
-    private bool $rispostaCorretta; // True, False
+    /**
+     * Testo della domanda
+     * @var string
+     */
+    private string $contenuto;
+
+    /**
+     * Indica se la risposta è corretta (true/false)
+     * @var bool
+     */
+    private bool $rispostaCorretta;
+
 
     //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $_contenuto, bool $_risposta) {
+     /**
+     * Costruttore della classe EDomanda
+     * 
+     * @param string $_contenuto  Testo della domanda
+     * @param bool $_risposta     Indica se la risposta è corretta
+     */
+    public function __construct(string $_contenuto, bool $_risposta)
+    {
         $this->contenuto = $_contenuto;
         $this->rispostaCorretta = $_risposta;
     }
 
     //----------------------METODI GET/SET (ID)-----------------------------
     
-    public function getId(): ?int { return $this->idDomanda; }
-    public function setId(int $id): void { $this->idDomanda = $id; } 
+    /**
+     * Restituisce l'ID della domanda
+     * @return int|null
+     */
+    public function getId(): ?int
+    {
+        return $this->idDomanda;
+    }
+
+    /**
+     * Imposta l'ID della domanda
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->idDomanda = $id;
+    }
 
     //----------------------METODI GET-----------------------------
 
-    public function getContenuto(): string { return $this->contenuto; }
-    public function getRispostaCorretta(): bool { return $this->rispostaCorretta; }
-
-    //-----------------------------METODI SET-----------------------------
-
-    public function setContenuto(string $contenuto): void { $this->contenuto = $contenuto; }
-    public function setRispostaCorretta(bool $risposta): void { $this->rispostaCorretta = $risposta; }
-    
-    //---------------------JSON-------------------------------
-
-    public function jsonSerialize(): array {
-        return [
-            'idDomanda' => $this->idDomanda,
-            'contenuto' => $this->contenuto,
-            'rispostaCorretta' => $this->rispostaCorretta
-        ];
+     /**
+     * Restituisce il testo della domanda
+     * @return string
+     */
+    public function getContenuto(): string
+    {
+        return $this->contenuto;
     }
 
-    //--------------------METODO TOSTRING--------------
+    /**
+     * Restituisce la risposta corretta (true = corretta, false = errata)
+     * @return bool
+     */
+    public function getRispostaCorretta(): bool
+    {
+        return $this->rispostaCorretta;
+    }
+
+    //---------------------- METODI SET -----------------------------
+
+    /**
+     * Imposta il testo della domanda
+     * @param string $contenuto
+     */
+    public function setContenuto(string $contenuto): void
+    {
+        $this->contenuto = $contenuto;
+    }
+
+    /**
+     * Imposta la risposta corretta (true/false)
+     * @param bool $risposta
+     */
+    public function setRispostaCorretta(bool $risposta): void
+    {
+        $this->rispostaCorretta = $risposta;
+    }
+
+    //--------------------TOSTRING--------------
 
     /**
      * Stampa i dettagli della domanda.
@@ -52,5 +112,17 @@ class EDomanda implements JsonSerializable {
         "rispostaCorretta : ".$this->getRispostaCorretta()."\n";
         
         return $print;
+    }
+     //---------------------Implementazione per la serializzazione JSON-------------------------------
+/**
+     * Implementazione del metodo JsonSerializable
+     * @return array
+     */
+    public function jsonSerialize(): array {
+        return [
+            'idDomanda' => $this->idDomanda,
+            'contenuto' => $this->contenuto,
+            'rispostaCorretta' => $this->rispostaCorretta
+        ];
     }
 }

@@ -36,19 +36,35 @@
      /** 
       * Crea una nuova istanza della classe EGuida
      * @param int $numeroGuida L'ID della guida.
-     *  @param EDipendente $idDipendente dipendente che effettua la guida.
+     * @param EDipendente $idDipendente dipendente che effettua la guida.
      * @param \DateTimeImmutable $dataOra L'orario pianificato della guida
      */
-     public function __construct(EDipendente $id, int $numeroGuida, DateTimeImmutable $dataOra) {
+     public function __construct(EDipendente $dipendente, int $numeroGuida, DateTimeImmutable $dataOra) {
 
+        $this->idDipendente = $dipendente;
         $this->numeroGuida= $numeroGuida;
         $this->dataOra= $dataOra;
-        $this->idDipendente = $id;
      }
     //----------------------METODI GET/SET (ID)-----------------------------
-    
-    public function getId(): ?int { return $this->idGuida; }
-    public function setId(int $id): void { $this->idGuida= $id; } 
+ /**
+ * Restituisce l'identificativo univoco della guida.
+ * 
+ * @return int|null ID della guida se già assegnato, altrimenti null.
+ */ 
+   public function getId(): ?int
+    {
+        return $this->idGuida;
+    }
+    **
+ * Imposta l'identificativo univoco della guida.
+ * 
+ * @param int $id Identificativo della guida da assegnare.
+ */
+    public function setId(int $id): void
+    {
+        $this->idGuida = $id;
+    }
+
 // ---------------------------- METODI GET ------------------------
      /**
      * @return int numero della guida
@@ -57,7 +73,11 @@
         return $this->numeroGuida;
     }
     
-    public function getIdDipendente(): int
+    /**
+     * Restituisce il dipendente associato alla guida
+     * @return EDipendente
+     */
+    public function getIdDipendente(): EDipendente
     {
         return $this->idDipendente;
     }
@@ -76,9 +96,13 @@
         $this->numeroGuida=$numeroGuida;
     }
 
+   /**
+     * Imposta il dipendente che tiene la guida
+     * @param EDipendente $dipendente
+     */
     public function setIdDipendente(EDipendente $dipendente): void
     {
-        $this->idDipendente= $dipendente.getId();
+        $this->idDipendente = $dipendente;
     }
     
     /**
@@ -90,19 +114,20 @@
 
 // ------------------ TOSTRING ---------------------------
     /**
-    * Stampa i dettagli della guida
-    * @return string
-    */
+     * Restituisce una rappresentazione testuale della guida
+     * @return string
+     */
     public function __toString(): string
     {
-        // Restituisce una stringa che include i dettagli chiave
         $dataFormattata = $this->dataOra->format('d/m/Y H:i');
-        
-        return "Guida numero: {$this->numeroGuida} programmata per il: {$dataFormattata}Dipendente: {$this->idDipendente}";
-
+        return "Guida n° {$this->numeroGuida}\nData e ora: {$dataFormattata}\nDipendente: {$this->idDipendente}\n";
     }
-// --- Implementazione per la serializzazione JSON ---
 
+// --- Implementazione per la serializzazione JSON ---
+    /**
+     * Serializza l'oggetto in formato JSON
+     * @return array
+     */
     public function jsonSerialize(): array
     {
         return [
