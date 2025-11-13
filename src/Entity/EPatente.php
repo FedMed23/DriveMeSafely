@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * La classe EPatente contiene le proprietà e gli attributi riguardanti una patente di guida.
  * L'attributo che la descrive è:
@@ -9,19 +11,25 @@
  * @access public
  * @author Camasso-Medelago
  * @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="patente")
  */
 
 class EPatente implements JsonSerializable
 {
     /**
-     * idPa identificativo della patente
+     * idPa identificativo della patente (chiave primaria)
      * @var int
-     * */
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
+     */
      private ?int $idPa= null; 
 
     /**
      * Tipo della patente (es. B, A, C)
      * @var string
+     * @ORM\Column(type="string", length=2)  
      */
     private string $tipo;
 
