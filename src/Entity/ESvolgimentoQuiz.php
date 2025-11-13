@@ -1,4 +1,6 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
+/**
 /**
 *La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
 *alla scuola guida.
@@ -13,17 +15,45 @@
 * @access public
 * @package Entity
 * @author Camasso-Medelago
+* @ORM\Entity
+* @ORM\Table(name="Svolgimento_Quiz")
 */
 
 class ESvolgimentoQuiz implements JsonSerializable {
-
+    /**
+     * id identificativo dello svolgimento del quiz
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
+     * */
     private ?int $idSvolgimento = null;
-    private EQuiz $quiz;                        // L'oggetto Quiz effettuato
-    private int $idIscritto;                      // L'iscritto che ha fatto la prova
-    private \DateTimeImmutable $dataSvolgimento; // Data e ora di esecuzione
-    private int $errori = 0;                    // Numero di risposte errate
+    private EQuiz $quiz;                       
+    /**
+     * id identificativo dell'iscritto che svolge il quiz
+     * @var int
+     * @ORM\Column(type="int", length=100)
+     * */
+    private int $idIscritto;                      
+    /**
+     * Data e ora dello svolgimento del quiz
+     * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private \DateTimeImmutable $dataSvolgimento; 
+    /**
+     * numero errori fatti nel quiz
+     * @var int
+     * @ORM\Column(type="int", length=2)
+     * */
+    private int $errori = 0;                 
     private array $tentativiRisposta = [];      // Array di oggetti ETentativoRisposta
-    private bool $superato;                     // Esito finale (True/False)
+    /**
+     * esito finale del quiz (True o False)
+     * @var bool
+     * @ORM\Column(type="bool")
+     * */
+    private bool $superato;                     
 
     //-------------------------COSTRUTTORE-------------------------
 
