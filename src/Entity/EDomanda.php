@@ -1,29 +1,37 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * La classe EDomanda rappresenta il contenuto di una domanda del quiz e la sua risposta corretta.
  */
  * @access public
  * @author Camasso-Medelago
  * @package Entity
+ *
+ * @ORM\Entity
+ * @ORM\Table(name="domanda")
  */
 class EDomanda implements JsonSerializable {
  /**
-     * Identificativo univoco della domanda (può essere null se non ancora salvata su DB)
+     * Identificativo univoco della domanda (può essere null se non ancora salvata su DB) (chiave primaria)
      * @var int|null
+     * @ORM\Column(type="int", length=100)
      */
     private ?int $idDomanda = null;
 
     /**
      * Testo della domanda
      * @var string
+     * @ORM\Column(type="string", length=100)  
      */
     private string $contenuto;
 
     /**
      * Indica se la risposta è corretta (true/false)
      * @var bool
-     */
+     * @ORM\Column(type="bool")
+     */  
     private bool $rispostaCorretta;
 
 
