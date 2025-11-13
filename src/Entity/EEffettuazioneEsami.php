@@ -27,6 +27,8 @@ class EEffettuazioneEsami implements JsonSerializable {
     /**
      * Esame associato all’effettuazione
      * @var EEsame
+     * @ORM\ManyToOne(targetEntity="EEsame")
+     * @ORM\JoinColumn(name="id_esame", referencedColumnName="id", nullable=false)
      */
     private EEsame $esame;
 
