@@ -23,7 +23,7 @@ class EDipendente extends EUtenteRegistrato {
 	/**
      * Stipendio del dipendente
      * @var float
-     * @ORM\Column(type="float", length=100)
+     * @ORM\Column(type="float")
 	 */
 	private float $stipendio;
 	
