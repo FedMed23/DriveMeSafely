@@ -1,4 +1,8 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM; 
+
+
 /**
  * La classe ETentativoRisposta rappresenta una singola risposta data dall'utente 
  * ad una domanda durante lo svolgimento di un quiz.
@@ -8,11 +12,27 @@
  * -esito: riporta se la risposta dell'utente alla domanda è giusta o sbagliata (True o False)
  *  @author Camasso-Medelago
  *  @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="tentativo_risposta")
  */
 class ETentativoRisposta implements JsonSerializable {
     
-    private EDomanda $domanda;         
-    private bool $rispostaUtente;   // V o F
+    /**
+     * Domanda associata alla risposta
+     * @var EDomanda
+     */
+    private EDomanda $domanda;    
+     /**
+     * Risposta dell'utente (V o F)
+     * @var bool
+     * @ORM\Column(type="bool")  
+     */
+    private bool $rispostaUtente;   
+     /**
+     * Esito della risposta (true se giusta, false se sbagliata)
+     * @var bool
+     * @ORM\Column(type="bool")  
+     */
     private bool $esito;             
 
 //-------------------------COSTRUTTORE-------------------------
