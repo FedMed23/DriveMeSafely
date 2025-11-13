@@ -1,4 +1,5 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe EPrenotazioneGuida rappresenta una prenotazione effettuata da un iscritto
  * per una determinata guida.
@@ -13,36 +14,45 @@
  * @access public
  * @package Entity
  * @author Camasso-Medelago
+ * @ORM\Entity
+ * @ORM\Table(name="Prenotazione_Guida")
  */
 
 class EPrenotazioneGuida implements JsonSerializable
 {   /**
      * id identificativo della prenotazione
      * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="string", length=100)
      * */
      private ?int $idPr= null; 
 
     /**
      * Iscritto che effettua la prenotazione
      * @var int
+     * @ORM\Column(type="int", length=100)
      */
     private int $idIscritto;
 
     /**
      * Guida associata alla prenotazione
      * @var int
+     * @ORM\Column(type="int", length=100)
      */
     private int $idGuida;
 
     /**
      * Data della prenotazione
      * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      */
     private DateTimeImmutable $dataPr;
 
     /**
      * Stato della prenotazione (es. completato, in attesa)
      * @var string
+     * @ORM\Column(type="string", length=100)
      */
     private string $stato;
 
