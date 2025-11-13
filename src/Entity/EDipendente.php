@@ -1,4 +1,8 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+
+
 /**
  * La classe EDipendente estende la classe EUtenteRegistrato e aggiunge
  * i dati specifici per il personale interno della Scuola Guida (es. il ruolo e lo stipendio).
