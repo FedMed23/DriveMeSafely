@@ -1,5 +1,6 @@
 <?php
 
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,7 +24,7 @@ class EEsame implements JsonSerializable
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private ?int $idEsame = null;
 
