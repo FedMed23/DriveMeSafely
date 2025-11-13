@@ -1,4 +1,6 @@
 <?php
+
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -12,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @package Entity
  * @author Camasso-Medelago
  * @ORM\Entity
- * @ORM\Table(name="Quiz")
+ * @ORM\Table(name="quiz")
  */
 class EQuiz implements JsonSerializable {
     /**
@@ -20,7 +22,7 @@ class EQuiz implements JsonSerializable {
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="integer")
      * */
     private ?int $idQuiz = null; 
     
