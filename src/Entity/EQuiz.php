@@ -32,7 +32,16 @@ class EQuiz implements JsonSerializable {
      * @ORM\Column(type="string", length=100)
      */
     private string $nomeQuiz; 
-    private array $domande = []; // Array di oggetti EDomanda
+    /**
+     * Insieme di domande del quiz
+     * @var array
+     * @ORM\ManyToMany(targetEntity="EDomanda", cascade={"persist"})
+     * @ORM\JoinTable(
+     *     name="quiz_domanda",
+     *     joinColumns={@ORM\JoinColumn(name="quiz_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="domanda_id", referencedColumnName="id")}
+     */
+    private array $domande = []; 
 
     //-------------------------COSTRUTTORE-------------------------
 
