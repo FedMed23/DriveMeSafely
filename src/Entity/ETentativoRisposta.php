@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * La classe ETentativoRisposta rappresenta una singola risposta data dall'utente 
  * ad una domanda durante lo svolgimento di un quiz.
  * Gli attributi che la descrivolo sono:
+ * -idTent: id tentativo risposta
  * -domanda: oggetto della classe domanda
  * -rispostaUtente: risposta dell'utente che può essere True o False
  * -esito: riporta se la risposta dell'utente alla domanda è giusta o sbagliata (True o False)
@@ -17,7 +18,15 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tentativo_risposta")
  */
 class ETentativoRisposta implements JsonSerializable {
-    
+     /**
+     *id tentativo risposta
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+     private ?int $idTent = null;
+   
     /**
      * Domanda associata alla risposta
      * @var EDomanda
