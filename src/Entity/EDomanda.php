@@ -1,5 +1,5 @@
 <?php
-
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,7 +18,7 @@ class EDomanda implements JsonSerializable {
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private ?int $idDomanda = null;
 
@@ -32,7 +32,7 @@ class EDomanda implements JsonSerializable {
     /**
      * Indica se la risposta è corretta (true/false)
      * @var bool
-     * @ORM\Column(type="bool")
+     * @ORM\Column(type="boolean")
      */  
     private bool $rispostaCorretta;
 
