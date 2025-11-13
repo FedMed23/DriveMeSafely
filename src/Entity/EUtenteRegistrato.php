@@ -1,4 +1,5 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
 
 //Nota: punto da vedere: path foto profilo 
 /**
@@ -14,11 +15,16 @@
  * -statoUtente: se l'account è attivo o meno
  *  @author Camasso-Medelago
  *  @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="Utente_Registrato")
  */
 class EUtenteRegistrato implements JsonSerializable {
 	/**
 	 * id identificativo dell'utente
-	 * @var int
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
      * */
 	 private ?int $id= null; 
      
@@ -26,12 +32,14 @@ class EUtenteRegistrato implements JsonSerializable {
 	/**
 	 * nome dell'utente
 	 * @var string
+	 * @ORM\Column(type="string", length=100)
 	 */
     private string $nomeUtente;
 
 	/**
 	 * cognome dell'utente
 	 * @var string
+	 * @ORM\Column(type="string", length=100)
 	 */
     private string $cognomeUtente;
 
@@ -44,24 +52,28 @@ class EUtenteRegistrato implements JsonSerializable {
     /**
 	 * email dell'utente
 	 * @var string
+	 * @ORM\Column(type="string", length=100)
 	 */
     private string $email;
 
     /**
      * username dell'utente
      * @var string
+	 * @ORM\Column(type="string", length=100)
      */
     private string $username;
 
     /**
 	 * password dell'utente
 	 * @var string
+	 * @ORM\Column(type="string", length=20)
 	 */
     private string $password;
 
     /**
 	 * stato dell'utente
 	 * @var bool
+	 * @ORM\Column(type="bool")
 	 */
     private bool $statoUtente;
 
