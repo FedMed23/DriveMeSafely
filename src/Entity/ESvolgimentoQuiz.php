@@ -2,7 +2,7 @@
 namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
-/*
+/**
 *La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
 *alla scuola guida.
 *Gli attributi che la descrivono sono:
