@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * La classe EEsame contiene le proprietà e gli attributi riguardanti un esame di guida.
  * Gli attributi che la descrivono sono:
@@ -10,25 +12,32 @@
  * @access public
  * @author Camasso-Medelago
  * @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="esame")
  */
 
 class EEsame implements JsonSerializable
 {
     /**
-     * Identificativo univoco dell'esame
+     * Identificativo univoco dell'esame (chiave primaria)
      * @var int|null
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
      */
     private ?int $idEsame = null;
 
     /**
      * Data dell'esame
      * @var DateTimeImmutable
-     */
+     * @ORM\Column(type="datetime_immutable")
+     */  
     private DateTimeImmutable $dataEs;
 
     /**
      * Tipologia dell'esame (es. teorico o pratico)
      * @var string
+     * @ORM\Column(type="string", length=7)  
      */
     private string $tipologia;
 
