@@ -1,6 +1,7 @@
 <?php
 
-use Doctrine\ORM\Mapping as ORM; 
+namespace Entity;
+use Doctrine\ORM\Mapping as ORM;
 
 
 /**
@@ -25,13 +26,13 @@ class ETentativoRisposta implements JsonSerializable {
      /**
      * Risposta dell'utente (V o F)
      * @var bool
-     * @ORM\Column(type="bool")  
+     * @ORM\Column(type="boolean")  
      */
     private bool $rispostaUtente;   
      /**
      * Esito della risposta (true se giusta, false se sbagliata)
      * @var bool
-     * @ORM\Column(type="bool")  
+     * @ORM\Column(type="boolean")  
      */
     private bool $esito;             
 
