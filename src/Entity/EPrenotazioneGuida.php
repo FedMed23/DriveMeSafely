@@ -1,4 +1,5 @@
 <?php
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe EPrenotazioneGuida rappresenta una prenotazione effettuata da un iscritto
@@ -15,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @package Entity
  * @author Camasso-Medelago
  * @ORM\Entity
- * @ORM\Table(name="Prenotazione_Guida")
+ * @ORM\Table(name="prenotazione_guida")
  */
 
 class EPrenotazioneGuida implements JsonSerializable
@@ -24,21 +25,21 @@ class EPrenotazioneGuida implements JsonSerializable
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="integer")
      * */
      private ?int $idPr= null; 
 
     /**
      * Iscritto che effettua la prenotazione
      * @var int
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private int $idIscritto;
 
     /**
      * Guida associata alla prenotazione
      * @var int
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private int $idGuida;
 
