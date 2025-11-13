@@ -1,4 +1,6 @@
 <?php
+namespace Entity;
+use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe EPrenotazioneEsami rappresenta una prenotazione effettuata da un dipendente
  * per un determinato esame.
@@ -14,7 +16,7 @@
  * @package Entity
  * @author Camasso-Medelago
  * @ORM\Entity
- * @ORM\Table(name="Prenotazione_Esami")
+ * @ORM\Table(name="prenotazione_esami")
  */
 
 class EPrenotazioneEsami implements JsonSerializable
@@ -22,21 +24,21 @@ class EPrenotazioneEsami implements JsonSerializable
      * id identificativo della prenotazione
      * @var int
      * @ORM\Id
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="integer")
      * */
      private ?int $idPrEs= null; 
 
     /**
      * Dipendente che effettua la prenotazione
      * @var int
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private int $idDipendente;
 
     /**
      * Identificativo univoco dell'esame
      * @var int
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private int $idEsame;
 
