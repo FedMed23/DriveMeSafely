@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM;
+
 /** 
 *La classe EGuida contiene le proprietà e gli attributi riguardanti una guida in scuolaguida
 * Gli attributi che la descrivono sono:
@@ -9,11 +11,13 @@
  * @access public
  * @author Camasso-Medelago
  * @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="guida")
  */
 
  class EGuida implements JsonSerializable {
     /**
-     * id identificativo dell'utente
+     * id identificativo dell'utente (chiave primaria)
      * @var int
      * */
      private ?int $idGuida= null; 
@@ -23,13 +27,17 @@
      /**
      * Numero della guida
      * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
      */  
      private int $numeroGuida;
 
      /**
      * Data e ora della guida 
      * @var DateTimeImmutable
-     */  
+     * @ORM\Column(type="datetime_immutable")
+     */   
      private DateTimeImmutable $dataOra;
 
 // -----------------------------COSTRUTTORE-----------------
