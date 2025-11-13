@@ -36,12 +36,16 @@ class EPagamento implements JsonSerializable
     /**
      * Utente che effettua il pagamento
      * @var EUtenteRegistrato
+     * @ORM\ManyToOne(targetEntity="EUtenteRegistrato")
+     * @ORM\JoinColumn(name="utente_id", referencedColumnName="id", nullable=false)
      */
     private EUtenteRegistrato $idUtenteRegistrato;
 
     /**
      * Spesa associata al pagamento
      * @var ESpesa
+     * @ORM\ManyToOne(targetEntity="ESpesa")
+     * @ORM\JoinColumn(name="spesa_id", referencedColumnName="id", nullable=false)
      */
     private ESpesa $idSpesa;
 
@@ -62,6 +66,8 @@ class EPagamento implements JsonSerializable
     /**
      * Carta di credito utilizzata per il pagamento
      * @var ECartaDiCredito
+     * @ORM\ManyToOne(targetEntity="ECartaDiCredito")
+     * @ORM\JoinColumn(name="carta_id", referencedColumnName="id", nullable=false)
      */
     private ECartaDiCredito $cartaDiCredito;
 
