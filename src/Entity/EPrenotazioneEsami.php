@@ -13,36 +13,44 @@
  * @access public
  * @package Entity
  * @author Camasso-Medelago
+ * @ORM\Entity
+ * @ORM\Table(name="Prenotazione_Esami")
  */
 
 class EPrenotazioneEsami implements JsonSerializable
 {   /**
      * id identificativo della prenotazione
      * @var int
+     * @ORM\Id
+     * @ORM\Column(type="string", length=100)
      * */
      private ?int $idPrEs= null; 
 
     /**
      * Dipendente che effettua la prenotazione
      * @var int
+     * @ORM\Column(type="int", length=100)
      */
     private int $idDipendente;
 
     /**
      * Identificativo univoco dell'esame
      * @var int
+     * @ORM\Column(type="int", length=100)
      */
     private int $idEsame;
 
     /**
      * Data della prenotazione
      * @var DateTimeImmutable
+     * @ORM\Column(type="datetime_immutable")
      */
     private DateTimeImmutable $dataPrEs;
 
     /**
      * Stato della prenotazione (es. completato, in attesa)
      * @var string
+     * @ORM\Column(type="string", length=100)
      */
     private string $stato;
 
