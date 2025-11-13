@@ -1,5 +1,8 @@
 <?php
 
+use Doctrine\ORM\Mapping as ORM; 
+
+
 /**
  * La classe EPagamento rappresenta un pagamento effettuato da un utente registrato
  * per una determinata spesa, tramite una carta di credito.
@@ -14,14 +17,19 @@
  * @access public
  * @package Entity
  * @author Camasso-Medelago
+ * @ORM\Entity
+ * @ORM\Table(name="pagamento")
  */
 
 class EPagamento implements JsonSerializable
 {
     /**
-     * id identificativo del pagamento
+     * id identificativo del pagamento (chiave primaria)
      * @var int
-     * */
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
+     */
      private ?int $idPag= null; 
 
     /**
@@ -39,12 +47,14 @@ class EPagamento implements JsonSerializable
     /**
      * Data del pagamento
      * @var DateTimeImmutable
-     */
+     * @ORM\Column(type="datetime_immutable")
+     */ 
     private DateTimeImmutable $data;
 
     /**
      * Stato del pagamento (es. completato, in attesa)
      * @var string
+     * @ORM\Column(type="string", length=100)  
      */
     private string $stato;
 
