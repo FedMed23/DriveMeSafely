@@ -6,17 +6,22 @@
 * @access public
  * @author Camasso-Medelago
  * @package Entity
+ *
+  *
+ * @ORM\Entity
+ * @ORM\Table(name="dipendente")
  */
 class EDipendente extends EUtenteRegistrato {
-    /**
-	 * Ruolo del dipendente (e.g., Istruttore, Amministratore, Segretario).
-	 * @var string
-	 */
+     /**
+     * Ruolo del dipendente
+     * @var string
+     * @ORM\Column(type="string", length=100)
+     */ 
 	private string $ruolo;
 	/**
      * Stipendio del dipendente
      * @var float
-     */
+     * * @ORM\Column(type="float", length=100)
 	private float $stipendio;
 	
     //-------------------------COSTRUTTORE-------------------------
