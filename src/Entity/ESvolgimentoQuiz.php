@@ -1,4 +1,5 @@
 <?php
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**
 /**
@@ -16,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
 * @package Entity
 * @author Camasso-Medelago
 * @ORM\Entity
-* @ORM\Table(name="Svolgimento_Quiz")
+* @ORM\Table(name="svolgimento_quiz")
 */
 
 class ESvolgimentoQuiz implements JsonSerializable {
@@ -25,14 +26,14 @@ class ESvolgimentoQuiz implements JsonSerializable {
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      * */
     private ?int $idSvolgimento = null;
     private EQuiz $quiz;                       
     /**
      * id identificativo dell'iscritto che svolge il quiz
      * @var int
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      * */
     private int $idIscritto;                      
     /**
@@ -44,14 +45,14 @@ class ESvolgimentoQuiz implements JsonSerializable {
     /**
      * numero errori fatti nel quiz
      * @var int
-     * @ORM\Column(type="int", length=2)
+     * @ORM\Column(type="integer")
      * */
     private int $errori = 0;                 
-    private array $tentativiRisposta = [];      // Array di oggetti ETentativoRisposta
+    private array $tentativiRisposta = [];     
     /**
      * esito finale del quiz (True o False)
      * @var bool
-     * @ORM\Column(type="bool")
+     * @ORM\Column(type="boolean")
      * */
     private bool $superato;                     
 
