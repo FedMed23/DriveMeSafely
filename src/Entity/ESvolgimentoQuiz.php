@@ -29,6 +29,11 @@ class ESvolgimentoQuiz implements JsonSerializable {
      * @ORM\Column(type="integer")
      * */
     private ?int $idSvolgimento = null;
+    /**
+     * Quiz svolto
+     * @ORM\ManyToOne(targetEntity="EQuiz")
+     * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id", nullable=false)
+     */
     private EQuiz $quiz;                       
     /**
      * id identificativo dell'iscritto che svolge il quiz
@@ -47,7 +52,12 @@ class ESvolgimentoQuiz implements JsonSerializable {
      * @var int
      * @ORM\Column(type="integer")
      * */
-    private int $errori = 0;                 
+    private int $errori = 0;      
+    /**
+    * Array di tentativi di risposte
+    * @var array
+    * @ORM\OneToMany(targetEntity="ETentativoRisposta", mappedBy="svolgimentoQuiz", cascade={"persist", "remove"})
+    */
     private array $tentativiRisposta = [];     
     /**
      * esito finale del quiz (True o False)
