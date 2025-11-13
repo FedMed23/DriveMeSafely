@@ -1,4 +1,5 @@
 <?php
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 //Nota: punto da vedere: path foto profilo 
@@ -32,7 +33,7 @@ class EUtenteRegistrato implements JsonSerializable {
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      * */
 	 private ?int $id= null; 
      
@@ -74,14 +75,14 @@ class EUtenteRegistrato implements JsonSerializable {
     /**
 	 * password dell'utente
 	 * @var string
-	 * @ORM\Column(type="string", length=20)
+	 * @ORM\Column(type="string", length=255)
 	 */
     private string $password;
 
     /**
 	 * stato dell'utente
 	 * @var bool
-	 * @ORM\Column(type="bool")
+	 * @ORM\Column(type="boolean")
 	 */
     private bool $statoUtente;
 
