@@ -1,17 +1,26 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+
+
 /**
 *La classe EEffettuazioneEsami rappresenta lo svolgimento dell'esame da parte dell'utente iscritto alla scuola guida.
 */
 * @access public
  * @author Camasso-Medelago
  * @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="effettuazione_esami")
  */
 
 class EEffettuazioneEsami implements JsonSerializable {
 
     /**
-     * Identificativo univoco dell’effettuazione esame (può essere null finché non salvato)
+     * Identificativo univoco dell’effettuazione esame (può essere null finché non salvato) (chiave primaria)
      * @var int|null
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
      */
     private ?int $idEffEs = null;
 
@@ -24,18 +33,21 @@ class EEffettuazioneEsami implements JsonSerializable {
     /**
      * ID dell’iscritto che ha svolto l’esame
      * @var int
+     * @ORM\Column(type="int", length=100)  
      */
     private int $idIscritto;
 
     /**
      * Numero di tentativi effettuati
      * @var int
+     * @ORM\Column(type="int", length=100)  
      */
     private int $tentativi;
 
     /**
      * Esito dell’esame (true se superato, false altrimenti)
      * @var bool
+     * @ORM\Column(type="bool")  
      */
     private bool $superato;
 
