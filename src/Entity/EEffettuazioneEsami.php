@@ -1,5 +1,5 @@
 <?php
-
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 
@@ -20,7 +20,7 @@ class EEffettuazioneEsami implements JsonSerializable {
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
     private ?int $idEffEs = null;
 
@@ -33,21 +33,21 @@ class EEffettuazioneEsami implements JsonSerializable {
     /**
      * ID dell’iscritto che ha svolto l’esame
      * @var int
-     * @ORM\Column(type="int", length=100)  
+     * @ORM\Column(type="integer")  
      */
     private int $idIscritto;
 
     /**
      * Numero di tentativi effettuati
      * @var int
-     * @ORM\Column(type="int", length=100)  
+     * @ORM\Column(type="integer")  
      */
     private int $tentativi;
 
     /**
      * Esito dell’esame (true se superato, false altrimenti)
      * @var bool
-     * @ORM\Column(type="bool")  
+     * @ORM\Column(type="boolean")  
      */
     private bool $superato;
 
