@@ -21,6 +21,8 @@ class ETentativoRisposta implements JsonSerializable {
     /**
      * Domanda associata alla risposta
      * @var EDomanda
+     * @ORM\ManyToOne(targetEntity="EDomanda")
+     * @ORM\JoinColumn(name="domanda_id", referencedColumnName="id", nullable=false)
      */
     private EDomanda $domanda;    
      /**
