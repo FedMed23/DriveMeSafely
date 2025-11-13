@@ -40,6 +40,7 @@ class EQuiz implements JsonSerializable {
      *     name="quiz_domanda",
      *     joinColumns={@ORM\JoinColumn(name="quiz_id", referencedColumnName="id")},
      *     inverseJoinColumns={@ORM\JoinColumn(name="domanda_id", referencedColumnName="id")}
+     *)
      */
     private array $domande = []; 
 
