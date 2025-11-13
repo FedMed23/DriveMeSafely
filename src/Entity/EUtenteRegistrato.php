@@ -16,7 +16,15 @@ use Doctrine\ORM\Mapping as ORM;
  *  @author Camasso-Medelago
  *  @package Entity
  * @ORM\Entity
- * @ORM\Table(name="Utente_Registrato")
+ * @ORM\Table(name="utente_registrato")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="tipo_utente", type="string")
+ * @ORM\DiscriminatorMap({
+ *     "utente" = "Entity\EUtenteRegistrato",
+ *     "iscritto" = "Entity\EIscritto",
+ *     "dipendente" = "Entity\EDipendente",
+ *     "proprietario" = "Entity\EProprietario"
+ * })
  */
 class EUtenteRegistrato implements JsonSerializable {
 	/**
@@ -52,14 +60,14 @@ class EUtenteRegistrato implements JsonSerializable {
     /**
 	 * email dell'utente
 	 * @var string
-	 * @ORM\Column(type="string", length=100)
+	 * @ORM\Column(type="string", length=100, unique=true)
 	 */
     private string $email;
 
     /**
      * username dell'utente
      * @var string
-	 * @ORM\Column(type="string", length=100)
+	 * @ORM\Column(type="string", length=100, unique=true)
      */
     private string $username;
 
