@@ -1,4 +1,5 @@
 <?php 
+use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe ESpesa contiene le proprietà e gli attributi riguardanti le spese che dve sostenere una scuola guida.
  * Gli attributi che la descrivono sono:
@@ -15,18 +16,23 @@ class ESpesa implements JsonSerializable
     /**
      * Identificativo univoco della spesa
      * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="int", length=100)
      */
     private ?int $idSpesa=null;
 
     /**
      * Tipologia della spesa (es. tassa, bollo, stipendio, iscrizione ecc.)
      * @var string
+     * @ORM\Column(type="string", length=100)
      */
     private string $tipologia;
 
     /**
      * Importo della spesa
      * @var float
+     * @ORM\Column(type="float", length=100)
      */
     private float $importo;
 
