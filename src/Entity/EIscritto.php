@@ -1,4 +1,7 @@
 <?php
+
+use Doctrine\ORM\Mapping as ORM;
+
 /**
  * La classe EIscritto estende la classe EUtenteRegistrato con i dati specifici dell'iscritto per la Scuola Guida.
  * Eredita id, nome, cognome, username, email, password e stato.
@@ -6,6 +9,8 @@
  *  @access public
  * @author Camasso-Medelago
  * @package Entity
+ * @ORM\Entity
+ * @ORM\Table(name="iscritto")
  */
 
 class EUtenteIscritto extends EUtenteRegistrato {
@@ -13,30 +18,35 @@ class EUtenteIscritto extends EUtenteRegistrato {
 	 /**
      * Codice fiscale dell'iscritto
      * @var string
+     * @ORM\Column(type="string", length=16)  
      */
     private string $codiceFiscale;
 
     /**
      * Data di nascita dell'iscritto
      * @var DateTimeImmutable
-     */
+     * @ORM\Column(type="datetime_immutable")
+     */  
     private DateTimeImmutable $dataNascita;
 
     /**
      * Luogo di nascita dell'iscritto
      * @var string
+     * @ORM\Column(type="string", length=100)  
      */
     private string $luogoNascita;
 
     /**
      * Indirizzo dell'iscritto
      * @var string
+     * @ORM\Column(type="string", length=100)  
      */
     private string $indirizzo;
 
     /**
      * Numero di telefono dell'iscritto
      * @var string
+     * @ORM\Column(type="string", length=100)  
      */
     private string $numeroTelefono;
 
