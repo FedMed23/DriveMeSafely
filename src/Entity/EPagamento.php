@@ -1,5 +1,6 @@
 <?php
 
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM; 
 
 
@@ -28,7 +29,7 @@ class EPagamento implements JsonSerializable
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="int", length=100)
+     * @ORM\Column(type="integer")
      */
      private ?int $idPag= null; 
 
