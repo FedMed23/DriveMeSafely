@@ -1,5 +1,6 @@
 <?php
 
+namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -53,6 +54,8 @@ class EUtenteIscritto extends EUtenteRegistrato {
     /**
      * Tipo di patente posseduta
      * @var EPatente
+     * @ORM\ManyToOne(targetEntity="EPatente")
+     * @ORM\JoinColumn(name="tipo_patente", referencedColumnName="id", nullable=false)
      */
     private EPatente $tipoPatente;
 
