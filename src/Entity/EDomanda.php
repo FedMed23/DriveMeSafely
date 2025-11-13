@@ -16,6 +16,8 @@ class EDomanda implements JsonSerializable {
  /**
      * Identificativo univoco della domanda (può essere null se non ancora salvata su DB) (chiave primaria)
      * @var int|null
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="int", length=100)
      */
     private ?int $idDomanda = null;
