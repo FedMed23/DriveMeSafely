@@ -1,4 +1,5 @@
 <?php
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * La classe EQuiz rappresenta un set di domande.
@@ -10,10 +11,24 @@
  * @access public
  * @package Entity
  * @author Camasso-Medelago
+ * @ORM\Entity
+ * @ORM\Table(name="Quiz")
  */
 class EQuiz implements JsonSerializable {
-
+    /**
+     * id identificativo del quiz
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="string", length=100)
+     * */
     private ?int $idQuiz = null; 
+    
+    /**
+     * Nome del quiz
+     * @var string
+     * @ORM\Column(type="string", length=100)
+     */
     private string $nomeQuiz; 
     private array $domande = []; // Array di oggetti EDomanda
 
