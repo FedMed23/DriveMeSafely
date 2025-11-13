@@ -4,7 +4,7 @@ namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 
-/**
+/*
  * La classe ETentativoRisposta rappresenta una singola risposta data dall'utente 
  * ad una domanda durante lo svolgimento di un quiz.
  * Gli attributi che la descrivolo sono:
