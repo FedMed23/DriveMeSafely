@@ -1,8 +1,8 @@
 <?php
 namespace Entity;
 use Doctrine\ORM\Mapping as ORM;
-/**
-/**
+
+/*
 *La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
 *alla scuola guida.
 *Gli attributi che la descrivono sono:
@@ -56,7 +56,6 @@ class ESvolgimentoQuiz implements JsonSerializable {
     /**
     * Array di tentativi di risposte
     * @var array
-    * @ORM\OneToMany(targetEntity="ETentativoRisposta", mappedBy="svolgimentoQuiz", cascade={"persist", "remove"})
     */
     private array $tentativiRisposta = [];     
     /**
