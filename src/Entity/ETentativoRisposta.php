@@ -18,15 +18,6 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="tentativo_risposta")
  */
 class ETentativoRisposta implements JsonSerializable {
-     /**
-     *id tentativo risposta
-     * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
-     private ?int $idTent = null;
-   
     /**
      * Domanda associata alla risposta
      * @var EDomanda
