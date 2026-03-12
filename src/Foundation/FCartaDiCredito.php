@@ -1,5 +1,6 @@
 <?php
 // src/Foundation/FCartaDiCredito.php
+//Classe Foundation di Carta di Credito
 
 use Doctrine\ORM\EntityManagerInterface;
 
