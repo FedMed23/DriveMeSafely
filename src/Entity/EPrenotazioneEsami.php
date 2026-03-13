@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="prenotazione_esami")
  */
 
-class EPrenotazioneEsami implements JsonSerializable
+class EPrenotazioneEsami implements \JsonSerializable
 {   /**
      * id identificativo della prenotazione
      * @var int

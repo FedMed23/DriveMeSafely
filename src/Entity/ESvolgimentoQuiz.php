@@ -20,7 +20,7 @@ use Doctrine\ORM\Mapping as ORM;
 * @ORM\Table(name="svolgimento_quiz")
 */
 
-class ESvolgimentoQuiz implements JsonSerializable {
+class ESvolgimentoQuiz implements \JsonSerializable {
     /**
      * id identificativo dello svolgimento del quiz
      * @var int
@@ -32,7 +32,7 @@ class ESvolgimentoQuiz implements JsonSerializable {
     /**
      * Quiz svolto
      * @ORM\ManyToOne(targetEntity="EQuiz")
-     * @ORM\JoinColumn(name="quiz_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="quiz_id", referencedColumnName="idQuiz", nullable=false)
      */
     private EQuiz $quiz;                       
     /**
@@ -178,5 +178,6 @@ public function __toString(): string {
     $print .= "=======================================\n";
     
     return $print;
+ }
 }
 ?>

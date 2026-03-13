@@ -4,7 +4,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * La classe EDomanda rappresenta il contenuto di una domanda del quiz e la sua risposta corretta.
- */
+ 
  * @access public
  * @author Camasso-Medelago
  * @package Entity
@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="domanda")
  */
-class EDomanda implements JsonSerializable {
+class EDomanda implements \JsonSerializable {
  /**
      * Identificativo univoco della domanda (può essere null se non ancora salvata su DB) (chiave primaria)
      * @var int|null

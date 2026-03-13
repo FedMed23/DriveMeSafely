@@ -22,7 +22,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="pagamento")
  */
 
-class EPagamento implements JsonSerializable
+class EPagamento implements \JsonSerializable
 {
     /**
      * id identificativo del pagamento (chiave primaria)
@@ -45,7 +45,7 @@ class EPagamento implements JsonSerializable
      * Spesa associata al pagamento
      * @var ESpesa
      * @ORM\ManyToOne(targetEntity="ESpesa")
-     * @ORM\JoinColumn(name="spesa_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="spesa_id", referencedColumnName="idSpesa", nullable=false)
      */
     private ESpesa $idSpesa;
 
@@ -67,7 +67,7 @@ class EPagamento implements JsonSerializable
      * Carta di credito utilizzata per il pagamento
      * @var ECartaDiCredito
      * @ORM\ManyToOne(targetEntity="ECartaDiCredito")
-     * @ORM\JoinColumn(name="carta_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="carta_id", referencedColumnName="numeroCarta", nullable=false)
      */
     private ECartaDiCredito $cartaDiCredito;
 

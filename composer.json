@@ -3,7 +3,10 @@
     "description": "Applicazione Web per una scuola guida",
     "type": "project",
     "require": {
-        "doctrine/orm": "^2.20"
+        "doctrine/orm": "^2.20",
+        "doctrine/cache": "^1.11",
+        "doctrine/annotations": "^2.0",
+        "symfony/cache": "^5.4"
     },
     "license": "proprietary",
     "autoload": {

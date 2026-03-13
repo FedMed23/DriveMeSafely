@@ -17,12 +17,21 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="tentativo_risposta")
  */
-class ETentativoRisposta implements JsonSerializable {
+class ETentativoRisposta implements \JsonSerializable {
+    /**
+     * Identificativo univoco del tentativo (chiave primaria)
+     * @var int
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Column(type="integer")
+     */
+    private ?int $idTent = null;
+
     /**
      * Domanda associata alla risposta
      * @var EDomanda
      * @ORM\ManyToOne(targetEntity="EDomanda")
-     * @ORM\JoinColumn(name="domanda_id", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="domanda_id", referencedColumnName="idDomanda", nullable=false)
      */
     private EDomanda $domanda;    
      /**
@@ -47,6 +56,9 @@ class ETentativoRisposta implements JsonSerializable {
     }
  
  //----------------------METODI GET-----------------------------   
+    public function getId(): ?int {
+        return $this->idTent;
+    }
     public function getDomanda(): EDomanda { return $this->domanda; }
     public function getRispostaUtente(): bool { return $this->rispostaUtente; }
     public function isCorretta(): bool { return $this->esito; }
@@ -54,6 +66,7 @@ class ETentativoRisposta implements JsonSerializable {
 //---------------------JSON-------------------------------
     public function jsonSerialize(): array {
         return [
+            'idTent' => $this->idTent,
             'domandaId' => $this->domanda->getId(),
             'rispostaUtente' => $this->rispostaUtente,
             'esito' => $this->esito
@@ -69,7 +82,8 @@ class ETentativoRisposta implements JsonSerializable {
     public function __toString(): string  {
         $rispostaUtenteStr = $this->rispostaUtente ? "Vero" : "Falso";
         $esitoStr = $this->esito ? "Corretta" : "Errata";
-        $print =" idDomanda: ".$this->domanda->getId()."\n".
+        $print ="idTent: ".$this->idTent."\n".
+                " idDomanda: ".$this->domanda->getId()."\n".
                 " rispostaUtente: ".$rispostaUtenteStr."\n".
                  "esito : ".$esitoStr."\n";
         

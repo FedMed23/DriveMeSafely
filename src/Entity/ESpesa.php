@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="spesa")
  */
 
-class ESpesa implements JsonSerializable
+class ESpesa implements \JsonSerializable
 {
     /**
      * Identificativo univoco della spesa
