@@ -4,7 +4,7 @@ use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
 // Carica automaticamente tutte le librerie installate con composer
-require_once "vendor/autoload.php";
+require_once "bootstrap.php";
 
 // ------------------- 1. Configurazione delle Entity -------------------
 // Dove si trovano le classi entity
