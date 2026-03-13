@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="carta_di_credito")
  */
-class ECartaDiCredito implements JsonSerializable {
+class ECartaDiCredito implements \JsonSerializable {
 
     /**
      * Numero della Carta (chiave primaria)

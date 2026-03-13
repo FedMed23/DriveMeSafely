@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     "proprietario" = "Entity\EProprietario"
  * })
  */
-class EUtenteRegistrato implements JsonSerializable {
+class EUtenteRegistrato implements \JsonSerializable {
 	/**
 	 * id identificativo dell'utente
      * @var int

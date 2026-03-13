@@ -5,15 +5,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
 *La classe EEffettuazioneEsami rappresenta lo svolgimento dell'esame da parte dell'utente iscritto alla scuola guida.
-*/
-* @access public
+ * @access public
  * @author Camasso-Medelago
  * @package Entity
  * @ORM\Entity
  * @ORM\Table(name="effettuazione_esami")
  */
 
-class EEffettuazioneEsami implements JsonSerializable {
+class EEffettuazioneEsami implements \JsonSerializable {
 
     /**
      * Identificativo univoco dell’effettuazione esame (può essere null finché non salvato) (chiave primaria)
@@ -28,7 +27,7 @@ class EEffettuazioneEsami implements JsonSerializable {
      * Esame associato all’effettuazione
      * @var EEsame
      * @ORM\ManyToOne(targetEntity="EEsame")
-     * @ORM\JoinColumn(name="id_esame", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="id_esame", referencedColumnName="idEsame", nullable=false)
      */
     private EEsame $esame;
 

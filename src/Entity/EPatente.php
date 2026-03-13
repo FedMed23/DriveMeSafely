@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="patente")
  */
 
-class EPatente implements JsonSerializable
+class EPatente implements \JsonSerializable
 {
     /**
      * idPa identificativo della patente (chiave primaria)

@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="quiz")
  */
-class EQuiz implements JsonSerializable {
+class EQuiz implements \JsonSerializable {
     /**
      * id identificativo del quiz
      * @var int
@@ -38,8 +38,8 @@ class EQuiz implements JsonSerializable {
      * @ORM\ManyToMany(targetEntity="EDomanda", cascade={"persist"})
      * @ORM\JoinTable(
      *     name="quiz_domanda",
-     *     joinColumns={@ORM\JoinColumn(name="quiz_id", referencedColumnName="id")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="domanda_id", referencedColumnName="id")}
+     *     joinColumns={@ORM\JoinColumn(name="quiz_id", referencedColumnName="idQuiz")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="domanda_id", referencedColumnName="idDomanda")}
      *)
      */
     private array $domande = []; 

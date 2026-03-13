@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="iscritto")
  */
 
-class EUtenteIscritto extends EUtenteRegistrato {
+class EIscritto extends EUtenteRegistrato {
 
 	 /**
      * Codice fiscale dell'iscritto
@@ -55,7 +55,7 @@ class EUtenteIscritto extends EUtenteRegistrato {
      * Tipo di patente posseduta
      * @var EPatente
      * @ORM\ManyToOne(targetEntity="EPatente")
-     * @ORM\JoinColumn(name="tipo_patente", referencedColumnName="id", nullable=false)
+     * @ORM\JoinColumn(name="tipo_patente", referencedColumnName="idPa", nullable=false)
      */
     private EPatente $tipoPatente;
 

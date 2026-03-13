@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="guida")
  */
 
- class EGuida implements JsonSerializable {
+ class EGuida implements \JsonSerializable {
     /**
      * id identificativo dell'utente (chiave primaria)
      * @var int
@@ -31,8 +31,6 @@ use Doctrine\ORM\Mapping as ORM;
      /**
      * Numero della guida
      * @var int
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */  
      private int $numeroGuida;
@@ -67,8 +65,8 @@ use Doctrine\ORM\Mapping as ORM;
     {
         return $this->idGuida;
     }
-    **
- * Imposta l'identificativo univoco della guida.
+    
+ /**Imposta l'identificativo univoco della guida.
  * 
  * @param int $id Identificativo della guida da assegnare.
  */
@@ -146,8 +144,8 @@ use Doctrine\ORM\Mapping as ORM;
             'numeroGuida' => $this->numeroGuida,
             'Dipendente' => $this->idDipendente,
             // Formatta l'oggetto DateTimeImmutable in una stringa leggibile
-            'dataOra' => $this->dataOra->format('Y-m-d H:i:s'), 
-        ];
+            'dataOra' => $this->dataOra->format('Y-m-d H:i:s')
+        ]; 
     }
- 
+ }
  ?>

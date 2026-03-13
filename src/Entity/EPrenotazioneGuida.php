@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="prenotazione_guida")
  */
 
-class EPrenotazioneGuida implements JsonSerializable
+class EPrenotazioneGuida implements \JsonSerializable
 {   /**
      * id identificativo della prenotazione
      * @var int
@@ -108,20 +108,14 @@ class EPrenotazioneGuida implements JsonSerializable
 
     // ---------------- METODI SET ----------------
 
-<<<<<<< HEAD
-    public function setIscritto(EIscritto $iscritto): void
-=======
     public function setIdIscritto(EIscritto $iscritto): void
->>>>>>> 9a19b4cdd32e67835b09ecc95af1cf3a1406fade
+
     {
         $this->idIscritto= $iscritto->getId();
     }
 
-<<<<<<< HEAD
-    public function setGuida(EGuida $guida): void
-=======
     public function setIdGuida(EGuida $guida): void
->>>>>>> 9a19b4cdd32e67835b09ecc95af1cf3a1406fade
+
     {
         $this->idGuida = $guida->getId();
     }

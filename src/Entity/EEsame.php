@@ -17,7 +17,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="esame")
  */
 
-class EEsame implements JsonSerializable
+class EEsame implements \JsonSerializable
 {
     /**
      * Identificativo univoco dell'esame (chiave primaria)
