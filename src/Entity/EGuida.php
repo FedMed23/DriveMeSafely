@@ -26,6 +26,8 @@ use Doctrine\ORM\Mapping as ORM;
      */
      private ?int $idGuida= null; 
 
+     #[ORM\ManyToOne(targetEntity: EDipendente::class)]
+     #[ORM\JoinColumn(name: "id_dipendente", referencedColumnName: "id", nullable: false)]
      private EDipendente $idDipendente;
 
      /**
