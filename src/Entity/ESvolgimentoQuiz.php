@@ -59,6 +59,8 @@ class ESvolgimentoQuiz implements \JsonSerializable {
     private int $errori = 0;      
     /**
     * Array di tentativi di risposte
+    **
+    * @ORM\OneToMany(targetEntity="ETentativoRisposta", mappedBy="svolgimento", cascade={"persist", "remove"})
     * @var array
     */
     private array $tentativiRisposta = [];     
@@ -103,7 +105,7 @@ class ESvolgimentoQuiz implements \JsonSerializable {
                 $domanda = $domandePerId[$domandaId];
                 
                 // Crea l'oggetto TentativoRisposta
-                $tentativo = new ETentativoRisposta($domanda, $risposta);
+                $tentativo = new ETentativoRisposta($this, $domanda, $risposta);
                 $this->tentativiRisposta[] = $tentativo;
                 
                 //Inizializza l'attributo errori
@@ -124,8 +126,7 @@ class ESvolgimentoQuiz implements \JsonSerializable {
     //----------------------METODI GET/SET (ID)-----------------------------
     
     public function getId(): ?int { return $this->idSvolgimento; }
-    public function setId(int $id): void { $this->idSvolgimento = $id; } 
-
+    
     //----------------------METODI GET-----------------------------
     
     public function getQuiz(): EQuiz { return $this->quiz; }
