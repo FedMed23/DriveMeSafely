@@ -1,5 +1,9 @@
 <?php
 namespace Entity;
+use Entity\EQuiz;
+use Entity\EIscritto;
+use Entity\ETentativoRisposta;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -166,7 +170,7 @@ class ESvolgimentoQuiz implements \JsonSerializable {
  */
 public function __toString(): string {
     $idStr = $this->getId() === null ? "[NUOVO]" : $this->getId();
-    $esito = $this->getSuperato() ? "SUPERATO" : "BOCCIATO";
+    $esito = $this->isSuperato() ? "SUPERATO" : "BOCCIATO";
 
     $print = "=== SVOLGIMENTO QUIZ ID: {$idStr} ===\n";
     $print .= "Quiz: {$this->getQuiz()->getNomeQuiz()} (ID: {$this->getQuiz()->getId()})\n";
