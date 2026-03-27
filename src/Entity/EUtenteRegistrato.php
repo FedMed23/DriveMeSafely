@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
  * -id: è un identificativo relativo agli utenti registrati
  * -nomeUtente: nome dell'utente
  * -cognomeUtente: cognome dell'utente
- * -fotoProfilo: foto profilo dell'utente
  * -username: username dell'utente
  * -email: email dell'utente
  * -password: password dell'utente
@@ -52,12 +51,6 @@ class EUtenteRegistrato implements \JsonSerializable {
 	 */
     private string $cognomeUtente;
 
-	/**
-	 * foto profilo dell'utente (URL)
-	 * @var string
-	 * private string $fotoProfilo;
-     */
-
     /**
 	 * email dell'utente
 	 * @var string
@@ -98,7 +91,7 @@ class EUtenteRegistrato implements \JsonSerializable {
         $this->password= password_hash($password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
     }
-    //----------------------METODI GET/SET (ID)-----------------------------
+    //----------------------METODI GET(ID)-----------------------------
     
     public function getId(): ?int { return $this->id; }
     public function setId(int $id): void { $this->id= $id; } 
@@ -159,10 +152,9 @@ class EUtenteRegistrato implements \JsonSerializable {
     /**
     * @param String $password password utente
     */
-    public function setPassword(string $newpassword): void{
-    	$newpassword = password_hash($newpassword, PASSWORD_DEFAULT);
-        $this->password=$newpassword;
-    }
+    public function setPassword(string $password): void {
+    $this->password = password_hash($password, PASSWORD_DEFAULT);
+}
 
     /**
     * Cambia lo stato in false (disattivo)
