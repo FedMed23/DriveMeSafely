@@ -91,7 +91,7 @@ class EUtenteRegistrato implements \JsonSerializable {
         $this->password= password_hash($password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
     }
-    //----------------------METODI GET(ID)-----------------------------
+    //----------------------METODI GET/SET (ID)-----------------------------
     
     public function getId(): ?int { return $this->id; }
     public function setId(int $id): void { $this->id= $id; } 
