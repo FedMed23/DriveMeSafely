@@ -34,6 +34,13 @@ class ETentativoRisposta implements \JsonSerializable {
      * @ORM\JoinColumn(name="domanda_id", referencedColumnName="idDomanda", nullable=false)
      */
     private EDomanda $domanda;    
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="ESvolgimentoQuiz", inversedBy="tentativiRisposta")
+     * @ORM\JoinColumn(name="svolgimento_id", referencedColumnName="idSvolgimento", nullable=false)
+     */
+    private ESvolgimentoQuiz $svolgimento;
+    
      /**
      * Risposta dell'utente (V o F)
      * @var bool
@@ -49,7 +56,8 @@ class ETentativoRisposta implements \JsonSerializable {
 
 //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(EDomanda $domanda, bool $rispostaUtente) {
+    public function __construct( ESvolgimentoQuiz $svolgimento, EDomanda $domanda, bool $rispostaUtente) {
+        $this->svolgimento = $svolgimento;
         $this->domanda = $domanda;
         $this->rispostaUtente = $rispostaUtente;
         $this->esito = ($rispostaUtente === $domanda->getRispostaCorretta());
@@ -60,6 +68,7 @@ class ETentativoRisposta implements \JsonSerializable {
         return $this->idTent;
     }
     public function getDomanda(): EDomanda { return $this->domanda; }
+    public function getSvolgimento(): ESvolgimentoQuiz { return $this->svolgimento; }
     public function getRispostaUtente(): bool { return $this->rispostaUtente; }
     public function isCorretta(): bool { return $this->esito; }
 
