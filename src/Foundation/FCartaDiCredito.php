@@ -2,6 +2,8 @@
 // src/Foundation/FCartaDiCredito.php
 //Classe Foundation di Carta di Credito
 
+namespace DriveMeSafely\src\Foundation;
+use DriveMeSafely\src\Entity\ECartaDiCredito;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FCartaDiCredito
@@ -14,7 +16,7 @@ class FCartaDiCredito
     }
 
     // Inserimento / Salvataggio
-    public function salvaCarta(ECartaDiCredito $carta): void
+    public function save(ECartaDiCredito $carta): void
     {
         $this->em->persist($carta);
         $this->em->flush();
@@ -27,13 +29,13 @@ class FCartaDiCredito
     }
 
     // Aggiorna la carta (può includere logica extra, ma il persist non serve se l'entity è già gestita)
-    public function aggiornaCarta(ECartaDiCredito $carta): void
+    public function update(ECartaDiCredito $carta): void
     {
         $this->em->flush();
     }
 
     // Elimina carta
-    public function eliminaCarta(ECartaDiCredito $carta): void
+    public function delete(ECartaDiCredito $carta): void
     {
         $this->em->remove($carta);
         $this->em->flush();
