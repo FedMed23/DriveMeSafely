@@ -1,55 +1,70 @@
 <?php
 
+namespace DriveMeSafely\src\Controller;
+
+use DriveMeSafely\src\Foundation\FPagamento;
+use DriveMeSafely\src\Foundation\FCartaDiCredito;
+use DriveMeSafely\src\Entity\EPagamento;
+use DriveMeSafely\src\Entity\ECartaDiCredito;
+
 class CPagamento
 {
-    public static function pagamento()
+    private FPagamento $fPagamento;
+    private FCartaDiCredito $fCarta;
+
+    public function __construct(FPagamento $fPagamento, FCartaDiCredito $fCarta)
     {
-        if (!CUtente::isLogged()) {
-            header('Location: /login');
-            return;
-        }
+        $this->fPagamento = $fPagamento;
+        $this->fCarta = $fCarta;
+    }
 
-        $pm = new FPersistentManager();
-        $utente = unserialize($_SESSION['utente']);
+    // Visualizza stato pagamenti
+    public function getPagamenti(int $idUtente): array
+    {
+        return $this->fPagamento->getPagamentiUtente($idUtente);
+    }
 
-        // -------- GET --------
-        if ($_SERVER['REQUEST_METHOD'] == "GET") {
+    // Seleziona pagamento
+    public function selezionaPagamento(int $idPagamento): ?EPagamento
+    {
+        return $this->fPagamento->getPagamentoById($idPagamento);
+    }
 
-            $pagamenti = $pm->load("utenteId", $utente->getId(), "FPagamento");
+    // Scelta metodo pagamento
+    public function scegliMetodo(int $idPagamento, string $metodo): void
+    {
+        $pagamento = $this->fPagamento->getPagamentoById($idPagamento);
+        $pagamento->setMetodo($metodo);
 
-            print_r($pagamenti); // debug
+        $this->fPagamento->update($pagamento);
+    }
 
-        }
+    // Inserimento carta
+    public function inserisciCarta(array $datiCarta): ECartaDiCredito
+    {
+        $carta = new ECartaDiCredito(
+            $datiCarta['numero'],
+            $datiCarta['nome'],
+            $datiCarta['cognome'],
+            $datiCarta['scadenza']
+        );
 
-        // -------- POST --------
-        elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
+        $this->fCarta->save($carta);
 
-            $numero = $_POST['numero'];
-            $nome = $_POST['nome'];
-            $cognome = $_POST['cognome'];
-            $scadenza = $_POST['scadenza'];
-            $idPagamento = $_POST['idPagamento'];
+        return $carta;
+    }
 
-            // crea carta
-            $carta = new ECartaDiCredito(
-                $numero,
-                $nome,
-                $cognome,
-                $scadenza
-            );
+    // Conferma pagamento
+    public function confermaPagamento(int $idPagamento, ECartaDiCredito $carta): void
+    {
+        $pagamento = $this->fPagamento->getPagamentoById($idPagamento);
 
-            $fcarta = new FCartaDiCredito();
-            $fcarta->save($carta);
+        $pagamento->setCarta($carta);
+        $pagamento->setStato("pagato");
 
-            // recupera pagamento
-            $pagamento = $pm->load("id", $idPagamento, "FPagamento");
-
-            $pagamento->setCarta($carta);
-            $pagamento->setStato("pagato");
-
-            $pm->updateObj($pagamento);
-
-            echo "Pagamento completato";
-        }
+        $this->fPagamento->update($pagamento);
     }
 }
+        
+
+          
