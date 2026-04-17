@@ -1,7 +1,7 @@
 <?php
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EProprietario;
+use CamassoMedelago\DriveMeSafely\Entity\EProprietario;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FProprietario

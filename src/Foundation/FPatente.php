@@ -1,9 +1,9 @@
 <?php
 // src/Foundation/FPatente.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EPatente;
+use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FPatente

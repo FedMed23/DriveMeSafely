@@ -1,9 +1,9 @@
 <?php
 // src/Foundation/FDomanda.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EDomanda;
+use CamassoMedelago\DriveMeSafely\Entity\EDomanda;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FDomanda

@@ -1,5 +1,5 @@
 <?php
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe EPrenotazioneGuida rappresenta una prenotazione effettuata da un iscritto
@@ -48,7 +48,7 @@ class EPrenotazioneGuida implements \JsonSerializable
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      */
-    private DateTimeImmutable $dataPr;
+    private \DateTimeImmutable $dataPr;
 
     /**
      * Stato della prenotazione (es. completato, in attesa)

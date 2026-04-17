@@ -1,5 +1,5 @@
 <?php
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 /**
  * La classe EProprietario estende EUtenteRegistrato.

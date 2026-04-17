@@ -1,8 +1,8 @@
 <?php
-namespace Entity;
-use Entity\EQuiz;
-use Entity\EIscritto;
-use Entity\ETentativoRisposta;
+namespace CamassoMedelago\DriveMeSafely\Entity;
+use CamassoMedelago\DriveMeSafely\Entity\EQuiz;
+use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
+use CamassoMedelago\DriveMeSafely\Entity\ETentativoRisposta;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 

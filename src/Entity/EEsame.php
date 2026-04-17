@@ -1,6 +1,6 @@
 <?php
 
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -33,7 +33,7 @@ class EEsame implements \JsonSerializable
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      */  
-    private DateTimeImmutable $dataEs;
+    private \DateTimeImmutable $dataEs;
 
     /**
      * Tipologia dell'esame (es. teorico o pratico)

@@ -1,9 +1,9 @@
 <?php
 // src/Foundation/FEffettuazioneEsami.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EEffettuazioneEsami;
+use CamassoMedelago\DriveMeSafely\Entity\EEffettuazioneEsami;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FEffettuazioneEsami

@@ -1,6 +1,6 @@
 <?php
 
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /** 
@@ -42,7 +42,7 @@ use Doctrine\ORM\Mapping as ORM;
      * @var DateTimeImmutable
      * @ORM\Column(type="datetime_immutable")
      */   
-     private DateTimeImmutable $dataOra;
+     private \DateTimeImmutable $dataOra;
 
 // -----------------------------COSTRUTTORE-----------------
      /** 

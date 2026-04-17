@@ -1,9 +1,9 @@
 <?php
 // src/Foundation/FDipendente.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EDipendente;
+use CamassoMedelago\DriveMeSafely\Entity\EDipendente;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FDipendente

@@ -33,4 +33,6 @@ $config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode,  null
 // ------------------- 4. Creazione dell'Entity Manager -------------------
 // L’Entity Manager gestisce tutte le operazioni sul DB (CRUD)
 $entityManager = EntityManager::create($dbParams, $config);
+
+return $entityManager;
 ?>

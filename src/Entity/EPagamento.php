@@ -1,7 +1,8 @@
 <?php
 
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM; 
+use DateTimeImmutable;
 
 
 /**

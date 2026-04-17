@@ -1,7 +1,7 @@
 <?php
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EPrenotazioneGuida;
+use CamassoMedelago\DriveMeSafely\Entity\EPrenotazioneGuida;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTimeImmutable;
 
