@@ -11,7 +11,7 @@
     "license": "proprietary",
     "autoload": {
         "psr-4": {
-            "CamassoMedelago\\Drivemesafely\\": "src/"
+            "CamassoMedelago\\DriveMeSafely\\": "src/"
         }
     },
     "authors": [

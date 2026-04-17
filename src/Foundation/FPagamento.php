@@ -1,13 +1,15 @@
 <?php
 // src/Foundation/FPagamento.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EPagamento;
-use DriveMeSafely\src\Entity\EUtenteRegistrato;
-use DriveMeSafely\src\Entity\ESpesa;
-use DriveMeSafely\src\Entity\ECartaDiCredito;
+use CamassoMedelago\DriveMeSafely\Entity\EPagamento;
+use CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato;
+use CamassoMedelago\DriveMeSafely\Entity\ESpesa;
+use CamassoMedelago\DriveMeSafely\Entity\ECartaDiCredito;
 use Doctrine\ORM\EntityManagerInterface;
+use DateTimeImmutable;
+
 
 class FPagamento
 {
@@ -36,7 +38,9 @@ class FPagamento
     // Recupera tutti i pagamenti
     public function getAllPagamenti(): array
     {
-        return $this->em->getRepository(EPagamento::class)->findAll();
+        return $this->em->getRepository(EPagamento::class)->findBy([
+        'idUtenteRegistrato' => $utente
+    ], null, 50);
     }
 
     // ---------------------- AGGIORNAMENTO ----------------------
@@ -61,6 +65,19 @@ class FPagamento
             'idUtenteRegistrato' => $utente
         ]);
     }
+    // Trova pagamenti di un utente
+    public function getPagamentiById(int $id_utente): array
+{
+    $utente = $this->em->getRepository(EUtenteRegistrato::class)->find($id_utente);
+
+    if (!$utente) {
+        return [];
+    }
+
+    return $this->em->getRepository(EPagamento::class)->findBy([
+        'idUtenteRegistrato' => $utente
+    ], null, 50);
+}
 
     // Trova pagamenti per stato (completato, in attesa, fallito)
     public function getPagamentiByStato(string $stato): array

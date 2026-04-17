@@ -1,10 +1,10 @@
 <?php
 // src/Foundation/FIscritto.php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EIscritto;
-use DriveMeSafely\src\Entity\EPatente;
+use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
+use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FIscritto

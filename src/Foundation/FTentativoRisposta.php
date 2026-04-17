@@ -2,8 +2,8 @@
 // src/Foundation/FTentativoRisposta.php
 // Classe Foundation / Service per ETentativoRisposta
 
-namespace DriveMeSafely\src\Foundation;
-use DriveMeSafely\src\Entity\ETentativoRisposta;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
+use CamassoMedelago\DriveMeSafely\Entity\ETentativoRisposta;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FTentativoRisposta

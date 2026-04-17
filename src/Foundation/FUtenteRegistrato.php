@@ -1,8 +1,8 @@
 <?php
 
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EUtenteRegistrato;
+use CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FUtente

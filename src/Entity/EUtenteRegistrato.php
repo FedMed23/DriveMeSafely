@@ -1,5 +1,5 @@
 <?php
-namespace Entity;
+namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 //Nota: punto da vedere: path foto profilo 
@@ -20,10 +20,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="tipo_utente", type="string")
  * @ORM\DiscriminatorMap({
- *     "utente" = "Entity\EUtenteRegistrato",
- *     "iscritto" = "Entity\EIscritto",
- *     "dipendente" = "Entity\EDipendente",
- *     "proprietario" = "Entity\EProprietario"
+ *     "utente" = "CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato",
+ *     "iscritto" = "CamassoMedelago\DriveMeSafely\Entity\EIscritto",
+ *     "dipendente" = "CamassoMedelago\DriveMeSafely\Entity\EDipendente",
+ *     "proprietario" = "CamassoMedelago\DriveMeSafely\Entity\EProprietario"
  * })
  */
 class EUtenteRegistrato implements \JsonSerializable {

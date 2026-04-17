@@ -2,9 +2,12 @@
 // src/Foundation/FCartaDiCredito.php
 //Classe Foundation di Carta di Credito
 
-namespace DriveMeSafely\src\Foundation;
-use DriveMeSafely\src\Entity\ECartaDiCredito;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
+use CamassoMedelago\DriveMeSafely\Entity\ECartaDiCredito;
 use Doctrine\ORM\EntityManagerInterface;
+use DateTimeImmutable;
+
+
 
 class FCartaDiCredito
 {

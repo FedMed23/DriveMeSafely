@@ -1,8 +1,8 @@
 <?php
-namespace DriveMeSafely\src\Foundation;
+namespace CamassoMedelago\DriveMeSafely\Foundation;
 
-use DriveMeSafely\src\Entity\EQuiz;
-use DriveMeSafely\src\Entity\EDomanda;
+use CamassoMedelago\DriveMeSafely\Entity\EQuiz;
+use CamassoMedelago\DriveMeSafely\Entity\EDomanda;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FQuiz
