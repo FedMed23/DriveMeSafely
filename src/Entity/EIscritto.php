@@ -1,7 +1,9 @@
 <?php
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+
 
 /**
  * La classe EIscritto estende la classe EUtenteRegistrato con i dati specifici dell'iscritto per la Scuola Guida.
@@ -78,27 +80,38 @@ class EIscritto extends EUtenteRegistrato {
      * @param EPatente $_patente
      */
     public function __construct(
-        string $_nome,
-        string $_cognome,
-        string $_username,
-        string $_email,
-        string $_password,
+        string $nome,
+        string $cognome,
+        string $email,
+        string $username,
+        string $password,
+        bool $stato,
         string $_cf,
         DateTimeImmutable $_dataNascita,
         string $_luogoNascita,
         string $_indirizzo,
         string $_telefono,
         EPatente $_patente
-    ) {
-        parent::__construct($_nome, $_cognome, $_username, $_email, $_password);
+)
+{
+   parent::__construct(
+        $nome,
+        $cognome,
+        $email, 
+        $username,
+        $password,
+        $stato,
+        
+    );
 
-        $this->codiceFiscale = $_cf;
-        $this->dataNascita = $_dataNascita;
-        $this->luogoNascita = $_luogoNascita;
-        $this->indirizzo = $_indirizzo;
-        $this->numeroTelefono = $_telefono;
-        $this->tipoPatente = $_patente;
-    }
+
+    $this->codiceFiscale = $_cf;
+    $this->dataNascita = $_dataNascita;
+    $this->luogoNascita = $_luogoNascita;
+    $this->indirizzo = $_indirizzo;
+    $this->numeroTelefono = $_telefono;
+    $this->tipoPatente = $_patente;
+}
 
     // ---------------------- METODI GET -----------------------------
     /**
