@@ -81,13 +81,13 @@ class EUtenteRegistrato implements \JsonSerializable {
 
 //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $nome, string $cognome, string $username, string $email, string $password) {
+    public function __construct(string $nome, string $cognome, string $email, string $username,  string $password) {
 
         $this->nomeUtente=$nome;
         $this->cognomeUtente=$cognome;
         //Path alla foto di default $this->fotoProfilo=
-        $this->username=$username;
         $this->email=$email;
+        $this->username=$username;
         $this->password= password_hash($password, PASSWORD_DEFAULT); //La password viene criptata tramite questo algoritmo di hash
         $this->statoUtente= true;
     }
