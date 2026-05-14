@@ -25,6 +25,7 @@ class CPrenotazioneGuide
     {
         return $this->fGuida->getAllGuide();
     }
+    
    // Restituisce il form di prenotazione
     public function mostraFormPrenotazione(): array
     {
