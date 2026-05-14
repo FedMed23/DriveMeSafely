@@ -20,16 +20,15 @@ use DateTimeImmutable;
 class CSvolgimentoQuiz
 {
     private FIscritto $fIscritto;
-    private FQuiz fQuiz;
-  
-    private array $tentativiRisposta = [];
-    private FSvolgimentoQuiz fSvolgimentoQuiz;
+    private FQuiz $fQuiz;
+    private FSvolgimentoQuiz $fSvolgimentoQuiz;
   
   
-    public function __construct(FIscritto $fIscritto, FQuiz fQuiz)
+    public function __construct(FIscritto $fIscritto, FQuiz fQuiz, FSvolgimentoQuiz $fSvolgimentoQuiz)
     {
         $this->fIscritto = $fIscritto;
         $this->fQuiz = $fQuiz;
+		$this->fSvolgimentoQuiz = $fSvolgimentoQuiz;
     }
 
     // Visualizza elenco quiz
@@ -45,32 +44,59 @@ class CSvolgimentoQuiz
     }
   
     // Svolgimento quiz
-    public function svolgimentoQuiz(FIscritto $fIscritto, FQuiz fQuiz, FTentativoRisposta $fTentativoRisposta): ESvolgimentoQuiz
-    {
-        $svolgimentoQuiz = new ESvolgimentoQuiz(FIscritto $fIscritto, FQuiz fQuiz, FTentativoRisposta $fTentativoRisposta);
-      
-        $this->fSvolgimentoQuiz->save($SvolgimentoQuiz);
+    public function svolgiQuiz(int $idQuiz, EIscritto $iscritto, array $risposteUtente): ESvolgimentoQuiz {
 
-        return $svolgimentoQuiz;
+        $quiz = $this->fQuiz->findById($idQuiz);
+        if (!$quiz) {
+            throw new \Exception("Quiz non trovato");
+        }
+        
+		$svolgimento = new ESvolgimentoQuiz( $quiz, $iscritto, $risposteUtente);
+
+        $this->fSvolgimentoQuiz->save($svolgimento);
+
+        return $svolgimento;
+
     }
 
-   /* Conferma dati
-    public function confermaDati(ESvolgimentoQuiz $ESvolgimentoQuiz, EIscritto $iscritto): void
-    {
-	    // recupero patente
-	    $patente = $this->fPatente->getPatenteById($idPa);
+   public function riepilogoQuiz(ESvolgimentoQuiz $svolgimento): array
+{
+    $riepilogoRisposte = [];
 
-	    if (!$patente) {
-	        throw new \Exception("Patente non trovata");
-	    }
+    foreach ($svolgimento->getTentativiRisposta() as $tentativo) {
 
-	    // assegno patente all'iscritto
-	    $iscritto->setTipoPatente($patente);
+        $domanda = $tentativo->getDomanda();
 
-	    // salvo modifiche
-	    $this->fIscritto->update($iscritto);
-	}
-  */
+        $riepilogoRisposte[] = [
+            'idDomanda' => $domanda->getId(),
+            'contenuto' => $domanda->getContenuto(),
+
+            // risposta corretta della domanda
+            'rispostaCorretta' => $domanda->getRispostaCorretta(),
+
+            // risposta data dall'utente
+            'rispostaUtente' => $tentativo->getRispostaUtente(),
+
+            // esito singola domanda
+            'corretta' => $tentativo->isCorretta()
+        ];
+    }
+
+    return [
+        'quiz' => $svolgimento->getQuiz()->getNomeQuiz(),
+
+        'data' => $svolgimento
+            ->getDataSvolgimento()
+            ->format('d/m/Y H:i'),
+
+        'errori' => $svolgimento->getErrori(),
+
+        'superato' => $svolgimento->isSuperato(),
+
+        'totaleDomande' => count($svolgimento->getTentativiRisposta()),
+
+        'risposte' => $riepilogoRisposte
+    ];
 }
         
 
