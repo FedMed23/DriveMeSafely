@@ -26,15 +26,6 @@ class CPrenotazioneGuide
         return $this->fGuida->getAllGuide();
     }
     
-   // Restituisce il form di prenotazione
-    public function mostraFormPrenotazione(): array
-    {
-        return [
-            'numeroGuida' => '',
-            'dataOra' => '',
-            'idIscritto' => ''
-        ];
-    }
 
     // Prenotazione nuova guida
     public function prenotaGuida(array $datiGuida): EGuida
