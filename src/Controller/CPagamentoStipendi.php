@@ -6,7 +6,6 @@ use CamassoMedelago\DriveMeSafely\Foundation\FPagamento;
 use CamassoMedelago\DriveMeSafely\Foundation\FCartaDiCredito;
 use CamassoMedelago\DriveMeSafely\Foundation\FDipendente;
 use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
-use CamassoMedelago\DriveMeSafely\Foundation\FProprietario;
 
 use CamassoMedelago\DriveMeSafely\Entity\EPagamento;
 use CamassoMedelago\DriveMeSafely\Entity\ECartaDiCredito;
@@ -19,44 +18,32 @@ class CPagamentoStipendi
     private FCartaDiCredito $fCarta;
     private FDipendente $fDipendente;
     private FSpesa $fSpesa;
-    private FProprietario $fProprietario;
 
     public function __construct(
         FPagamento $fPagamento,
         FCartaDiCredito $fCarta,
         FDipendente $fDipendente,
-        FSpesa $fSpesa,
-        FProprietario $fProprietario
+        FSpesa $fSpesa
     ) {
         $this->fPagamento = $fPagamento;
         $this->fCarta = $fCarta;
         $this->fDipendente = $fDipendente;
         $this->fSpesa = $fSpesa;
-        $this->fProprietario = $fProprietario;
     }
 
-    // 1 - Area contabilità
-    public function gestioneContabilita(): array
-    {
-        return [
-            'dipendenti' => $this->fDipendente->findAll(),
-            'spese' => $this->fSpesa->findAll()
-        ];
-    }
-
-    // 2 - Visualizza dipendenti
+    // 1 - Visualizza dipendenti
     public function getDipendenti(): array
     {
         return $this->fDipendente->findAll();
     }
   
-    // 3 - Filtra dipendenti per tipologia
+    // 2 - Filtra dipendenti per tipologia
     public function getDipendentiPerTipologia(string $tipologia): array
     {
         return $this->fDipendente->findByTipologia($tipologia);
     }
   
-    // 6 - Inserimento carta
+    // 3 - Inserimento carta
     public function inserisciCarta(array $datiCarta): ECartaDiCredito
     {
         $carta = new ECartaDiCredito(
@@ -71,7 +58,7 @@ class CPagamentoStipendi
         return $carta;
     }
 
-    // 5 - Pagamento stipendi
+    // 4 - Pagamento stipendi
     public function pagaStipendi(
         EProprietario $proprietario,
         array $dipendenti,
