@@ -20,13 +20,12 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="tipo_utente", type="string")
  * @ORM\DiscriminatorMap({
- *     "utente" = "CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato",
  *     "iscritto" = "CamassoMedelago\DriveMeSafely\Entity\EIscritto",
  *     "dipendente" = "CamassoMedelago\DriveMeSafely\Entity\EDipendente",
  *     "proprietario" = "CamassoMedelago\DriveMeSafely\Entity\EProprietario"
  * })
  */
-class EUtenteRegistrato implements \JsonSerializable {
+abstract class EUtenteRegistrato implements \JsonSerializable {
 	/**
 	 * id identificativo dell'utente
      * @var int
@@ -94,7 +93,7 @@ class EUtenteRegistrato implements \JsonSerializable {
     //----------------------METODI GET/SET (ID)-----------------------------
     
     public function getId(): ?int { return $this->id; }
-    public function setId(int $id): void { $this->id= $id; } 
+    //public function setId(int $id): void { $this->id= $id; } 
 //----------------------METODI GET-----------------------------
     /**
     * @return String nome dell'utente
