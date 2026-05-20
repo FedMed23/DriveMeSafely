@@ -40,3 +40,48 @@ class CPrenotazioniEsami
         return $this->fQuiz->findById($idQuiz);
     }
 
+    // Segnalazione studente alla segreteria
+    // per prenotazione esame teorico/pratico
+    public function segnalaStudenteEsame(array $datiEsame): EEsame
+    {
+        // Recupero studente
+        $iscritto = $this->fIscritto->getIscrittoById(
+            $datiEsame['idIscritto']
+        );
+
+        if (!$iscritto) {
+            throw new \Exception("Studente non trovato");
+        }
+
+        // Creazione esame
+        $esame = new EEsame(
+            $datiEsame['tipologia'],
+            new DateTimeImmutable($datiEsame['dataEsame'])
+        );
+
+        // Salvataggio esame
+        $this->fEsame->save($esame);
+
+        return $esame;
+    }
+
+    // Conferma segnalazione
+    public function confermaSegnalazione(
+        EIscritto $iscritto,
+        EEsame $esame
+    ): string {
+
+        return "Lo studente "
+            . $iscritto->getNome()
+            . " "
+            . $iscritto->getCognome()
+            . " è stato segnalato alla segreteria "
+            . "per l'esame "
+            . $esame->getTipologia()
+            . " del giorno "
+            . $esame->getDataEsame()->format('d/m/Y');
+    }
+}
+?>
+
+
