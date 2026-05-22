@@ -42,7 +42,7 @@ switch ($page) {
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
-                $idPa = $cIscrizione->selezionaPatente();
+                $idPa = $_POST['idPa']; 
         
                 $smarty->assign('idPa', $idPa);
                 $smarty->display('iscrizione/VFormIscrizione.tpl');
