@@ -9,6 +9,8 @@ use Smarty\Smarty;
 
 // Inizializza Doctrine (configurazione esterna)
 $entityManager = require __DIR__ . '/../config/doctrine.php';
+var_dump($entityManager->getConnection()->connect());
+die();
 
 // Inizializza Smarty
 $smarty = new Smarty();
@@ -16,6 +18,7 @@ $smarty->setTemplateDir(__DIR__ . '/../templates/');
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
 $smarty->setCacheDir(__DIR__ . '/../cache/');
 $smarty->setConfigDir(__DIR__ . '/../configs/');
+$smarty->display('home.tpl');
 
 // Inizializza le fondazioni
 $fIscritto = new FIscritto($entityManager);
