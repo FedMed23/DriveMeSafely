@@ -1,6 +1,7 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use DateTimeImmutable;
 /**
  * La classe EPrenotazioneEsami rappresenta una prenotazione effettuata da un dipendente
  * per un determinato esame.
@@ -24,9 +25,10 @@ class EPrenotazioneEsami implements \JsonSerializable
      * id identificativo della prenotazione
      * @var int
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
-     * */
-     private ?int $idPrEs= null; 
+     */
+    private ?int $idPrEs = null;
 
     /**
      * Dipendente che effettua la prenotazione
@@ -73,7 +75,7 @@ class EPrenotazioneEsami implements \JsonSerializable
         string $stato
     ) {
         $this->idDipendente = $dipendente->getId();
-        $this->idEsame = $esame->getId();
+        $this->idEsame = $esame->getIdEsame();
         $this->dataPrEs = $data;
         $this->stato = $stato;
     }

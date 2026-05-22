@@ -78,4 +78,6 @@ switch ($page) {
         $smarty->display('home.tpl');
         break;
     
+
 }
+
