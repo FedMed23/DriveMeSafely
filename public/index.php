@@ -40,17 +40,17 @@ switch ($page) {
 
     case 'inserisciDati':
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        $idPa = $_POST['idPa'];
-
-        $smarty->assign('idPa', $idPa);
-        $smarty->display('iscrizione/VFormIscrizione.tpl');
-
-    } else {
-        header("Location: index.php?page=iscrizione");
-        exit;
-    }
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+                $idPa = $_POST['idPa'];
+        
+                $smarty->assign('idPa', $idPa);
+                $smarty->display('iscrizione/VFormIscrizione.tpl');
+        
+            } else {
+                header("Location: index.php?page=iscrizione");
+                exit;
+            }
 
     break;
     case 'confermaIscrizione':
