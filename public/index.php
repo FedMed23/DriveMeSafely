@@ -42,7 +42,7 @@ switch ($page) {
         // Mostra il form per inserire i dati
         $idPa = $_POST['idPa'];
         $smarty->assign('idPa', $idPa);
-        $smarty->display('iscrizione/VInserisciDati.tpl');
+        $smarty->display('iscrizione/VFormIscrizione.tpl');
         break;
 
     case 'confermaIscrizione':
