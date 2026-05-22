@@ -1,6 +1,7 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use DateTimeImmutable;
 /**
  * La classe EPrenotazioneEsami rappresenta una prenotazione effettuata da un dipendente
  * per un determinato esame.
