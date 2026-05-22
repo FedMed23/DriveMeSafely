@@ -11,7 +11,7 @@ use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use Smarty\Smarty;
 
 // Inizializza Doctrine (configurazione esterna)
-$entityManager = require __DIR__ . '/../config/doctrine.php';
+$entityManager = require __DIR__ . "/bootstrap.php";
 
 // Inizializza Smarty
 $smarty = new Smarty();
