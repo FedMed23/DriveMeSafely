@@ -25,9 +25,10 @@ class EPrenotazioneEsami implements \JsonSerializable
      * id identificativo della prenotazione
      * @var int
      * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
-     * */
-     private ?int $idPrEs= null; 
+     */
+    private ?int $idPrEs = null;
 
     /**
      * Dipendente che effettua la prenotazione
