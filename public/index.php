@@ -5,7 +5,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use CamassoMedelago\DriveMeSafely\Controller\CIscrizione;
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
-use CamassoMedelago\DriveMeSafely\Smarty\Smarty;
+use Smarty\Smarty;
 
 // Inizializza Doctrine (configurazione esterna)
 $entityManager = require __DIR__ . '/../config/doctrine.php';
