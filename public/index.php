@@ -3,21 +3,25 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use CamassoMedelago\DriveMeSafely\Controller\CIscrizione;
-use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
-use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 
-// Doctrine (già configurato da voi)
-$entityManager = require __DIR__ . '/../config/bootstrap.php';
+$smarty = new Smarty\Smarty();
 
-// Foundation
-$fIscritto = new FIscritto($entityManager);
-$fPatente  = new FPatente($entityManager);
+$smarty->setTemplateDir(__DIR__ . '/../templates/');
+$smarty->setCompileDir(__DIR__ . '/../templates_c/');
 
-// Controller
-$controller = new CIscrizione($fIscritto, $fPatente);
+$page = $_GET['page'] ?? 'home';
 
-// 🔥 dati presi dal controller
-$patenti = $controller->getPatenti();
+switch($page) {
 
-// 👉 qui colleghi la VIEW
-include __DIR__ . '/../View/Iscrizione/VPatenti.php';
+    case 'iscrizione':
+
+        $controller = new CIscrizione($fIscritto, $fPatente);
+
+        $patenti = $controller->getPatenti();
+
+        $smarty->assign('patenti', $patenti);
+
+        $smarty->display('iscrizione/VPatenti.tpl');
+
+        break;
+}
