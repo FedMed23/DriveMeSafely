@@ -70,7 +70,7 @@ switch ($page) {
         $smarty->assign('iscritto', $iscritto);
         $smarty->display('iscrizione/VConfermaIscrizione.tpl');
         break;
-    */
+    */ //
 
     case 'home':
     default:
