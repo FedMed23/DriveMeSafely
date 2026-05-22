@@ -74,7 +74,7 @@ class EPrenotazioneEsami implements \JsonSerializable
         string $stato
     ) {
         $this->idDipendente = $dipendente->getId();
-        $this->idEsame = $esame->getId();
+        $this->idEsame = $esame->getIdEsame();
         $this->dataPrEs = $data;
         $this->stato = $stato;
     }
