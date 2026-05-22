@@ -18,6 +18,8 @@ $smarty->setTemplateDir(__DIR__ . '/../templates/');
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
 $smarty->setCacheDir(__DIR__ . '/../cache/');
 $smarty->setConfigDir(__DIR__ . '/../configs/');
+var_dump(class_exists('Smarty\\Smarty'));
+die();
 //$smarty->display('home.tpl');
 
 // Inizializza le fondazioni
