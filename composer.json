@@ -6,7 +6,8 @@
         "doctrine/orm": "^2.20",
         "doctrine/cache": "^1.11",
         "doctrine/annotations": "^2.0",
-        "symfony/cache": "^5.4"
+        "symfony/cache": "^5.4",
+        "smarty/smarty": "^5.8"
     },
     "license": "proprietary",
     "autoload": {

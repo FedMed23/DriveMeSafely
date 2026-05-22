@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Selezione Patente</title>
+    <title>Seleziona Patente</title>
 </head>
 <body>
 
 <h1>Scegli la patente</h1>
 
-<?php foreach ($patenti as $patente): ?>
-    <div>
-        <p>Tipo: <?= $patente->getTipo() ?></p>
-        <p>Prezzo: <?= $patente->getPrezzo() ?> €</p>
+<?php if (!isset($patenti) || empty($patenti)): ?>
+    <p>Nessuna patente disponibile</p>
+<?php else: ?>
 
-        <form method="POST" action="/confermaDati.php">
-            <input type="hidden" name="idPa" value="<?= $patente->getId() ?>">
-            <button type="submit">Seleziona</button>
-        </form>
-    </div>
-    <hr>
-<?php endforeach; ?>
+    <?php foreach ($patenti as $patente): ?>
+        <div>
+            <p>Tipo: <?= $patente->getTipo() ?></p>
+
+            <form method="POST" action="/confermaDati.php">
+                <input type="hidden" name="idPa" value="<?= $patente->getId() ?>">
+                <button type="submit">Seleziona</button>
+            </form>
+        </div>
+        <hr>
+    <?php endforeach; ?>
+
+<?php endif; ?>
 
 </body>
 </html>
