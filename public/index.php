@@ -39,15 +39,25 @@ switch ($page) {
         break;
 
     case 'inserisciDati':
-        Mostra il form per inserire i dati
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
         $idPa = $_POST['idPa'];
+
         $smarty->assign('idPa', $idPa);
         $smarty->display('iscrizione/VFormIscrizione.tpl');
-        break;
 
+    } else {
+        header("Location: index.php?page=iscrizione");
+        exit;
+    }
+
+    break;
     case 'confermaIscrizione':
-        // Salva i dati dell'iscritto e conferma
-        $datiIscritto = [
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $iscritto = $cIscrizione->inserisciDati([
             'nome' => $_POST['nome'],
             'cognome' => $_POST['cognome'],
             'email' => $_POST['email'],
@@ -55,22 +65,24 @@ switch ($page) {
             'password' => $_POST['password'],
             'stato' => true,
             'codiceFiscale' => $_POST['codiceFiscale'],
-            'dataNascita' => new DateTimeImmutable($_POST['dataNascita']),
+            'dataNascita' => $_POST['dataNascita'],
             'luogoNascita' => $_POST['luogoNascita'],
             'indirizzo' => $_POST['indirizzo'],
             'numeroTelefono' => $_POST['numeroTelefono'],
             'tipoPatente' => null
-        ];
+        ]);
 
-        // Inserimento dati e conferma
-        $iscritto = $cIscrizione->inserisciDati($datiIscritto);
         $cIscrizione->confermaDati($_POST['idPa'], $iscritto);
 
-        // Passa l'iscritto alla view di conferma
         $smarty->assign('iscritto', $iscritto);
         $smarty->display('iscrizione/VConfermaIscrizione.tpl');
-        break;
-    
+
+    } else {
+        header("Location: index.php?page=iscrizione");
+        exit;
+    }
+
+    break;
 
     case 'home':
     default:
