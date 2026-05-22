@@ -38,7 +38,7 @@ switch ($page) {
         $smarty->display('iscrizione/VPatenti.tpl');
         break;
 
-    /*case 'inserisciDati':
+    case 'inserisciDati':
         Mostra il form per inserire i dati
         $idPa = $_POST['idPa'];
         $smarty->assign('idPa', $idPa);
@@ -70,7 +70,7 @@ switch ($page) {
         $smarty->assign('iscritto', $iscritto);
         $smarty->display('iscrizione/VConfermaIscrizione.tpl');
         break;
-    */ //
+    
 
     case 'home':
     default:
