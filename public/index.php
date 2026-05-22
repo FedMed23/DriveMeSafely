@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -8,7 +11,7 @@ use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use Smarty\Smarty;
 
 // Inizializza Doctrine (configurazione esterna)
-$entityManager = require __DIR__ . '/../config/doctrine.php';
+$entityManager = require __DIR__ . "/../bootstrap.php";
 
 // Inizializza Smarty
 $smarty = new Smarty();
@@ -16,7 +19,6 @@ $smarty->setTemplateDir(__DIR__ . '/../templates/');
 $smarty->setCompileDir(__DIR__ . '/../templates_c/');
 $smarty->setCacheDir(__DIR__ . '/../cache/');
 $smarty->setConfigDir(__DIR__ . '/../configs/');
-$smarty->display('home.tpl');
 
 // Inizializza le fondazioni
 $fIscritto = new FIscritto($entityManager);
@@ -68,11 +70,12 @@ switch ($page) {
         $smarty->assign('iscritto', $iscritto);
         $smarty->display('iscrizione/VConfermaIscrizione.tpl');
         break;
-    */
+    */ //
 
     case 'home':
     default:
         // Pagina home generica
         $smarty->display('home.tpl');
         break;
+    
 }
