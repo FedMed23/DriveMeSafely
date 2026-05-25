@@ -17,6 +17,10 @@
 
         <form method="POST"
               action="index.php?page=inserisciDati">
+            
+            <input type="hidden" 
+                   name="page_post" 
+                   value="inserisciDati">
 
             <input type="hidden"
                    name="idPa"
