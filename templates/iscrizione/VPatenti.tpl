@@ -19,7 +19,7 @@
               action="index.php?page=inserisciDati">
             
             <input type="hidden" 
-                   name="page_post" 
+                   name="page" 
                    value="inserisciDati">
 
             <input type="hidden"
