@@ -58,6 +58,8 @@ switch ($page) {
     case 'confermaIscrizione':
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        $patente = $fPatente->getPatenteById($_POST['idPa']);
 
         $iscritto = $cIscrizione->inserisciDati([
                 'nome' => $_POST['nome'],
@@ -71,7 +73,6 @@ switch ($page) {
                 'luogoNascita' => $_POST['luogoNascita'],
                 'indirizzo' => $_POST['indirizzo'],
                 'numeroTelefono' => $_POST['numeroTelefono'],
-                $patente = $fPatente->getPatenteById($_POST['idPa']);
                 'tipoPatente' => $patente
         ]);
 
