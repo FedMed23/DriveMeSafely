@@ -10,7 +10,7 @@
 <h1>Inserisci i tuoi dati</h1>
 
 <form method="POST"
-      action="index.php?page=confermaIscrizione">
+      action="?page=confermaIscrizione">
 
     <input type="hidden"
            name="idPa"
