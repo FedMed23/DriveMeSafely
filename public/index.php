@@ -40,57 +40,53 @@ switch ($page) {
         $smarty->display('iscrizione/VPatenti.tpl');
         break;
 
-   case 'inserisciDati':
-            case 'inserisciDati':
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-        $idPa = $_POST['idPa'];
-
-        $smarty->assign('idPa', $idPa);
-
-        $smarty->display('iscrizione/VFormIscrizione.tpl');
-
-    } else {
-
-        header("Location: index.php?page=iscrizione");
-        exit;
-    }
-
-break;
-    
-    case 'confermaIscrizione':
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    case 'inserisciDati':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $idPa = $_POST['idPa'];
+            $smarty->assign('idPa', $idPa);
+            $smarty->display('iscrizione/VFormIscrizione.tpl');
+        } else {
+            header("Location: index.php?page=iscrizione");
+            exit;
+        }
+        break;
         
-        $patente = $fPatente->getPatenteById($_POST['idPa']);
+    case 'confermaIscrizione':
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            
+            // Recuperiamo la patente tramite la Foundation
+            $patente = $fPatente->getPatenteById($_POST['idPa']);
 
-        $iscritto = $cIscrizione->inserisciDati([
-                'nome' => $_POST['nome'],
-                'cognome' => $_POST['cognome'],
-                'email' => $_POST['email'],
-                'username' => $_POST['username'],
-                'password' => $_POST['password'],
-                'stato' => true,
-                'codiceFiscale' => $_POST['codiceFiscale'],
-                'dataNascita' => new DateTimeImmutable($_POST['dataNascita']), 
-                'luogoNascita' => $_POST['luogoNascita'],
-                'indirizzo' => $_POST['indirizzo'],
+            if (!$patente) {
+                throw new \Exception("Patente non trovata per l'ID specificato.");
+            }
+
+            // Il controller crea l'iscritto, associa la patente e salva nel DB
+            $iscritto = $cIscrizione->inserisciDati([
+                'nome'           => $_POST['nome'],
+                'cognome'        => $_POST['cognome'],
+                'email'          => $_POST['email'],
+                'username'       => $_POST['username'],
+                'password'       => $_POST['password'],
+                'stato'          => true,
+                'codiceFiscale'  => $_POST['codiceFiscale'],
+                'dataNascita'    => new DateTimeImmutable($_POST['dataNascita']), 
+                'luogoNascita'   => $_POST['luogoNascita'],
+                'indirizzo'      => $_POST['indirizzo'],
                 'numeroTelefono' => $_POST['numeroTelefono'],
-                'tipoPatente' => $patente
-        ]);
+                'tipoPatente'    => $patente
+            ]);
 
-        $cIscrizione->confermaDati($_POST['idPa'], $iscritto);
+            // Nota: $cIscrizione->confermaDati() è stata rimossa perché duplicava il salvataggio
 
-        $smarty->assign('iscritto', $iscritto);
-        $smarty->display('iscrizione/VConfermaIscrizione.tpl');
+            $smarty->assign('iscritto', $iscritto);
+            $smarty->display('iscrizione/VConfermaIscrizione.tpl');
 
-    } else {
-        header("Location: index.php?page=iscrizione");
-        exit;
-    }
-
-    break;
+        } else {
+            header("Location: index.php?page=iscrizione");
+            exit;
+        }
+        break;
 
     case 'home':
     default:
