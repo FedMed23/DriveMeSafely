@@ -59,12 +59,10 @@ class FPagamento
     // ---------------------- METODI PERSONALIZZATI ----------------------
 
     // Trova pagamenti di un utente
-    public function getPagamentiByUtente(EUtenteRegistrato $utente): array
-    {
-        return $this->em->getRepository(EPagamento::class)->findBy([
-            'idUtenteRegistrato' => $utente
-        ]);
-    }
+   public function getAllPagamenti(): array
+{
+    return $this->em->getRepository(EPagamento::class)->findAll();
+}
     // Trova pagamenti di un utente
     public function getPagamentiById(int $id_utente): array
 {
