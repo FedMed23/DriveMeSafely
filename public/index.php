@@ -10,7 +10,7 @@ use CamassoMedelago\DriveMeSafely\Controller\CIscrizione;
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use Smarty\Smarty;
-use DateTimeImmutable;
+use \DateTimeImmutable;
 
 // Inizializza Doctrine (configurazione esterna)
 $entityManager = require __DIR__ . "/../bootstrap.php";
