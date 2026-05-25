@@ -59,7 +59,7 @@ switch ($page) {
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        'iscritto' = $cIscrizione->inserisciDati([
+        $iscritto = $cIscrizione->inserisciDati([
                 'nome' => $_POST['nome'],
                 'cognome' => $_POST['cognome'],
                 'email' => $_POST['email'],
