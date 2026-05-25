@@ -41,36 +41,18 @@ switch ($page) {
         break;
 
    case 'inserisciDati':
-
-    if (
-        $_SERVER['REQUEST_METHOD'] === 'POST'
-        && isset($_POST['idPa'])
-    ) {
-
         $idPa = (int) $_POST['idPa'];
 
         // Recupera patente selezionata
         $patente = $cIscrizione->selezionaPatente($idPa);
-
-        // Controllo esistenza patente
-        if (!$patente) {
-            die("Patente non trovata");
-        }
 
         // Passa dati alla view
         $smarty->assign('idPa', $idPa);
 
         // Mostra form iscrizione
         $smarty->display('iscrizione/VFormIscrizione.tpl');
-
-    } else {
-
-        header("Location: index.php?page=iscrizione");
-        exit;
-
-    }
-
-break;
+        break;
+    
     case 'confermaIscrizione':
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
