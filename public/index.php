@@ -31,6 +31,10 @@ $cIscrizione = new CIscrizione($fIscritto, $fPatente);
 
 // Leggi il parametro 'page' per il routing
 $page = $_POST['page'] ?? $_GET['page'] ?? 'home';
+echo "<pre>";
+echo "PAGE: ";
+var_dump($page);
+echo "</pre>";
 
 switch ($page) {
     case 'iscrizione':
