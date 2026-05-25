@@ -10,7 +10,7 @@ use CamassoMedelago\DriveMeSafely\Controller\CIscrizione;
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use Smarty\Smarty;
-use \DateTimeImmutable;
+use DateTimeImmutable;
 
 // Inizializza Doctrine (configurazione esterna)
 $entityManager = require __DIR__ . "/../bootstrap.php";
@@ -41,17 +41,31 @@ switch ($page) {
         break;
 
    case 'inserisciDati':
-            echo "<pre>";
-        
-            echo "REQUEST METHOD:\n";
-            var_dump($_SERVER['REQUEST_METHOD']);
-        
-            echo "\nPOST:\n";
-            var_dump($_POST);
-        
-            echo "</pre>";
-        
-            die();
+            if ($_SERVER['REQUEST_METHOD'] === 'POST'
+        && isset($_POST['idPa'])
+    ) {
+
+        $idPa = (int) $_POST['idPa'];
+
+        // Recupera patente selezionata
+        $patente = $cIscrizione->selezionaPatente($idPa);
+
+        // Controllo esistenza patente
+        if (!$patente) {
+            die("Patente non trovata");
+        }
+
+        // Passa dati alla view
+        $smarty->assign('idPa', $idPa);
+
+        // Mostra form iscrizione
+        $smarty->display('iscrizione/VFormIscrizione.tpl');
+
+    } else {
+        header("Location: index.php?page=iscrizione");
+        exit;
+
+    }
         break;
     
     case 'confermaIscrizione':
