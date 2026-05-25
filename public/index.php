@@ -59,7 +59,6 @@ switch ($page) {
 
         // Passa dati alla view
         $smarty->assign('idPa', $idPa);
-        $smarty->assign('patente', $patente);
 
         // Mostra form iscrizione
         $smarty->display('iscrizione/VFormIscrizione.tpl');
