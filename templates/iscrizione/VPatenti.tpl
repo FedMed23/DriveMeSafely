@@ -16,7 +16,7 @@
         <h3>Patente {$patente->getTipo()}</h3>
 
         <form method="POST"
-              action="index.php?page=inserisciDati">
+              action="?page=inserisciDati">
 
             <input type="hidden"
                    name="idPa"
