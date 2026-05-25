@@ -71,7 +71,8 @@ switch ($page) {
                 'luogoNascita' => $_POST['luogoNascita'],
                 'indirizzo' => $_POST['indirizzo'],
                 'numeroTelefono' => $_POST['numeroTelefono'],
-                'tipoPatente' => null
+                $patente = $fPatente->getPatenteById($_POST['idPa']);
+                'tipoPatente' => $patente
         ]);
 
         $cIscrizione->confermaDati($_POST['idPa'], $iscritto);
