@@ -41,16 +41,17 @@ switch ($page) {
         break;
 
    case 'inserisciDati':
-        $idPa = (int) $_POST['idPa'];
-
-        // Recupera patente selezionata
-        $patente = $cIscrizione->selezionaPatente($idPa);
-
-        // Passa dati alla view
-        $smarty->assign('idPa', $idPa);
-
-        // Mostra form iscrizione
-        $smarty->display('iscrizione/VFormIscrizione.tpl');
+            echo "<pre>";
+        
+            echo "REQUEST METHOD:\n";
+            var_dump($_SERVER['REQUEST_METHOD']);
+        
+            echo "\nPOST:\n";
+            var_dump($_POST);
+        
+            echo "</pre>";
+        
+            die();
         break;
     
     case 'confermaIscrizione':
