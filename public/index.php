@@ -30,7 +30,7 @@ $fPatente = new FPatente($entityManager);
 $cIscrizione = new CIscrizione($fIscritto, $fPatente);
 
 // Leggi il parametro 'page' per il routing
-$page = $_GET['page'] ?? 'home';
+$page = $_POST['page_post'] ?? $_GET['page'] ?? 'home';
 
 switch ($page) {
     case 'iscrizione':
