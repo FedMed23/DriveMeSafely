@@ -41,12 +41,16 @@ switch ($page) {
         break;
 
     case 'inserisciDati':
-        $idPa = $_POST['idPa'] ?? $_GET['idPa'] ?? 1; // Un ID di fallback per non far rompere Smarty
+                if ($method === 'POST') {
+                        $idPa = $_POST['idPa'];
+                        $smarty->assign('idPa', $idPa);
+                        $smarty->display('iscrizione/VFormIscrizione.tpl');
         
-        $smarty->assign('idPa', $idPa);
-        $smarty->display('iscrizione/VFormIscrizione.tpl');
-        break;
-        
+                } else {
+                    header("Location: index.php?page=iscrizione");
+                    exit;
+                }
+                break;
     case 'confermaIscrizione':
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
