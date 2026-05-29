@@ -92,12 +92,10 @@ switch ($page) {
         }
         break;
 
-    case 'home':
-    default:
+   case 'home':
+   default:
         // Pagina home generica
         $smarty->display('home.tpl');
         break;
-    
-
-}
+    }
 
