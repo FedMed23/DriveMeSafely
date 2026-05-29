@@ -3,6 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+die("INDEX FUNZIONA");
+
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -31,10 +33,6 @@ $cIscrizione = new CIscrizione($fIscritto, $fPatente);
 
 // Leggi il parametro 'page' per il routing
 $page = $_POST['page'] ?? $_GET['page'] ?? 'home';
-echo "<pre>";
-echo "PAGE: ";
-var_dump($page);
-echo "</pre>";
 
 switch ($page) {
     case 'iscrizione':
