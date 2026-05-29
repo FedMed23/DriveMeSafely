@@ -97,5 +97,5 @@ switch ($page) {
         // Pagina home generica
         $smarty->display('home.tpl');
         break;
-    }
+}
 
