@@ -2,527 +2,364 @@
 
 namespace CamassoMedelago\DriveMeSafely\Controller;
 
-use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
-use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
-use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
-use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
-use CamassoMedelago\DriveMeSafely\Entity\EPatente;
-use CamassoMedelago\DriveMeSafely\DTO\DPacchettoPatente;
-use DateTimeImmutable;
+use CamassoMedelago\DriveMeSafely\Service\SIscrizione;
+use CamassoMedelago\DriveMeSafely\View\VIscrizione;
+use CamassoMedelago\DriveMeSafely\Utils\PasswordUtil;
 
 class CIscrizione
 {
-    private FIscritto $fIscritto;
-    private FPatente $fPatente;
-    private FSpesa $fSpesa;
+    private SIscrizione $service;
+    private VIscrizione $view;
 
     public function __construct(
-        FIscritto $fIscritto,
-        FPatente $fPatente,
-        FSpesa $fSpesa
+        SIscrizione $service,
+        VIscrizione $view
     ) {
-        $this->fIscritto = $fIscritto;
-        $this->fPatente = $fPatente;
-        $this->fSpesa = $fSpesa;
+        $this->service = $service;
+        $this->view = $view;
     }
-
-    /*
-     * ============================================================
-     * 1. VISUALIZZAZIONE PACCHETTI PATENTE
-     * ============================================================
-     */
-
     /**
-     * Restituisce tutti i pacchetti patente disponibili.
+     * Gestisce il caso d'uso dell'iscrizione.
      *
-     * Per ogni patente vengono recuperate le relative spese
-     * e viene calcolato il costo totale del pacchetto.
+     * In base al metodo HTTP ricevuto:
      *
-     * @return DPacchettoPatente[]
+     * GET  -> visualizzazione pacchetti / dettaglio / form
+     * POST -> elaborazione del form di iscrizione
      */
-    public function getPatenti(): array
+    public function iscrizione(): void
     {
-        $patenti = $this->fPatente->getAllPatenti();
+        switch ($_SERVER['REQUEST_METHOD']) {
 
-        $pacchetti = [];
+            case 'GET':
+                $this->get();
+                break;
 
-        foreach ($patenti as $patente) {
+            case 'POST':
+                $this->post();
+                break;
 
-            $spese = $this->fSpesa->getSpeseByPatente(
-                $patente->getId()
-            );
+            default:
+                http_response_code(405);
+                $this->view->showError(
+                    "Metodo HTTP non supportato.",
+                    405
+                );
+                break;
+        }
+    }
+    /**
+     * Gestisce tutte le richieste GET relative all'iscrizione.
+     *
+     * Possibili situazioni:
+     *
+     * 1. GET senza idPa
+     *    -> visualizza tutti i pacchetti patente
+     *
+     * 2. GET con idPa
+     *    -> visualizza il dettaglio del pacchetto selezionato
+     *
+     * 3. GET con idPa e parametro form
+     *    -> visualizza il form di iscrizione
+     */
+    private function get(): void
+    {
+        try {
 
-            $importoTotale = 0.0;
+            $idPaParam = $_GET['idPa'] ?? null;
 
-            foreach ($spese as $spesa) {
-                $importoTotale += (float)$spesa->getImporto();
+
+            /*
+             * ---------------------------------------------------------
+             * CASO 1
+             * Nessun pacchetto selezionato.
+             *
+             * Equivalente alla PacchettiPatentiServlet:
+             *
+             * service.getPatenti()
+             * ---------------------------------------------------------
+             */
+
+            if ($idPaParam === null || trim($idPaParam) === '') {
+                $pacchetti = $this->service->getPatenti();
+                $this->view->showPacchetti($pacchetti);
+                return;
+            }
+            /*
+             * ---------------------------------------------------------
+             * Controllo dell'id della patente
+             * ---------------------------------------------------------
+             */
+
+            if (!ctype_digit((string) $idPaParam)) {
+                $this->view->showError(
+                    "Identificativo patente non valido.",
+                    400
+                );
+                return;
+            }
+            $idPa = (int) $idPaParam;
+
+
+            /*
+             * ---------------------------------------------------------
+             * CASO 2 / 3
+             *
+             * Recuperiamo il pacchetto selezionato.
+             * ---------------------------------------------------------
+             */
+            $pacchetto = $this->service->getPacchetto($idPa);
+            if ($pacchetto === null) {
+                $this->view->showError(
+                    "Pacchetto non trovato.",
+                    404
+                );
+                return;
+            }
+            /*
+             * ---------------------------------------------------------
+             * CASO 3
+             *
+             * Se è stato richiesto il form di iscrizione,
+             * visualizziamo il form passando il pacchetto.
+             *
+             * Esempio:
+             *
+             * /iscrizione?idPa=1&form=1
+             * ---------------------------------------------------------
+             */
+            if (isset($_GET['form'])) {
+                $this->view->showFormIscrizione($pacchetto);
+                return;
             }
 
-            $pacchetti[] = new DPacchettoPatente(
-                $patente,
-                $spese,
-                $importoTotale
-            );
-        }
+            /*
+             * ---------------------------------------------------------
+             * CASO 2
+             *
+             * Nessun parametro "form":
+             * mostriamo il dettaglio del pacchetto.
+             * ---------------------------------------------------------
+             */
 
-        return $pacchetti;
+            $this->view->showDettaglioPacchetto($pacchetto);
+
+        } catch (\InvalidArgumentException $e) {
+
+            $this->view->showError( $e->getMessage(),  400 );
+  
+        } catch (\RuntimeException $e) {
+
+            $this->view->showError( $e->getMessage(), 404  );
+        
+        } catch (\Exception $e) {
+
+            $this->view->showError( "Si è verificato un errore durante il recupero dei dati.",  500 );
+         
+        }
     }
 
-
-    /*
-     * ============================================================
-     * 2. SELEZIONE PACCHETTO
-     * ============================================================
-     */
-
     /**
-     * Restituisce il pacchetto patente selezionato.
-     */
-    public function getPacchetto(int $idPatente): DPacchettoPatente
-    {
-        if ($idPatente <= 0) {
-            throw new \InvalidArgumentException(
-                "Non è stato selezionato un pacchetto valido."
-            );
-        }
-
-        $patente = $this->fPatente->getPatenteById($idPatente);
-
-        if ($patente === null) {
-            throw new \RuntimeException(
-                "Pacchetto patente non trovato a sistema."
-            );
-        }
-
-        $spese = $this->fSpesa->getSpeseByPatente(
-            $patente->getId()
-        );
-
-        $importoTotale = 0.0;
-
-        foreach ($spese as $spesa) {
-            $importoTotale += (float)$spesa->getImporto();
-        }
-
-        return new DPacchettoPatente(
-            $patente,
-            $spese,
-            $importoTotale
-        );
-    }
-
-
-    /*
-     * ============================================================
-     * 3. ISCRIZIONE
-     * ============================================================
-     */
-
-    /**
-     * Valida i dati inseriti e crea l'entità EIscritto.
+     * Gestisce il POST del form di iscrizione.
      *
-     * ATTENZIONE:
-     * questo metodo NON salva ancora l'iscritto.
+     * Legge esclusivamente i dati della HTTP request,
+     * li normalizza e li passa al Service.
      *
-     * Il salvataggio avviene solamente con
-     * confermaIscrizione().
+     * La business logic rimane nel Service.
      */
-    public function iscrizione(
-        int $idPa,
-        string $nome,
-        string $cognome,
-        string $username,
-        string $email,
-        string $password,
-        string $codiceFiscale,
-        string $indirizzo,
-        string $luogoNascita,
-        DateTimeImmutable $dataNascita,
-        string $telefono
-    ): EIscritto {
-
-        /*
-         * --------------------------------------------------------
-         * Patente
-         * --------------------------------------------------------
-         */
-
-        if ($idPa <= 0) {
-            throw new \InvalidArgumentException(
-                "Non è stato selezionato un pacchetto valido."
-            );
-        }
-
-        $patente = $this->fPatente->getPatenteById($idPa);
-
-        if ($patente === null) {
-            throw new \InvalidArgumentException(
-                "Patente non trovata."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Nome
-         * --------------------------------------------------------
-         */
-
-        if (trim($nome) === '') {
-            throw new \InvalidArgumentException(
-                "Il nome non può essere nullo o vuoto."
-            );
-        }
-
-        $nomePulito = trim($nome);
-
-        if (!$this->isNomeValido($nomePulito)) {
-            throw new \InvalidArgumentException(
-                "Nome non valido."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Cognome
-         * --------------------------------------------------------
-         */
-
-        if (trim($cognome) === '') {
-            throw new \InvalidArgumentException(
-                "Il cognome non può essere nullo o vuoto."
-            );
-        }
-
-        $cognomePulito = trim($cognome);
-
-        if (!$this->isNomeValido($cognomePulito)) {
-            throw new \InvalidArgumentException(
-                "Cognome non valido."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Data di nascita
-         * --------------------------------------------------------
-         */
-
-        if (!$this->isDataValida($dataNascita)) {
-            throw new \InvalidArgumentException(
-                "Data di nascita non valida."
-            );
-        }
-
-        if (!$this->isIdoneoPatente($dataNascita)) {
-            throw new \InvalidArgumentException(
-                "Iscrizione non valida: l'età minima per l'iscrizione è 16 anni."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Codice fiscale
-         * --------------------------------------------------------
-         */
-
-        if (trim($codiceFiscale) === '') {
-            throw new \InvalidArgumentException(
-                "Il codice fiscale non può essere nullo o vuoto."
-            );
-        }
-
-        $cf = strtoupper(trim($codiceFiscale));
-
-        if (!$this->isCodiceFiscaleValido($cf)) {
-            throw new \InvalidArgumentException(
-                "Codice fiscale non valido."
-            );
-        }
-
-        if ($this->fIscritto->existsByCF($cf)) {
-            throw new \RuntimeException(
-                "Il Codice Fiscale inserito è già associato a un allievo."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Username
-         * --------------------------------------------------------
-         */
-
-        if (trim($username) === '') {
-            throw new \InvalidArgumentException(
-                "Lo username non può essere nullo o vuoto."
-            );
-        }
-
-        $usernamePulito = trim($username);
-
-        if ($this->fIscritto->findByUsername($usernamePulito) !== null) {
-            throw new \RuntimeException(
-                "Username non valido o già utilizzato."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Password
-         * --------------------------------------------------------
-         */
-
-        if (trim($password) === '') {
-            throw new \InvalidArgumentException(
-                "La password non può essere nulla o vuota."
-            );
-        }
-
-        if (!$this->isPasswordValida($password)) {
-            throw new \InvalidArgumentException(
-                "La password deve contenere almeno 8 caratteri, "
-                . "una maiuscola, una minuscola, un numero "
-                . "e un carattere speciale."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Telefono
-         * --------------------------------------------------------
-         */
-
-        if (trim($telefono) === '') {
-            throw new \InvalidArgumentException(
-                "Il numero di telefono non può essere nullo."
-            );
-        }
-
-        $telefonoPulito = trim($telefono);
-
-        if (!$this->isTelefonoValido($telefonoPulito)) {
-            throw new \InvalidArgumentException(
-                "Numero di telefono non valido."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Email
-         * --------------------------------------------------------
-         */
-
-        if (trim($email) === '') {
-            throw new \InvalidArgumentException(
-                "L'email non può essere nulla o vuota."
-            );
-        }
-
-        $emailPulita = strtolower(trim($email));
-
-        if (!$this->isEmailValida($emailPulita)) {
-            throw new \InvalidArgumentException(
-                "Email non valida."
-            );
-        }
-
-        if ($this->fIscritto->findByEmail($emailPulita) !== null) {
-            throw new \RuntimeException(
-                "L'email inserita è già associata a un allievo."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Indirizzo
-         * --------------------------------------------------------
-         */
-
-        if (trim($indirizzo) === '') {
-            throw new \InvalidArgumentException(
-                "L'indirizzo non può essere nullo o vuoto."
-            );
-        }
-
-        $indirizzoPulito = trim($indirizzo);
-
-        if (!$this->isIndirizzoValido($indirizzoPulito)) {
-            throw new \InvalidArgumentException(
-                "Indirizzo non valido."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Luogo di nascita
-         * --------------------------------------------------------
-         */
-
-        if (trim($luogoNascita) === '') {
-            throw new \InvalidArgumentException(
-                "Il luogo di nascita non può essere nullo o vuoto."
-            );
-        }
-
-        $luogoNascitaPulito = trim($luogoNascita);
-
-        if (!$this->isLuogoNascitaValido($luogoNascitaPulito)) {
-            throw new \InvalidArgumentException(
-                "Luogo di nascita non valido."
-            );
-        }
-
-
-        /*
-         * --------------------------------------------------------
-         * Creazione dell'entità
-         * --------------------------------------------------------
-         */
-
-        $iscritto = new EIscritto(
-            $nomePulito,
-            $cognomePulito,
-            $emailPulita,
-            $usernamePulito,
-            $password,
-            true,
-            $cf,
-            $dataNascita,
-            $luogoNascitaPulito,
-            $indirizzoPulito,
-            $telefonoPulito,
-            $patente
-        );
-
-        return $iscritto;
-    }
-
-
-    /*
-     * ============================================================
-     * 4. CONFERMA ISCRIZIONE
-     * ============================================================
-     */
-
-    /**
-     * Salva definitivamente l'iscritto nel database.
-     */
-    public function confermaIscrizione(EIscritto $iscritto): void
+    private function post(): void
     {
-        $this->fIscritto->save($iscritto);
-    }
+        try {
+            /*
+             * ---------------------------------------------------------
+             * Recupero ID patente
+             * ---------------------------------------------------------
+             */
+
+            $idPaParam = $_POST['idPa'] ?? null;
+
+            if (
+                $idPaParam === null ||
+                !ctype_digit((string) $idPaParam)
+            ) {
+                throw new \InvalidArgumentException(
+                    "Patente selezionata non valida."
+                );
+            }
+
+            $idPa = (int) $idPaParam;
 
 
-    /*
-     * ============================================================
-     * 5. METODI DI VALIDAZIONE
-     * ============================================================
-     */
+            /*
+             * ---------------------------------------------------------
+             * Recupero dati account
+             * ---------------------------------------------------------
+             */
 
-    private function isNomeValido(string $valore): bool
-    {
-        return mb_strlen($valore) >= 2
-            && mb_strlen($valore) <= 50
-            && preg_match(
-                "/^[\p{L}' -]+$/u",
-                $valore
-            );
-    }
+            $username = $_POST['username'] ?? null;
+            $email = $_POST['email'] ?? null;
+            $password = $_POST['password'] ?? null;
 
 
-    private function isIdoneoPatente(
-        DateTimeImmutable $data
-    ): bool {
-        $dataMinima = new DateTimeImmutable(
-            '-16 years'
-        );
+            /*
+             * ---------------------------------------------------------
+             * Recupero dati anagrafici
+             * ---------------------------------------------------------
+             */
 
-        return $data <= $dataMinima;
-    }
+            $nome = $_POST['nome'] ?? null;
+            $cognome = $_POST['cognome'] ?? null;
+            $cf = $_POST['codiceFiscale'] ?? null;
+            $dataNascitaParam = $_POST['dataNascita'] ?? null;
+            $luogoNascita = $_POST['luogoNascita'] ?? null;
+            $indirizzo = $_POST['indirizzo'] ?? null;
+            $telefono = $_POST['telefono'] ?? null;
 
 
-    private function isDataValida(
-        DateTimeImmutable $data
-    ): bool {
-        $oggi = new DateTimeImmutable('today');
+            /*
+             * ---------------------------------------------------------
+             * Normalizzazione dei dati
+             *
+             * Il controller si occupa della rappresentazione HTTP.
+             * ---------------------------------------------------------
+             */
 
-        return $data <= $oggi;
-    }
+            $username = $username !== null ? trim($username) : null;
+            $email = $email !== null ? strtolower(trim($email)): null; 
+            $nome = $nome !== null ? trim($nome) : null;
+            $cognome = $cognome !== null ? trim($cognome)  : null;
+            $cf = $cf !== null ? strtoupper(trim($cf)): null;
+            $luogoNascita = $luogoNascita !== null
+                ? trim($luogoNascita)
+                : null;
+            $indirizzo = $indirizzo !== null
+                ? trim($indirizzo)
+                : null;
+            $telefono = $telefono !== null
+                ? trim($telefono)
+                : null;
 
-    private function isTelefonoValido(
-        string $telefono
-    ): bool {
-        return strlen($telefono) >= 9
-            && strlen($telefono) <= 15
-            && preg_match(
-                '/^\+?[0-9 ]+$/',
+
+            /*
+             * ---------------------------------------------------------
+             * Conversione data di nascita
+             * ---------------------------------------------------------
+             */
+
+            if (
+                $dataNascitaParam === null ||
+                trim($dataNascitaParam) === ''
+            ) {
+                throw new \InvalidArgumentException(
+                    "Data di nascita non valida."
+                );
+            }
+
+            try {
+                $dataNascita = new \DateTimeImmutable(
+                    $dataNascitaParam
+                );
+
+            } catch (\Exception $e) {
+
+                throw new \InvalidArgumentException(
+                    "Data di nascita non valida."
+                );
+            }
+            $password_hash = PasswordUtil::hashPassword($password);
+
+            /*
+             * ---------------------------------------------------------
+             * BUSINESS LOGIC
+             *
+             * Tutta la logica dell'iscrizione viene delegata
+             * al Service.
+             * ---------------------------------------------------------
+             */
+
+            $iscritto = $this->service->iscrizione(
+                $idPa,
+                $nome,
+                $cognome,
+                $username,
+                $email,
+                $password_hash,
+                $cf,
+                $indirizzo,
+                $luogoNascita,
+                $dataNascita,
                 $telefono
             );
-    }
 
-    private function isCodiceFiscaleValido(
-        string $cf
-    ): bool {
-        return preg_match(
-            '/^[A-Z0-9]{16}$/',
-            $cf
-        );
-    }
-
-    private function isEmailValida(
-        string $email
-    ): bool {
-        return strlen($email) <= 100
-            && filter_var(
-                $email,
-                FILTER_VALIDATE_EMAIL
-            ) !== false;
-    }
-
-    private function isIndirizzoValido(
-        string $indirizzo
-    ): bool {
-        return mb_strlen($indirizzo) >= 5
-            && mb_strlen($indirizzo) <= 100
-            && preg_match(
-                "/^[\p{L}\p{N} .,'\/\-]+$/u",
-                $indirizzo
+            /*
+             * ---------------------------------------------------------
+             * Salvataggio definitivo
+             * ---------------------------------------------------------
+             */
+            $this->service->confermaIscrizione(
+                $iscritto
             );
-    }
 
-    private function isLuogoNascitaValido(
-        string $luogo
-    ): bool {
-        return mb_strlen($luogo) >= 2
-            && mb_strlen($luogo) <= 100
-            && preg_match(
-                "/^[\p{L} .'-]+$/u",
-                $luogo
+            /*
+             * ---------------------------------------------------------
+             * LOGIN AUTOMATICO
+             * ---------------------------------------------------------
+             */
+
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            $_SESSION['utenteLoggato'] = $iscritto;
+            
+            /*
+             * ---------------------------------------------------------
+             * REDIRECT ALLA HOME
+             *
+             * Per ora lasciamo il redirect relativo.
+             * Lo sistemeremo definitivamente quando configureremo
+             * FCFrontController e il routing.
+             * ---------------------------------------------------------
+             */
+
+            header('Location: /DriveMeSafely/public/');
+            exit;
+
+
+        } catch (\InvalidArgumentException $e) {
+
+            /*
+             * Errore nei dati inseriti dall'utente.
+             */
+            $this->view->showFormError(
+                $e->getMessage()
             );
-    }
 
-    private function isPasswordValida(
-        string $password
-    ): bool {
-        if (
-            strlen($password) < 8 ||
-            strlen($password) > 64
-        ) {
-            return false;
+        } catch (\RuntimeException $e) {
+
+            /*
+             * Errore generato dalla business logic.
+             *
+             * Esempi:
+             *
+             * - username già utilizzato
+             * - email già utilizzata
+             * - codice fiscale già presente
+             * - patente inesistente
+             * - età non sufficiente
+             * - password non valida
+             */
+            $this->view->showFormError(
+                $e->getMessage()
+            );
+
+        } catch (\Exception $e) {
+
+            /*
+             * Errore inatteso.
+             */
+            $this->view->showError(
+                "Si è verificato un errore durante l'iscrizione.",
+                500
+            );
         }
-
-        return preg_match('/[A-Z]/', $password)
-            && preg_match('/[a-z]/', $password)
-            && preg_match('/[0-9]/', $password)
-            && preg_match('/[^A-Za-z0-9]/', $password);
     }
 }
