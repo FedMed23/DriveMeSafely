@@ -1,82 +1,50 @@
 <?php
-// src/Foundation/FIscritto.php
-
 namespace CamassoMedelago\DriveMeSafely\Foundation;
-
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
-use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use Doctrine\ORM\EntityManagerInterface;
-
-class FIscritto
+class FIscritto extends FGeneric
 {
     private EntityManagerInterface $em;
 
-    // Costruttore
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
-
-    // ---------------------- SALVATAGGIO ----------------------
-    public function save(EIscritto $iscritto): void
+    public function findById(int $id): ?EIscritto
     {
-        $this->em->persist($iscritto);
-        $this->em->flush();
+        return $this->em->find(EIscritto::class, $id);
     }
-
-    // ---------------------- LETTURA ----------------------
-    // Recupera per ID
-    public function getIscrittoById(int $id): ?EIscritto
+    public function findByUsername(string $username): ?EIscritto
     {
-        return $this->em->getRepository(EIscritto::class)->find($id);
+        $utenti = $this->em->getRepository(EIscritto::class)->findBy([
+            'username' => $username
+        ]);
+        return empty($utenti) ? null : $utenti[0];
     }
-
-    // Recupera tutti gli iscritti
-    public function getAllIscritti(): array
+    public function findByEmail(string $email): ?EIscritto
     {
-        return $this->em->getRepository(EIscritto::class)->findAll();
+        $utenti = $this->em->getRepository(EIscritto::class)->findBy([
+            'email' => $email
+        ]);
+        return empty($utenti) ? null : $utenti[0];
     }
-
-    // ---------------------- AGGIORNAMENTO ----------------------
-    public function update(EIscritto $iscritto): void
+    public function findAttivi(): array
     {
-        $this->em->flush();
+        return $this->em->getRepository(EIscritto::class)->findBy([
+            'stato' => true
+        ]);
     }
-
-    // ---------------------- ELIMINAZIONE ----------------------
-    public function delete(EIscritto $iscritto): void
-    {
-        $this->em->remove($iscritto);
-        $this->em->flush();
-    }
-
-    // ---------------------- METODI PERSONALIZZATI ----------------------
-
-    // Trova per codice fiscale (molto importante!)
-    public function getByCodiceFiscale(string $cf): ?EIscritto
+    public function findByCF(string $cf): ?EIscritto
     {
         return $this->em->getRepository(EIscritto::class)->findOneBy([
             'codiceFiscale' => $cf
         ]);
     }
-
-    // Trova iscritti per tipo di patente
-    public function getByPatente(EPatente $patente): array
+    public function existsByCF(string $cf): bool
     {
-        return $this->em->getRepository(EIscritto::class)->findBy([
-            'tipoPatente' => $patente
+        $utenti = $this->em->getRepository(EIscritto::class)->findBy([
+            'codiceFiscale' => $cf
         ]);
-    }
-
-    // Cerca per cognome
-    public function getByCognome(string $cognome): array
-    {
-        return $this->em->getRepository(EIscritto::class)
-            ->createQueryBuilder('i')
-            ->where('i.cognome LIKE :cognome')
-            ->setParameter('cognome', '%' . $cognome . '%')
-            ->getQuery()
-            ->getResult();
+        return count($utenti) > 0;
     }
 }
-?>
