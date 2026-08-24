@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../StartSmarty.php';
+require_once __DIR__ . '/../Smarty/StartSmarty.php';
 
 if (Installation::verificaInstallazione()) {
     $fcontroller = new CFrontController();
