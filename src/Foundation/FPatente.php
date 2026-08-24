@@ -5,7 +5,7 @@ use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 
-class FPatente extends FGeneric
+class FPatente 
 {
     private EntityManagerInterface $em;
 
