@@ -10,7 +10,7 @@ class VIscrizione
 
     public function __construct()
     {
-        $this->smarty = $smarty;
+        $this->smarty = Smarty::configuration();
     }
 
     /**
