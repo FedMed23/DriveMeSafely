@@ -40,15 +40,13 @@ class SIscrizione
      */
     public function getPatenti(): array
     {
-        $patenti = $this->fPatente->getAllPatenti();
+        $patenti = $this->fPatente->findPacchettiPatenti();
 
         $pacchetti = [];
 
         foreach ($patenti as $patente) {
 
-            $spese = $this->fSpesa->getSpeseByPatente(
-                $patente->getId()
-            );
+            $spese = $patente->getSpese();
 
             $importoTotale = 0.0;
 
@@ -92,9 +90,7 @@ class SIscrizione
             );
         }
 
-        $spese = $this->fSpesa->getSpeseByPatente(
-            $patente->getId()
-        );
+        $spese = $this->patente->getSpese();
 
         $importoTotale = 0.0;
 
@@ -410,9 +406,21 @@ class SIscrizione
     /**
      * Salva definitivamente l'iscritto nel database.
      */
+        /**
+     * Esegue il salvataggio in modo atomico (Stile esplicito).
+     */
     public function confermaIscrizione(EIscritto $iscritto): void
     {
-        $this->fIscritto->save($iscritto);
+        $this->em->beginTransaction();
+        try {
+            $this->fIscritto->save($iscritto);
+            $this->em->commit();
+            
+        } catch (\Throwable $e) {
+           
+            $this->em->rollback();
+            throw $e; 
+        }
     }
 
 
