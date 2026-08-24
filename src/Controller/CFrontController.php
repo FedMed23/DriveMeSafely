@@ -1,18 +1,13 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Controller;
 
-use CamassoMedelago\DriveMeSafely\Service\SIscrizione;
-use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
-use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
-use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
-use CamassoMedelago\DriveMeSafely\Controller\CIscrizione; // <--- AGGIUNTO IMPORT MANCANTE
 use Doctrine\ORM\EntityManagerInterface;
 
 class CFrontController
 {
     private EntityManagerInterface $em;
 
-    // Passiamo l'EntityManager tramite il costruttore
+    // 1. Il Front Controller riceve l'EntityManager dal file index.php principale
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -31,7 +26,7 @@ class CFrontController
             $resource = substr($resource, strlen($basePath));
         }
         
-        // Pulisce gli slash ai lati (es: "/home/iscrizione/" diventa "home/iscrizione")
+        // Pulisce gli slash ai lati
         $resource = trim($resource, '/');
 
         if ($resource === '') {
@@ -39,57 +34,32 @@ class CFrontController
         }
         
         $parts = explode('/', $resource);
-    
-        // Rotte principali sotto "home" (es. /home/iscrizione)
-        if (count($parts) >= 2 && $parts[0] === 'home') {
-            switch ($parts[1]) {
-                case 'pacchetti_patenti':
-                    $this->CIscrizione::getPatenti();
-                    return;
-                case 'dettaglio_pacchetto':
-                    $this->CIscrizione::getPatente();
-                    return;
-                case 'iscrizione':
-                    $this->gestisciIscrizione($method);
-                    return;
+        $route = $parts[0]; 
+
+        $controllerName = "C" . ucfirst($route);
+        $controllerClass = "CamassoMedelago\\DriveMeSafely\\Controller\\" . $controllerName;
+
+        // Directory fisica dei controller per il controllo di sicurezza
+        $dir = __DIR__; 
+        $eledir = scandir($dir);
+
+        // Controlla se la classe del controller esiste fisicamente sul disco
+        if (in_array($controllerName . ".php", $eledir)) {
+            $mainMethod = $route; 
+                
+            // SOLUZIONE: Passiamo l'EntityManager al costruttore del controller!
+            $controllerInstance = new $controllerClass($this->em);
+                
+            if (method_exists($controllerInstance, $mainMethod)) {
+                $controllerInstance->$mainMethod();
+                return;
             }
-        }
-        
-        // Rotta per la pagina principale (es. /home o indirizzo radice)
-        if (count($parts) === 1 && $parts[0] === 'home') {
-            this->CHome($em);
-            echo "Benvenuto nella Home Page!";
-            return;
-        }
+        } // <--- Sistemata la graffa mancante qui!
 
         // Risposta standard se nessuna rotta coincide
         http_response_code(404);
         echo 'Pagina non trovata.';
     }
-
-
-    private function gestisciPacchettiPatenti(string $method): void
-    {
-        if ($method !== 'GET') {
-            http_response_code(405);
-            echo 'Metodo HTTP non consentito.';
-            return;
-        }
-        $this->getCIscrizione()->pacchetti();
-    }
-
-    private function gestisciIscrizione(string $method): void
-    {
-        $controller = $this->getCIscrizione();
-        if ($method === 'GET') {
-            $controller->formIscrizione();
-            return;
-        }
-        if ($method === 'POST') {
-            $controller->iscrivi();
-            return;
-        }
-        http_response_code(405);
-        echo 'Metodo HTTP non consentito.';
-    }
 }
+
+        
