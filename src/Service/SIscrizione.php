@@ -1,5 +1,7 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Service;
+
+use Doctrine\ORM\EntityManagerInterface; 
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
@@ -17,9 +19,9 @@ class SIscrizione
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
-        $this->fIscritto = $fIscritto;
-        $this->fPatente = $fPatente;
-        $this->fSpesa = $fSpesa;
+        $this->fIscritto = new FIscritto($em);
+        $this->fPatente  = new FPatente($em);
+        $this->fSpesa    = new FSpesa($em);
     }
 
     /*
