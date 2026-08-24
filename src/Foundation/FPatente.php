@@ -53,13 +53,13 @@ class FPatente
             )->setParameter('idPa', $idPa)
              ->getOneOrNullResult();
     }
-    public function findPacchettiPatenti(): array
-    {
-        return $this->em->createQuery(
-            'SELECT DISTINCT p
-             FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p
-             LEFT JOIN p.spese
-             ORDER BY p.tipo ASC'
-        )->getResult();
-    }
+        public function findPacchettiPatenti(): array
+        {
+            return $this->em->createQuery(
+                'SELECT DISTINCT p, s 
+                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p
+                 LEFT JOIN p.spese s
+                 ORDER BY p.tipo ASC'
+            )->getResult();
+        }
 }
