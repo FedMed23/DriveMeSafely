@@ -8,13 +8,13 @@ use CamassoMedelago\DriveMeSafely\Utils\PasswordUtil;
 
 class CIscrizione
 {
+    private EntityManager $em;
     private SIscrizione $service;
     private VIscrizione $view;
 
-    public function __construct(
-        SIscrizione $service,
-        VIscrizione $view
+    public function __construct(EntityManager $em
     ) {
+        $this->em = $em;
         $this->service = $service;
         $this->view = $view;
     }
