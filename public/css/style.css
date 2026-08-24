@@ -1,0 +1,177 @@
+/* 
+    Created on : 24 lug 2026, 12:05:55
+    Author     : federica
+    #5397db celeste principale
+    #042d52 blu scuro hero
+*/
+
+/* Reset e impostazioni di base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif; /* Font leggermente più moderno di Arial semplice */
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* Header e Navigazione */
+header {
+    background-color: #5397db;
+    color: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: opacity 0.2s ease;
+}
+
+nav ul li a:hover {
+    opacity: 0.8; /* Sbiadisce leggermente al passaggio del mouse */
+}
+
+/* Sezione Hero principale */
+.hero {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #042d52;
+    color: white;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+    opacity: 0.9;
+}
+
+/* Griglia dei Servizi (Cards) */
+.servizi {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.servizi h2 {
+    margin-bottom: 40px;
+    color: #042d52;
+}
+
+.cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Spazio fisso e uniforme tra le card */
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Permette alle card di andare a capo sugli schermi piccoli */
+}
+
+.card {
+    background: white;
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    flex: 1;
+    min-width: 280px; /* Impedisce alle card di stringersi troppo */
+    max-width: 350px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Effetto sollevamento quando si passa sopra la card */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+    color: #5397db;
+    margin-top: 0;
+}
+
+/* Componente Calendario Gestionale */
+.calendar {
+    max-width: 1000px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ------------------------------------------------ */
+/* AGGIUNTI: SISTEMA DEI BOTTONI (Mancavano nel CSS) */
+/* ------------------------------------------------ */
+.btn {
+    display: inline-block;
+    background-color: #5397db;
+    color: white !important; /* Forza il colore bianco anche dentro la nav */
+    padding: 10px 22px;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn:hover {
+    background-color: #3b7fc2; /* Scurisce il celeste al passaggio */
+    opacity: 1 !important;
+}
+
+.btn:active {
+    transform: scale(0.98); /* Effetto clic pressione haptica */
+}
+
+/* Bottone Alternativo Arancione (per i Quiz / Evidenze nell'Hero) */
+.btn-alt {
+    background-color: #eb7f0c;
+}
+
+.btn-alt:hover {
+    background-color: #cc6d08;
+}
+
+/* Footer di chiusura */
+footer {
+    text-align: center;
+    padding: 30px;
+    background-color: #333;
+    color: #aaa;
+    margin-top: 60px;
+    font-size: 0.9rem;
+}
