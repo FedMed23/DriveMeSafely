@@ -2,7 +2,7 @@
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use Doctrine\ORM\EntityManagerInterface;
-class FIscritto extends FGeneric
+class FIscritto
 {
     private EntityManagerInterface $em;
 
