@@ -15,8 +15,8 @@ class CIscrizione
     public function __construct(EntityManager $em
     ) {
         $this->em = $em;
-        $this->service = $service;
-        $this->view = $view;
+        $this->service = new SIscrizione($em);
+        $this->view = new VIscrizione();
     }
     /**
      * Gestisce il caso d'uso dell'iscrizione.
