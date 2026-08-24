@@ -26,8 +26,8 @@
                         <li><a href="{$request.contextPath}/home/mie_spese" class="btn">Spese</a></li>
                         <li><a href="{$request.contextPath}/home/logout">Logout</a></li>
                     {else}
-                        <li><a href="{$request.contextPath}/home/login">Login</a></li>
                         <li><a href="{$request.contextPath}/home/iscrizione" class="btn">Iscriviti</a></li>
+                        <li><a href="{$request.contextPath}/home/login">Login</a></li>
                     {/if}
                 </ul>
             </nav>
