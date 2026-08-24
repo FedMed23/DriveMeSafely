@@ -70,8 +70,26 @@ class VIscrizione
         );
     }
     
+        /**
+     * Gestisce gli errori di compilazione dei moduli (InvalidArgument / Runtime)
+     * Mostra un popup e torna indietro mantenendo i dati compilati dal browser.
+     */
     public function showFormError(string $errorMessage, array $oldData = [], $pacchetto = null): void
     {
+        echo "<script>alert('" . addslashes($errorMessage) . "'); window.history.back();</script>";
+        exit;
+    }
+
+    /**
+     * Gestisce gli errori imprevisti o di sistema (Throwable / default HTTP 405)
+     * Risolve il Fatal Error aggiungendo il metodo mancante.
+     */
+    public function showError(string $errorMessage, int $code = 500): void
+    {
+        // Imposta il codice di stato HTTP per il browser
+        http_response_code($code);
+        
+        // Mostra il popup di errore imprevisto e torna indietro
         echo "<script>alert('" . addslashes($errorMessage) . "'); window.history.back();</script>";
         exit;
     }
