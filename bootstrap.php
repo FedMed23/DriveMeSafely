@@ -23,7 +23,7 @@ $dbParams = [
     'host'     => '127.0.0.1', 
     'user'     => 'root',       // default XAMPP
     'password' => '',           // default XAMPP
-    'dbname'   => 'drive_me_safely_db', // nome del database creato in phpMyAdmin
+    'dbname'   => 'drivemesafely_php_db', // nome del database creato in phpMyAdmin
 ];
 
 // ------------------- 3. Creazione della configurazione Doctrine -------------------
