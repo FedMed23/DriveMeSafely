@@ -34,8 +34,19 @@ class CFrontController
         }
         
         $parts = explode('/', $resource);
+                $parts = explode('/', $resource);
+        
+        // Determiniamo la rotta predefinita
         $route = $parts[0]; 
 
+        // --- NUOVA LOGICA DI CONTROLLO PER IL PREFISSO HOME ---
+        // Se l'URL inizia con "home" ed è presente un secondo pezzo (es: /home/iscrizione)
+        if ($parts[0] === 'home' && isset($parts[1]) && trim($parts[1]) !== '') {
+            $route = $parts[1]; // Spostiamo la rotta sul secondo segmento ("iscrizione")
+        }
+        // ------------------------------------------------------
+
+        // Ora $route sarà correttamente "iscrizione" anche se l'URL era /home/iscrizione!
         $controllerName = "C" . ucfirst($route);
         $controllerClass = "CamassoMedelago\\DriveMeSafely\\Controller\\" . $controllerName;
 
@@ -45,17 +56,18 @@ class CFrontController
 
         // Controlla se la classe del controller esiste fisicamente sul disco
         if (in_array($controllerName . ".php", $eledir)) {
+            
+            // Il metodo principale da chiamare coincide sempre con il nome della risorsa
             $mainMethod = $route; 
                 
-            // SOLUZIONE: Passiamo l'EntityManager al costruttore del controller!
+            // Istanziamo la finta Servlet passandole l'EntityManager
             $controllerInstance = new $controllerClass($this->em);
                 
             if (method_exists($controllerInstance, $mainMethod)) {
                 $controllerInstance->$mainMethod();
                 return;
             }
-        } // <--- Sistemata la graffa mancante qui!
-
+        }
         // Risposta standard se nessuna rotta coincide
         http_response_code(404);
         echo 'Pagina non trovata.';
