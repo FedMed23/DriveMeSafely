@@ -44,7 +44,10 @@ class CFrontController
         if (count($parts) >= 2 && $parts[0] === 'home') {
             switch ($parts[1]) {
                 case 'pacchetti_patenti':
-                    $this->gestisciPacchettiPatenti($method);
+                    $this->CIscrizione::getPatenti();
+                    return;
+                case 'dettaglio_pacchetto':
+                    $this->CIscrizione::getPatente();
                     return;
                 case 'iscrizione':
                     $this->gestisciIscrizione($method);
@@ -54,7 +57,7 @@ class CFrontController
         
         // Rotta per la pagina principale (es. /home o indirizzo radice)
         if (count($parts) === 1 && $parts[0] === 'home') {
-            // Qui potrai chiamare un ipotetico CHome->index()
+            this->CHome($em);
             echo "Benvenuto nella Home Page!";
             return;
         }
@@ -64,20 +67,6 @@ class CFrontController
         echo 'Pagina non trovata.';
     }
 
-    /**
-     * Factory Method privato per istanziare correttamente le dipendenze
-     */
-    private function getCIscrizione(): CIscrizione
-    {
-        // Passiamo l'istanza dell'EntityManager salvata nel Front Controller
-        $fIscritto = new FIscritto($this->em);
-        $fPatente = new FPatente($this->em);
-        $fSpesa = new FSpesa($this->em);
-        
-        $service = new SIscrizione($fIscritto, $fPatente, $fSpesa);
-        
-        return new CIscrizione($service);
-    }
 
     private function gestisciPacchettiPatenti(string $method): void
     {
