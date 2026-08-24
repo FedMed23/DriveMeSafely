@@ -1,0 +1,297 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 20 ago 2026, 13:29:39
+    Author     : federica
+*/
+.dettaglio-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 0 25px;
+}
+
+.pagina-header {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.pagina-header h2 {
+    margin-bottom: 10px;
+}
+
+.pagina-header p {
+    color: #666;
+    font-size: 16px;
+}
+
+.pacchetto-dettaglio {
+    background: white;
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.pacchetto-intestazione {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.pacchetto-info h3 {
+    font-size: 30px;
+    margin: 0 0 10px;
+}
+
+.pacchetto-info p {
+    margin: 0;
+    color: #666;
+    line-height: 1.6;
+}
+
+.badge-patente {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 20px;
+    background: #eef4ff;
+    color: #2457a6;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.sezione-spese {
+    margin-top: 30px;
+}
+
+.sezione-spese h4 {
+    font-size: 21px;
+    margin-bottom: 18px;
+}
+
+.spese-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.spesa-riga {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 18px;
+    background: #f8f9fb;
+    border-radius: 10px;
+}
+
+.spesa-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.spesa-tipologia {
+    font-weight: 600;
+}
+
+.spesa-descrizione {
+    font-size: 14px;
+    color: #777;
+}
+
+.spesa-importo {
+    font-weight: 700;
+    font-size: 17px;
+    white-space: nowrap;
+}
+
+.totale-box {
+    margin-top: 30px;
+    padding: 22px;
+    border-radius: 14px;
+    background: #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.totale-label {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.totale-importo {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.azioni {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-indietro,
+.btn-iscrizione {
+    display: inline-block;
+    padding: 13px 24px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.btn-indietro {
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn-iscrizione {
+    background: #2457a6;
+    color: white;
+}
+
+.btn-indietro:hover,
+.btn-iscrizione:hover {
+    transform: translateY(-2px);
+}
+
+.nessuna-spesa {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    background: #f8f9fb;
+    border-radius: 10px;
+}
+
+.pacchetti-container {
+
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+
+}
+
+
+.pacchetti-grid {
+
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+    margin-top:30px;
+
+}
+
+
+
+.pacchetto-card {
+
+    background:white;
+    padding:25px;
+    border-radius:10px;
+
+    box-shadow:0 4px 8px rgba(0,0,0,0.15);
+
+    text-align:center;
+
+    transition:transform 0.3s;
+
+}
+.quiz-card:hover {
+
+    transform:translateY(-5px);
+
+}
+
+
+
+.btn-quiz {
+
+    background-color:#61b15a;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 25px;
+
+    border-radius:5px;
+
+    cursor:pointer;
+
+    font-weight:bold;
+
+}
+
+
+.btn-quiz:hover {
+
+    background-color:#4d9148;
+
+}
+
+/* --- INTEGRAZIONI AGGIUNTIVE PER LE CARD --- */
+
+/* 1. Un tocco di colore sportivo/istituzionale sul bordo superiore */
+.pacchetto-card {
+    border-top: 4px solid #34495e; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Spinge il pulsante sempre in fondo, allineando tutti i bottoni */
+    min-height: 250px; /* Evita che card con descrizioni corte siano più basse delle altre */
+}
+
+/* 2. Gerarchia visiva per il Titolo del Quiz */
+.pacchetto-card h3 {
+    margin: 0 0 12px 0;
+    color: #2c3e50;
+    font-size: 1.35em;
+    font-weight: 700;
+}
+
+/* 3. Dettagli tecnici (Argomento e Numero Domande) allineati e puliti */
+.pacchetto-card p {
+    margin: 6px 0;
+    font-size: 0.95em;
+    color: #555555;
+    text-align: left; /* L'allineamento a sinistra dei dettagli è più scansionabile rispetto al testo centrato */
+    background: #f8f9fa; /* Crea un leggero box di sfondo per isolare i dati */
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+/* Evidenziatore per i testi in grassetto dentro i dettagli */
+.pacchetto-card p strong {
+    color: #34495e;
+}
+
+/* 4. ADATTAMENTO FONDAMENTALE PER IL PULSANTE TRASFORMATO IN LINK (<a>) */
+.btn-pacchetto {
+    display: inline-block; /* Obbligatorio per i tag <a> per fargli rispettare i padding verticali */
+    text-decoration: none; /* Rimuove la sottolineatura blu classica dei link del browser */
+    margin-top: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-pacchetto:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* 5. Miglioramento Responsive per la Griglia */
+@media (max-width: 900px) {
+    .pacchetto-grid {
+        grid-template-columns: repeat(2, 1fr); /* Passa a 2 colonne sui tablet */
+    }
+}
+
+@media (max-width: 600px) {
+    .pacchetto-grid {
+        grid-template-columns: 1fr; /* Passa a 1 colonna singola sugli smartphone */
+    }
+}
