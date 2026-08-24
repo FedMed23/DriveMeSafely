@@ -8,7 +8,7 @@ class VIscrizione
 {
     private Smarty $smarty;
 
-    public function __construct(Smarty $smarty)
+    public function __construct()
     {
         $this->smarty = $smarty;
     }
