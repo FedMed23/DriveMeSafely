@@ -4,7 +4,7 @@ namespace CamassoMedelago\DriveMeSafely\Foundation;
 use CamassoMedelago\DriveMeSafely\Entity\ESpesa;
 use Doctrine\ORM\EntityManagerInterface;
 
-class FSpesa extends FGeneric
+class FSpesa 
 {
     private EntityManagerInterface $em;
 
