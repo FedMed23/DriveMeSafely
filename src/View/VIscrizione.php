@@ -1,8 +1,7 @@
 <?php
 
 namespace CamassoMedelago\DriveMeSafely\View;
-
-use Smarty\Smarty;
+use CamassoMedelago\DriveMeSafely\Smarty\StartSmarty;
 
 class VIscrizione
 {
