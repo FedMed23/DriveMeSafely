@@ -1,5 +1,5 @@
 <?php
-namespace CamassoMedelago\DriveMeSafely\Controller;
+namespace CamassoMedelago\DriveMeSafely\Service;
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
@@ -10,15 +10,13 @@ use DateTimeImmutable;
 
 class SIscrizione
 {
+    private EntityManagerInterface $em;
     private FIscritto $fIscritto;
     private FPatente $fPatente;
     private FSpesa $fSpesa;
 
-    public function __construct(
-        FIscritto $fIscritto,
-        FPatente $fPatente,
-        FSpesa $fSpesa
-    ) {
+    public function __construct(EntityManagerInterface $em) {
+        $this->em = $em;
         $this->fIscritto = $fIscritto;
         $this->fPatente = $fPatente;
         $this->fSpesa = $fSpesa;
