@@ -5,11 +5,9 @@ use CamassoMedelago\DriveMeSafely\Smarty\StartSmarty;
 
 class VIscrizione
 {
-    private StartSmarty $smarty;
-
     public function __construct()
     {
-        $this->smarty = StartSmarty::configuration();
+        $smarty = StartSmarty::configuration();
     }
 
     /**
