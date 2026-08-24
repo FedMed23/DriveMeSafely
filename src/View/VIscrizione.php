@@ -69,4 +69,11 @@ class VIscrizione
             'iscrizione/conferma_iscrizione.tpl'
         );
     }
+    
+    public function showFormError(string $errorMessage, array $oldData = [], $pacchetto = null): void
+    {
+        echo "<script>alert('" . addslashes($errorMessage) . "'); window.history.back();</script>";
+        exit;
+    }
+
 }
