@@ -1,111 +1,114 @@
 <?php
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * La classe EPatente contiene le proprietà e gli attributi riguardanti una patente di guida.
- * L'attributo che la descrive è:
- * - idPa: id della Patente
- * - tipo: categoria della patente (es. B, A, C, ecc.)
- * 
- * @access public
- * @author Camasso-Medelago
- * @package Entity
  * @ORM\Entity
  * @ORM\Table(name="patente")
  */
-
 class EPatente implements \JsonSerializable
 {
     /**
-     * idPa identificativo della patente (chiave primaria)
-     * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
-     private ?int $idPa= null; 
+    private ?int $idPa = null; 
 
     /**
-     * Tipo della patente (es. B, A, C)
-     * @var string
-     * @ORM\Column(type="string", length=2)  
+     * @ORM\Column(type="string", length=2, nullable=false)  
      */
     private string $tipo;
 
-
-   // ---------------- COSTRUTTORE ----------------
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     */
+    private string $descrizione;
 
     /**
-     * Crea una nuova istanza della classe EPatente
-     * @param string $tipo categoria della patente
+     * @ORM\ManyToMany(targetEntity="ESpesa")
+     * @ORM\JoinTable(
+     *     name="patente_has_spesa",
+     *     joinColumns={@ORM\JoinColumn(name="id_patente", referencedColumnName="idPa")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="id_spesa", referencedColumnName="id")}
+     * )
+     * @ORM\OrderBy({"tipologia" = "ASC"})
      */
-    public function __construct(string $tipo)
+    private Collection $spese;
+
+    /**
+     * Costruttore
+     */
+    public function __construct(string $tipo, string $descrizione, Collection $spese = null)
     {
         $this->tipo = $tipo;
+        $this->descrizione = $descrizione;
+        $this->spese = $spese ?? new ArrayCollection();
     }
- //----------------------METODI GET/SET (ID)-----------------------------
-    /**
-     * Restituisce l'id della patente
-     * @return int
-     */
-    public function getId(): ?int { return $this->idPa; }
 
-    /**
-     * Imposta l'id della patente
-     * @param int
-     */
-    public function setId(int $id): void { $this->idPa= $id; } 
+    // ---------------- GETTER / SETTER ----------------
 
-// ---------------- METODI GET ----------------
+    public function getId(): ?int 
+    { 
+        return $this->idPa; 
+    }
 
-    /**
-     * Restituisce il tipo della patente
-     * @return string
-     */
+    public function setId(int $id): void 
+    { 
+        $this->idPa = $id; 
+    } 
+
     public function getTipo(): string
     {
         return $this->tipo;
     }
 
-// ---------------- METODI SET ----------------
-
-    /**
-     * Imposta il tipo della patente
-     * @param string $tipo
-     */
     public function setTipo(string $tipo): void
     {
         $this->tipo = $tipo;
     }
 
-// ------------------ TOSTRING ---------------------------
-
-    /**
-     * Stampa i dettagli della patente
-     * @return string
-     */
-    public function __toString(): string
+    public function getDescrizione(): string
     {
-        // Restituisce una stringa che include i dettagli chiave
-        return "idPatente: {$this->idPa}\n Tipo di Patente: {$this->tipo}\n";
+        return $this->descrizione;
     }
 
-  // --- Implementazione per la serializzazione JSON ---
+    public function setDescrizione(string $descrizione): void
+    {
+        $this->descrizione = $descrizione;
+    }
 
-    /**
-     * Serializza l'oggetto in formato JSON
-     * @return array
-     */
+    public function getSpese(): Collection
+    {
+        return $this->spese;
+    }
+
+    public function setSpese(Collection $spese): void
+    {
+        $this->spese = $spese;
+    }
+
+    // ------------------ TOSTRING ---------------------------
+
+    public function __toString(): string
+    {
+        return "Patente{idPa={$this->idPa}, tipo='{$this->tipo}', descrizione='{$this->descrizione}', numeroSpese=" . count($this->spese) . "}";
+    }
+
+    // ------------------ JSON SERIALIZE ---------------------
+
     public function jsonSerialize(): array
     {
         return [
             'idPa' => $this->idPa,
-            'tipo' => $this->tipo
+            'tipo' => $this->tipo,
+            'descrizione' => $this->descrizione,
+            'spese' => $this->spese->toArray()
         ];
     }
 }
-
-?> 
-
+?>

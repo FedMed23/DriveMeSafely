@@ -1,62 +1,56 @@
 <?php
-// src/Foundation/FPatente.php
-
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\NonUniqueResultException;
 
-class FPatente
+class FPatente extends FGeneric
 {
     private EntityManagerInterface $em;
 
-    // Costruttore
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
-    // ---------------------- SALVATAGGIO ----------------------
-    public function save(EPatente $patente): void
+    /**
+     * Recupera una patente per ID. Se non esiste, ritorna null.
+     */
+    public function findById(int $idPa): ?EPatente
     {
-        $this->em->persist($patente);
-        $this->em->flush();
+            return $this->em->createQuery(
+                'SELECT p 
+                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
+                 WHERE p.idPa = :idPa'
+            )->setParameter('idPa', $idPa)
+             ->getOneOrNullResult(); 
     }
 
-    // ---------------------- LETTURA ----------------------
-    // Recupera per ID
-    public function getPatenteById(int $id): ?EPatente
+    /**
+     * Recupera una patente per tipo. Se non esiste, ritorna null.
+     */
+    public function findByTipo(string $tipo): ?EPatente
     {
-        return $this->em->getRepository(EPatente::class)->find($id);
+            return $this->em->createQuery(
+                'SELECT p 
+                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
+                 WHERE p.tipo = :tipo'
+            )->setParameter('tipo', $tipo)
+             ->getOneOrNullResult();
     }
 
-    // Recupera tutte le patenti
-    public function getAllPatenti(): array
+    /**
+     * Recupera un singolo pacchetto patente con le sue spese. Se non esiste, ritorna null.
+     */
+    public function findPacchettoById(int $idPa): ?EPatente
     {
-        return $this->em->getRepository(EPatente::class)->findAll();
-    }
-
-    // ---------------------- AGGIORNAMENTO ----------------------
-    public function update(EPatente $patente): void
-    {
-        $this->em->flush();
-    }
-
-    // ---------------------- ELIMINAZIONE ----------------------
-    public function delete(EPatente $patente): void
-    {
-        $this->em->remove($patente);
-        $this->em->flush();
-    }
-
-    // ---------------------- METODI PERSONALIZZATI ----------------------
-
-    // Trova patente per tipo (A, B, C...)
-    public function getByTipo(string $tipo): ?EPatente
-    {
-        return $this->em->getRepository(EPatente::class)->findOneBy([
-            'tipo' => $tipo
-        ]);
+            return $this->em->createQuery(
+                'SELECT DISTINCT p, s 
+                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
+                 LEFT JOIN p.spese s 
+                 WHERE p.idPa = :idPa'
+            )->setParameter('idPa', $idPa)
+             ->getOneOrNullResult();
     }
 }
-?>

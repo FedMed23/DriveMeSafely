@@ -1,5 +1,5 @@
 <?php
-require_once 'utility/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 require_once 'StartSmarty.php';
 
 if (Installation::verificaInstallazione()) {
