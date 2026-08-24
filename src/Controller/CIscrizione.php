@@ -13,7 +13,7 @@ class CIscrizione
     private SIscrizione $service;
     private VIscrizione $view;
 
-    public function __construct(EntityManager $em
+    public function __construct(EntityManagerInterface $em
     ) {
         $this->em = $em;
         $this->service = new SIscrizione($em);
