@@ -146,18 +146,33 @@ class CIscrizione
 
     } catch (\InvalidArgumentException|\RuntimeException $e) {
     $pacchetto = null;
+    echo '<pre>';
+    echo "MESSAGGIO: " . $e->getMessage() . "\n";
+    echo "FILE: " . $e->getFile() . "\n";
+    echo "RIGA: " . $e->getLine() . "\n";
+    echo "\nTRACE:\n";
+    echo $e->getTraceAsString();
+    echo '</pre>';
+            
+    //if (isset($idPa) && $idPa > 0) {
+    //    $pacchetto = $this->service->getPacchetto($idPa);
+    //}
 
-    if (isset($idPa) && $idPa > 0) {
-        $pacchetto = $this->service->getPacchetto($idPa);
-    }
-
-    $this->view->showFormError(
-        $e->getMessage(),
-        $_POST,
-        $pacchetto
-    );
+    //$this->view->showFormError(
+    //    $e->getMessage(),
+    //    $_POST,
+     //   $pacchetto
+    //);
 
     } catch (\Throwable $e) {
+        echo '<pre>';
+        echo "MESSAGGIO: " . $e->getMessage() . "\n";
+        echo "FILE: " . $e->getFile() . "\n";
+        echo "RIGA: " . $e->getLine() . "\n";
+        echo "\nTRACE:\n";
+        echo $e->getTraceAsString();
+        echo '</pre>';
+        exit;
         $this->view->showError(
             "Si è verificato un errore imprevisto durante l'iscrizione.",
             500
@@ -333,6 +348,14 @@ class CIscrizione
 
         } catch (\InvalidArgumentException|\RuntimeException $e) {
             $pacchetto = null;
+            echo '<pre>';
+            echo "MESSAGGIO: " . $e->getMessage() . "\n";
+            echo "FILE: " . $e->getFile() . "\n";
+            echo "RIGA: " . $e->getLine() . "\n";
+            echo "\nTRACE:\n";
+            echo $e->getTraceAsString();
+            echo '</pre>';
+            exit;
         
             if (isset($idPa) && $idPa > 0) {
                 $pacchetto = $this->service->getPacchetto($idPa);
@@ -345,6 +368,14 @@ class CIscrizione
             );
         
         } catch (\Throwable $e) {
+            echo '<pre>';
+            echo "MESSAGGIO: " . $e->getMessage() . "\n";
+            echo "FILE: " . $e->getFile() . "\n";
+            echo "RIGA: " . $e->getLine() . "\n";
+            echo "\nTRACE:\n";
+            echo $e->getTraceAsString();
+            echo '</pre>';
+            exit;
             $this->view->showError(
                 "Si è verificato un errore imprevisto durante l'iscrizione.",
                 500
