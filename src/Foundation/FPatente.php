@@ -58,7 +58,7 @@ class FPatente
         return $this->em->createQuery(
             'SELECT DISTINCT p
              FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p
-             LEFT JOIN FETCH p.spese
+             LEFT JOIN p.spese
              ORDER BY p.tipo ASC'
         )->getResult();
     }
