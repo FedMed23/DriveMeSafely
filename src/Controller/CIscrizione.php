@@ -5,10 +5,11 @@ namespace CamassoMedelago\DriveMeSafely\Controller;
 use CamassoMedelago\DriveMeSafely\Service\SIscrizione;
 use CamassoMedelago\DriveMeSafely\View\VIscrizione;
 use CamassoMedelago\DriveMeSafely\Utils\PasswordUtil;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CIscrizione
 {
-    private EntityManager $em;
+    private EntityManagerInterface $em;
     private SIscrizione $service;
     private VIscrizione $view;
 
