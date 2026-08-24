@@ -59,6 +59,7 @@ class CFrontController
         // Risposta standard se nessuna rotta coincide
         http_response_code(404);
         echo 'Pagina non trovata.';
+        echo $resource;
     }
 }
 
