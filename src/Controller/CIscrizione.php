@@ -143,20 +143,26 @@ class CIscrizione
 
             $this->view->showDettaglioPacchetto($pacchetto);
 
-        } catch (\InvalidArgumentException $e) {
+    } catch (\InvalidArgumentException|\RuntimeException $e) {
+    $pacchetto = null;
 
-            $this->view->showError( $e->getMessage(),  400 );
-  
-        } catch (\RuntimeException $e) {
-
-            $this->view->showError( $e->getMessage(), 404  );
-        
-        } catch (\Exception $e) {
-
-            $this->view->showError( "Si è verificato un errore durante il recupero dei dati.",  500 );
-         
-        }
+    if (isset($idPa) && $idPa > 0) {
+        $pacchetto = $this->service->getPacchetto($idPa);
     }
+
+    $this->view->showFormError(
+        $e->getMessage(),
+        $_POST,
+        $pacchetto
+    );
+
+    } catch (\Throwable $e) {
+        $this->view->showError(
+            "Si è verificato un errore imprevisto durante l'iscrizione.",
+            500
+        );
+    }
+}
 
     /**
      * Gestisce il POST del form di iscrizione.
@@ -324,40 +330,22 @@ class CIscrizione
             exit;
 
 
-        } catch (\InvalidArgumentException $e) {
-
-            /*
-             * Errore nei dati inseriti dall'utente.
-             */
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            $pacchetto = null;
+        
+            if (isset($idPa) && $idPa > 0) {
+                $pacchetto = $this->service->getPacchetto($idPa);
+            }
+        
             $this->view->showFormError(
-                $e->getMessage()
+                $e->getMessage(),
+                $_POST,
+                $pacchetto
             );
-
-        } catch (\RuntimeException $e) {
-
-            /*
-             * Errore generato dalla business logic.
-             *
-             * Esempi:
-             *
-             * - username già utilizzato
-             * - email già utilizzata
-             * - codice fiscale già presente
-             * - patente inesistente
-             * - età non sufficiente
-             * - password non valida
-             */
-            $this->view->showFormError(
-                $e->getMessage()
-            );
-
-        } catch (\Exception $e) {
-
-            /*
-             * Errore inatteso.
-             */
+        
+        } catch (\Throwable $e) {
             $this->view->showError(
-                "Si è verificato un errore durante l'iscrizione.",
+                "Si è verificato un errore imprevisto durante l'iscrizione.",
                 500
             );
         }
