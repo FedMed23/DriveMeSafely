@@ -12,127 +12,188 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="domanda")
  */
-class EDomanda implements \JsonSerializable {
- /**
-     * Identificativo univoco della domanda (può essere null se non ancora salvata su DB) (chiave primaria)
+class EDomanda implements \JsonSerializable
+{
+    /**
+     * Identificativo univoco della domanda
+     *
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_domanda", type="integer")
      */
     private ?int $idDomanda = null;
 
     /**
      * Testo della domanda
+     *
      * @var string
-     * @ORM\Column(type="string", length=100)  
+     * @ORM\Column(type="string", length=300, nullable=false)
      */
     private string $contenuto;
 
     /**
-     * Indica se la risposta è corretta (true/false)
+     * Indica se la risposta è corretta
+     *
      * @var bool
-     * @ORM\Column(type="boolean")
-     */  
+     * @ORM\Column(type="boolean", nullable=false)
+     */
     private bool $rispostaCorretta;
 
-
-    //-------------------------COSTRUTTORE-------------------------
-
-     /**
-     * Costruttore della classe EDomanda
-     * 
-     * @param string $_contenuto  Testo della domanda
-     * @param bool $_risposta     Indica se la risposta è corretta
+    /**
+     * Argomento della domanda
+     *
+     * @var string
+     * @ORM\Column(type="string", length=100, nullable=false)
      */
-    public function __construct(string $_contenuto, bool $_risposta)
+    private string $argomento;
+
+    /**
+     * Quiz associati alla domanda
+     *
+     * @var EQuiz[]
+     * @ORM\ManyToMany(targetEntity="EQuiz", mappedBy="domande")
+     */
+    private array $quizAssociati = [];
+
+    /**
+     * Immagine associata alla domanda
+     *
+     * @var string|null
+     * @ORM\Column(name="immagine", type="string", length=255, nullable=true)
+     */
+    private ?string $immagine = null;
+
+
+    // ------------------------- COSTRUTTORI -------------------------
+
+    /**
+     * Costruttore vuoto obbligatorio per Doctrine.
+     */
+    public function __construct()
     {
-        $this->contenuto = $_contenuto;
-        $this->rispostaCorretta = $_risposta;
     }
 
-    //----------------------METODI GET/SET (ID)-----------------------------
-    
     /**
-     * Restituisce l'ID della domanda
-     * @return int|null
+     * Costruttore completo della classe EDomanda.
+     *
+     * @param string $contenuto Testo della domanda
+     * @param bool $rispostaCorretta Indica se la risposta è corretta
+     * @param string $argomento Argomento della domanda
+     * @param string|null $immagine Immagine associata alla domanda
      */
-    public function getId(): ?int
+    public function init(
+        string $contenuto,
+        bool $rispostaCorretta,
+        string $argomento,
+        ?string $immagine
+    ): void {
+        $this->contenuto = $contenuto;
+        $this->rispostaCorretta = $rispostaCorretta;
+        $this->argomento = $argomento;
+        $this->immagine = $immagine;
+    }
+
+
+    // ---------------------- METODI GET -----------------------------
+
+    public function getIdDomanda(): ?int
     {
         return $this->idDomanda;
     }
 
-    /**
-     * Imposta l'ID della domanda
-     * @param int $id
-     */
-    public function setId(int $id): void
-    {
-        $this->idDomanda = $id;
-    }
-
-    //----------------------METODI GET-----------------------------
-
-     /**
-     * Restituisce il testo della domanda
-     * @return string
-     */
     public function getContenuto(): string
     {
         return $this->contenuto;
     }
 
-    /**
-     * Restituisce la risposta corretta (true = corretta, false = errata)
-     * @return bool
-     */
-    public function getRispostaCorretta(): bool
+    public function isRispostaCorretta(): bool
     {
         return $this->rispostaCorretta;
     }
 
-    //---------------------- METODI SET -----------------------------
+    public function getArgomento(): string
+    {
+        return $this->argomento;
+    }
 
     /**
-     * Imposta il testo della domanda
-     * @param string $contenuto
+     * @return EQuiz[]
      */
+    public function getQuiz(): array
+    {
+        return $this->quizAssociati;
+    }
+
+    public function getImmagine(): ?string
+    {
+        return $this->immagine;
+    }
+
+
+    // ---------------------- METODI SET -----------------------------
+
+    public function setIdDomanda(?int $idDomanda): void
+    {
+        $this->idDomanda = $idDomanda;
+    }
+
     public function setContenuto(string $contenuto): void
     {
         $this->contenuto = $contenuto;
     }
 
-    /**
-     * Imposta la risposta corretta (true/false)
-     * @param bool $risposta
-     */
-    public function setRispostaCorretta(bool $risposta): void
+    public function setRispostaCorretta(bool $rispostaCorretta): void
     {
-        $this->rispostaCorretta = $risposta;
+        $this->rispostaCorretta = $rispostaCorretta;
     }
 
-    //--------------------TOSTRING--------------
+    public function setArgomento(string $argomento): void
+    {
+        $this->argomento = $argomento;
+    }
 
     /**
-     * Stampa i dettagli della domanda.
-     * @return string
+     * @param EQuiz[] $quiz
      */
-    public function __toString(): string  {
-        $print =" idDomanda: ".$this->getId()."\n"." Contenuto : ".$this->getContenuto()."\n".
-        "rispostaCorretta : ".$this->getRispostaCorretta()."\n";
-        
-        return $print;
+    public function setQuiz(array $quiz): void
+    {
+        $this->quizAssociati = $quiz;
     }
-     //---------------------Implementazione per la serializzazione JSON-------------------------------
-/**
-     * Implementazione del metodo JsonSerializable
-     * @return array
-     */
-    public function jsonSerialize(): array {
+
+    public function setImmagine(?string $immagine): void
+    {
+        $this->immagine = $immagine;
+    }
+
+
+    // -------------------- TOSTRING -------------------------------
+
+    public function __toString(): string
+    {
+        return "Domanda{" .
+            "id=" . $this->idDomanda .
+            ", argomento='" . $this->argomento . '\'' .
+            ", contenuto='" . $this->contenuto . '\'' .
+            ", haImmagine=" . ($this->immagine !== null ? "Sì" : "No") .
+            '}';
+    }
+
+
+    // --------------------- JSON -------------------------------
+
+    public function jsonSerialize(): array
+    {
         return [
             'idDomanda' => $this->idDomanda,
             'contenuto' => $this->contenuto,
-            'rispostaCorretta' => $this->rispostaCorretta
+            'rispostaCorretta' => $this->rispostaCorretta,
+            'argomento' => $this->argomento,
+            'quiz' => $this->quizAssociati,
+            'immagine' => $this->immagine
         ];
     }
 }
+
+?>
+
