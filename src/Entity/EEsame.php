@@ -20,120 +20,127 @@ use Doctrine\ORM\Mapping as ORM;
 class EEsame implements \JsonSerializable
 {
     /**
-     * Identificativo univoco dell'esame (chiave primaria)
+     * Identificativo univoco dell'esame
+     *
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_esame", type="integer")
      */
     private ?int $idEsame = null;
 
     /**
-     * Data dell'esame
-     * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
-     */  
-    private \DateTimeImmutable $dataEs;
-
-    /**
-     * Tipologia dell'esame (es. teorico o pratico)
-     * @var string
-     * @ORM\Column(type="string", length=7)  
-     */
-    private string $tipologia;
-
-// ---------------- COSTRUTTORE ----------------
-
-    /**
-     * Crea una nuova istanza della classe EEsame
+     * Data e ora dell'esame
      *
-     * @param string $tipologia tipo di esame
-     * @param DateTimeImmutable $dataEs Data in cui si svolge l'esame
+     * @var DateTime
+     * @ORM\Column(name="data_es", type="datetime", nullable=false)
      */
-    public function __construct(string $tipologia, DateTimeImmutable $dataEs)
+    private DateTime $dataEs;
+
+    /**
+     * Tipologia dell'esame
+     *
+     * @var TipologiaEsame
+     * @ORM\Column(name="tipologia", type="string", length=15, nullable=false)
+     */
+    private TipologiaEsame $tipologia;
+
+
+    // ---------------- COSTRUTTORI ----------------
+
+    /**
+     * Costruttore vuoto obbligatorio per Doctrine.
+     */
+    public function __construct()
     {
-        $this->tipologia = $tipologia;
-        $this->dataEs = $dataEs; 
     }
 
-  // ---------------- METODI GET ----------------
-
     /**
-     * Restituisce l'ID dell'esame
-     * @return int|null
+     * Crea una nuova istanza della classe EEsame.
+     *
+     * @param TipologiaEsame $tipologia tipo di esame
+     * @param DateTime $dataEs data e ora in cui si svolge l'esame
      */
+    public function init(
+        TipologiaEsame $tipologia,
+        DateTime $dataEs
+    ): void {
+        $this->tipologia = $tipologia;
+        $this->dataEs = $dataEs;
+    }
+
+
+    // ---------------- METODI GET ----------------
+
     public function getIdEsame(): ?int
     {
         return $this->idEsame;
     }
 
-    public function getDataEsame(): DateTimeImmutable
+    public function getDataEs(): DateTime
     {
         return $this->dataEs;
     }
 
-    /**
-     * Restituisce la tipologia dell'esame
-     * @return string
-     */
-    public function getTipologia(): string
+    public function getTipologia(): TipologiaEsame
     {
         return $this->tipologia;
     }
 
-  // ---------------- METODI SET ----------------
 
-    /**
-     * Imposta l'ID dell'esame
-     * @param int $idEsame
-     */
-    public function setIdEsame(int $idEsame): void
+    // ---------------- METODI SET ----------------
+
+    public function setIdEsame(?int $idEsame): void
     {
         $this->idEsame = $idEsame;
     }
 
-    public function setDataEsame(DateTimeImmutable $data): void
+    public function setDataEsame(DateTime $dataEs): void
     {
-        $this->dataEs = $data;
+        $this->dataEs = $dataEs;
     }
 
-    /**
-     * Imposta la tipologia dell'esame
-     * @param string $tipologia
-     */
-    public function setTipologia(string $tipologia): void
+    public function setTipologia(TipologiaEsame $tipologia): void
     {
         $this->tipologia = $tipologia;
     }
 
-   // ------------------ TOSTRING ---------------------------
 
-    /**
-     * Stampa i dettagli dell'esame
-     * @return string
-     */
-    public function __toString(): string
-    {   
-        $dataFormattata = $this->dataEs->format('d-m-Y');
-        $id = $this->idEsame ?? 'N/D';
-        return "ID Esame: {$id}\nData: {$dataFormattata}\nTipologia: {$this->tipologia}\n";
+    // ---------------- DATA FORMATTATA ----------------
+
+    public function getDataOraFormattata(): string
+    {
+        if (!isset($this->dataEs)) {
+            return "";
+        }
+
+        return $this->dataEs->format('d/m/Y H:i');
     }
-    
-    // --- Implementazione per la serializzazione JSON ---
 
-    /**
-     * Serializza l'oggetto in formato JSON
-     * @return array
-     */
+
+    // ------------------ TOSTRING ---------------------------
+
+    public function __toString(): string
+    {
+        return "Esame ID: " .
+            $this->idEsame .
+            " | Tipo: " .
+            $this->tipologia .
+            " | Data: " .
+            $this->dataEs->format('Y-m-d H:i:s');
+    }
+
+
+    // ------------------ JSON ---------------------------
+
     public function jsonSerialize(): array
     {
         return [
             'idEsame' => $this->idEsame,
-            'data' => $this->dataEs->format('Y-m-d'),
+            'dataEs' => $this->dataEs->format('Y-m-d H:i:s'),
             'tipologia' => $this->tipologia
         ];
     }
 }
 
 ?>
-
