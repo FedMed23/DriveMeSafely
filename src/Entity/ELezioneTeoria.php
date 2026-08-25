@@ -8,10 +8,6 @@ use DateTimeImmutable;
 /**
  * La classe ELezioneTeoria rappresenta una specifica lezione in aula.
  *
- * @access public
- * @package Entity
- * @author Camasso-Medelago
- *
  * @ORM\Entity
  */
 class ELezioneTeoria extends ELezione
@@ -19,31 +15,35 @@ class ELezioneTeoria extends ELezione
     /**
      * Aula nella quale si svolge la lezione.
      *
-     * Nell'attuale versione PHP viene mantenuta come stringa,
-     * in attesa della classe/enum Aula.
-     *
-     * @var string|null
-     * @ORM\Column(name="aula", type="string", length=50, nullable=true)
+     * @ORM\Column(
+     *     name="aula",
+     *     type="string",
+     *     length=50,
+     *     nullable=true,
+     *     enumType="CamassoMedelago\DriveMeSafely\Entity\Aula"
+     * )
      */
-    private ?string $aula = null;
+    private ?Aula $aula = null;
 
     /**
      * Argomento ministeriale della lezione.
      *
-     * Nell'attuale versione PHP viene mantenuto come stringa,
-     * in attesa dell'enum ArgomentoMinisteriale.
-     *
-     * @var string|null
-     * @ORM\Column(name="argomento", type="string", length=50, nullable=true)
+     * @ORM\Column(
+     *     name="argomento",
+     *     type="string",
+     *     length=50,
+     *     nullable=true,
+     *     enumType="CamassoMedelago\DriveMeSafely\Entity\ArgomentoMinisteriale"
+     * )
      */
-    private ?string $argomentoLezione = null;
+    private ?ArgomentoMinisteriale $argomentoLezione = null;
 
     // ---------------- COSTRUTTORE ----------------
 
     public function __construct(
         DateTimeImmutable $dataOra,
-        ?string $aula = null,
-        ?string $argomento = null
+        ?Aula $aula = null,
+        ?ArgomentoMinisteriale $argomento = null
     ) {
         parent::__construct($dataOra);
 
@@ -53,25 +53,26 @@ class ELezioneTeoria extends ELezione
 
     // ---------------- GETTER ----------------
 
-    public function getAula(): ?string
+    public function getAula(): ?Aula
     {
         return $this->aula;
     }
 
-    public function getArgomentoLezione(): ?string
+    public function getArgomentoLezione(): ?ArgomentoMinisteriale
     {
         return $this->argomentoLezione;
     }
 
     // ---------------- SETTER ----------------
 
-    public function setAula(?string $aula): void
+    public function setAula(?Aula $aula): void
     {
         $this->aula = $aula;
     }
 
-    public function setArgomentoLezione(?string $argomento): void
-    {
+    public function setArgomentoLezione(
+        ?ArgomentoMinisteriale $argomento
+    ): void {
         $this->argomentoLezione = $argomento;
     }
 
@@ -80,8 +81,8 @@ class ELezioneTeoria extends ELezione
     public function jsonSerialize(): array
     {
         return parent::jsonSerialize() + [
-            'aula' => $this->aula,
-            'argomentoLezione' => $this->argomentoLezione
+            'aula' => $this->aula?->value,
+            'argomentoLezione' => $this->argomentoLezione?->value
         ];
     }
 
@@ -96,8 +97,12 @@ class ELezioneTeoria extends ELezione
         return "LezioneTeoria{" .
             "id=" . ($this->getIdLezione() ?? 'N/D') .
             ", dataOra=" . $dataFormattata .
-            ", argomento='" . $this->argomentoLezione . '\'' .
-            ", aula='" . $this->aula . '\'' .
+            ", argomento='" .
+            ($this->argomentoLezione?->value ?? 'N/D') .
+            '\'' .
+            ", aula='" .
+            ($this->aula?->value ?? 'N/D') .
+            '\'' .
             '}';
     }
 }
