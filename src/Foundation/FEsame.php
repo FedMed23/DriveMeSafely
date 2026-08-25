@@ -5,20 +5,24 @@ namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EEsame;
 use Doctrine\ORM\EntityManagerInterface;
-use DateTimeImmutable;
 
 class FEsame
 {
     private EntityManagerInterface $em;
 
-    // Costruttore: collega Doctrine al database
+    // ---------------------- COSTRUTTORE ----------------------
+    /**
+     * Costruttore: collega Doctrine al database
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
-    // Salva un nuovo esame
+    /**
+     * Salva un nuovo esame
+     */
     public function save(EEsame $esame): void
     {
         $this->em->persist($esame);
@@ -26,58 +30,65 @@ class FEsame
     }
 
     // ---------------------- LETTURA ----------------------
-    // Recupera un esame tramite ID
-    public function getEsameById(int $id): ?EEsame
+    /**
+     * Recupera un esame tramite ID
+     */
+    public function findById(int $idEsame): ?EEsame
     {
-        return $this->em->getRepository(EEsame::class)->find($id);
+        return $this->em->find(EEsame::class, $idEsame);
     }
 
-    // Recupera tutti gli esami
-    public function getAllEsami(): array
+    /**
+     * Recupera tutte le sessioni d'esame future,
+     * ordinate dalla più vicina alla più lontana.
+     */
+    public function findSessioniFuture(): array
     {
-        return $this->em->getRepository(EEsame::class)->findAll();
+        return $this->em
+            ->getRepository(EEsame::class)
+            ->createQueryBuilder('e')
+            ->where('e.dataEs >= :oggi')
+            ->setParameter('oggi', new \DateTimeImmutable())
+            ->orderBy('e.dataEs', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recupera tutte le sessioni d'esame future
+     * filtrate per tipologia (TEORIA o PRATICA).
+     */
+    public function findFutureByTipologia(string $tipologia): array
+    {
+        return $this->em
+            ->getRepository(EEsame::class)
+            ->createQueryBuilder('e')
+            ->where('e.tipologia = :tipo')
+            ->andWhere('e.dataEs >= :oggi')
+            ->setParameter('tipo', $tipologia)
+            ->setParameter('oggi', new \DateTimeImmutable())
+            ->orderBy('e.dataEs', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     // ---------------------- AGGIORNAMENTO ----------------------
+    /**
+     * Aggiorna un esame esistente
+     */
     public function update(EEsame $esame): void
     {
         $this->em->flush();
     }
 
     // ---------------------- ELIMINAZIONE ----------------------
+    /**
+     * Elimina un esame
+     */
     public function delete(EEsame $esame): void
     {
         $this->em->remove($esame);
         $this->em->flush();
-    }
-
-    // ---------------------- METODI PERSONALIZZATI ----------------------
-
-    // Trova esami per tipologia (teorico/pratico)
-    public function getEsamiByTipologia(string $tipologia): array
-    {
-        return $this->em->getRepository(EEsame::class)->findBy([
-            'tipologia' => $tipologia
-        ]);
-    }
-
-    // Trova esami in una certa data
-    public function getEsamiByData(\DateTimeImmutable $data): array
-    {
-        return $this->em->getRepository(EEsame::class)->findBy([
-            'dataEs' => $data
-        ]);
-    }
-
-    // Trova esami futuri (molto utile)
-    public function getEsamiFuturi(): array
-    {
-        return $this->em->getRepository(EEsame::class)
-            ->createQueryBuilder('e')
-            ->where('e.dataEs > :oggi')
-            ->setParameter('oggi', new \DateTimeImmutable())
-            ->getQuery()
-            ->getResult();
     }
 }
 ?>
