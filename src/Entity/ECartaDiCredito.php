@@ -17,111 +17,124 @@ use DateTimeImmutable;
  * @ORM\Entity
  * @ORM\Table(name="carta_di_credito")
  */
-class ECartaDiCredito implements \JsonSerializable {
+public class CartaDiCredito implements Serializable {
 
     /**
-     * Numero della Carta (chiave primaria)
-     * @var string
-     * @ORM\Id
-     * @ORM\Column(type="string", length=16)
-     */  
-    private string $numeroCarta;
-
-    /**
-     * Nome del titolare della Carta
-     * @var string
-     * @ORM\Column(type="string", length=100)
-     */  
-    private string $nomeTitolare;
-
-    /**
-     * Cognome del titolare della Carta
-     * @var string
-     * @ORM\Column(type="string", length=100)
-     */  
-    private string $cognomeTitolare;
-
-    /**
-     * Data della scadenza della carta 
-     * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
-     */  
-    private DateTimeImmutable $dataScadenza;
-
-     
-// -----------------------------COSTRUTTORE-----------------
-    /** 
-     * Crea una nuova istanza della classe ECartaDiCredito
-     * @param string $nomeTitolare  nome del titolare
-     * @param string $cognomeTitolare  cognome del titolare
-     * @param \DateTimeImmutable $dataScadenza data scadenza carta di credito
-     * @param string $numeroCarta numero della carta di credito
+     * Numero della carta, utilizzato come chiave primaria.
      */
-    public function __construct(string $nomeTitolare, string $cognomeTitolare, DateTimeImmutable $dataScadenza, string $numeroCarta) {
+    @Id
+    @Column(name = "numero_carta", length = 16, nullable = false)
+    private String numeroCarta;
 
-       //Algoritmo che cripta il numero della carta da implementare(?)
+    /**
+     * Nome del titolare della carta.
+     */
+    @Column(name = "nome_titolare", length = 100, nullable = false)
+    private String nomeTitolare;
 
-       $this->nomeTitolare= $nomeTitolare;
-       $this->cognomeTitolare= $cognomeTitolare;
-       $this->dataScadenza= $dataScadenza;
-       $this->numeroCarta= $numeroCarta;
-    }
-// ---------------------------- METODI GET ------------------------
-    public function getNomeTitolareCarta(): string {
-       return $this->nomeTitolare;
-    }
+    /**
+     * Cognome del titolare della carta.
+     */
+    @Column(name = "cognome_titolare", length = 100, nullable = false)
+    private String cognomeTitolare;
 
-    public function getCognomeTitolareCarta(): string {
-       return $this->cognomeTitolare;
-    }
+    /**
+     * Data di scadenza della carta.
+     */
+    @Column(name = "data_scadenza", nullable = false)
+    private LocalDate dataScadenza;
 
-    public function getDataScadenza(): \DateTimeImmutable {
-       return $this->dataScadenza;
-    }
 
-    public function getNumeroCartaMascherato(): string {
-       $numeroCartaMascherato = 'XXXX-XXXX-XXXX-' . substr($this->numeroCarta, -4);
-       return $numeroCartaMascherato;
-    }
+    // ------------------- COSTRUTTORI -------------------
 
-  // ---------------------------- METODI SET ----------------------------
-    public function setNomeTitolareCarta(string $nomeTitolare): void
-    {
-       $this->nomeTitolare = $nomeTitolare;
+    /**
+     * Costruttore vuoto obbligatorio per JPA/Hibernate.
+     */
+    public CartaDiCredito() {
     }
 
-    public function setCognomeTitolareCarta(string $cognomeTitolare): void
-    {
-       $this->cognomeTitolare = $cognomeTitolare;
+    /**
+     * Costruttore della classe CartaDiCredito.
+     */
+    public CartaDiCredito(
+            String nomeTitolare,
+            String cognomeTitolare,
+            LocalDate dataScadenza,
+            String numeroCarta
+    ) {
+        this.nomeTitolare = nomeTitolare;
+        this.cognomeTitolare = cognomeTitolare;
+        this.dataScadenza = dataScadenza;
+        this.numeroCarta = numeroCarta;
     }
 
-    public function setDataScadenza(\DateTimeImmutable $dataScadenza): void
-    {
-       $this->dataScadenza = $dataScadenza;
+
+    // ------------------- METODI GET -------------------
+
+    public String getNomeTitolareCarta() {
+        return this.nomeTitolare;
     }
 
-    public function setNumeroCarta(string $numeroCarta): void
-    {
-       $this->numeroCarta = $numeroCarta;
+    public String getCognomeTitolareCarta() {
+        return this.cognomeTitolare;
     }
 
-// ------------------ TOSTRING ---------------------------
-    public function __toString(): string
-    {
-       $dataFormattata = $this->dataScadenza->format('m-Y');
-       return "Nome Titolare: {$this->nomeTitolare}\n Cognome Titolare:{$this->cognomeTitolare}\n Data Scadenza: {$dataFormattata}\n Numero Carta: {$this->getNumeroCartaMascherato()}\n";
+    public LocalDate getDataScadenza() {
+        return this.dataScadenza;
     }
 
-// --- Implementazione per la serializzazione JSON ---
-    public function jsonSerialize(): array
-    {
-       return [
-           'nomeTitolare' => $this->nomeTitolare,
-           'cognomeTitolare' => $this->cognomeTitolare,
-           'dataScadenza' => $this->dataScadenza->format('m-Y'),
-           'numeroCartaMascherato'=> $this->getNumeroCartaMascherato(),
-       ];
+    /**
+     * Restituisce il numero della carta mascherato.
+     *
+     * Esempio:
+     * XXXX-XXXX-XXXX-1234
+     */
+    public String getNumeroCartaMascherato() {
+        if (this.numeroCarta == null || this.numeroCarta.length() < 4) {
+            return "XXXX";
+        }
+
+        return "XXXX-XXXX-XXXX-" +
+                this.numeroCarta.substring(this.numeroCarta.length() - 4);
     }
 
+
+    // ------------------- METODI SET -------------------
+
+    public void setNomeTitolareCarta(String nomeTitolare) {
+        this.nomeTitolare = nomeTitolare;
+    }
+
+    public void setCognomeTitolareCarta(String cognomeTitolare) {
+        this.cognomeTitolare = cognomeTitolare;
+    }
+
+    public void setDataScadenza(LocalDate dataScadenza) {
+        this.dataScadenza = dataScadenza;
+    }
+
+    public void setNumeroCarta(String numeroCarta) {
+        this.numeroCarta = numeroCarta;
+    }
+
+
+    // ------------------- TOSTRING -------------------
+
+    @Override
+    public String toString() {
+
+        String dataFormattata = "";
+
+        if (this.dataScadenza != null) {
+            DateTimeFormatter formatter =
+                    DateTimeFormatter.ofPattern("MM-yyyy");
+
+            dataFormattata = this.dataScadenza.format(formatter);
+        }
+
+        return "Nome Titolare: " + this.nomeTitolare + "\n" +
+               " Cognome Titolare:" + this.cognomeTitolare + "\n" +
+               " Data Scadenza: " + dataFormattata + "\n" +
+               " Numero Carta: " + getNumeroCartaMascherato() + "\n";
+    }
 }
-?>
