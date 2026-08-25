@@ -26,195 +26,189 @@ use DateTimeImmutable;
 class EPagamento implements \JsonSerializable
 {
     /**
-     * id identificativo del pagamento (chiave primaria)
+     * id identificativo del pagamento
+     *
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_pag", type="integer")
      */
-     private ?int $idPag= null; 
+    private ?int $idPag = null;
 
     /**
      * Utente che effettua il pagamento
-     * @var EUtenteRegistrato
-     * @ORM\ManyToOne(targetEntity="EUtenteRegistrato")
-     * @ORM\JoinColumn(name="utente_id", referencedColumnName="id", nullable=false)
+     *
+     * @ORM\ManyToOne(targetEntity="EUtenteRegistrato", fetch="LAZY")
+     * @ORM\JoinColumn(name="utente_id", nullable=false)
      */
-    private EUtenteRegistrato $idUtenteRegistrato;
+    private EUtenteRegistrato $utenteRegistrato;
 
     /**
      * Spesa associata al pagamento
-     * @var ESpesa
-     * @ORM\ManyToOne(targetEntity="ESpesa")
-     * @ORM\JoinColumn(name="spesa_id", referencedColumnName="idSpesa", nullable=false)
+     *
+     * @ORM\ManyToOne(targetEntity="ESpesa", fetch="LAZY")
+     * @ORM\JoinColumn(name="spesa_id", nullable=false)
      */
-    private ESpesa $idSpesa;
+    private ESpesa $spesa;
 
     /**
      * Data del pagamento
-     * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
-     */ 
-    private DateTimeImmutable $data;
+     *
+     * @var DateTime
+     * @ORM\Column(name="data_pagamento", type="date", nullable=false)
+     */
+    private DateTime $data;
 
     /**
-     * Stato del pagamento (es. completato, in attesa)
+     * Stato del pagamento
+     *
      * @var string
-     * @ORM\Column(type="string", length=100)  
+     * @ORM\Column(type="string", length=100, nullable=false)
      */
     private string $stato;
 
     /**
      * Carta di credito utilizzata per il pagamento
-     * @var ECartaDiCredito
-     * @ORM\ManyToOne(targetEntity="ECartaDiCredito")
-     * @ORM\JoinColumn(name="carta_id", referencedColumnName="numeroCarta", nullable=false)
+     *
+     * @ORM\ManyToOne(
+     *     targetEntity="ECartaDiCredito",
+     *     fetch="LAZY",
+     *     cascade={"persist", "merge"}
+     * )
+     * @ORM\JoinColumn(name="carta_id", nullable=false)
      */
     private ECartaDiCredito $cartaDiCredito;
 
-    // ---------------- COSTRUTTORE ----------------
+
+    // ---------------- COSTRUTTORI ----------------
 
     /**
-     * Crea una nuova istanza della classe EPagamento
-     * 
-     * @param EUtenteRegistrato $idUtenteRegistrato utente che effettua il pagamento
-     * @param ESpesa $idSpesa spesa pagata
-     * @param DateTimeImmutable $data data del pagamento
-     * @param string $stato stato del pagamento
-     * @param ECartaDiCredito $cartaDiCredito carta usata per il pagamento
+     * Costruttore vuoto obbligatorio per Doctrine.
      */
-    public function __construct(
-        EUtenteRegistrato $idUtenteRegistrato,
-        ESpesa $idSpesa,
-        DateTimeImmutable $data,
-        string $stato,
+    public function __construct()
+    {
+    }
+
+    /**
+     * Crea una nuova istanza della classe EPagamento.
+     */
+    public function init(
+        EUtenteRegistrato $utenteRegistrato,
+        ESpesa $spesa,
         ECartaDiCredito $cartaDiCredito
-    ) {
-        $this->idUtenteRegistrato = $idUtenteRegistrato;
-        $this->idSpesa = $idSpesa;
-        $this->data = $data;
-        $this->stato = $stato;
+    ): void {
+        $this->utenteRegistrato = $utenteRegistrato;
+        $this->spesa = $spesa;
+        $this->data = new DateTime();
+        $this->stato = "PAGATO";
         $this->cartaDiCredito = $cartaDiCredito;
     }
-//----------------------METODI GET/SET (ID)-----------------------------
-     /**
-     * Restituisce l'identificativo del pagamento
-     * @return int|null
-     */
-    public function getId(): ?int { return $this->idPag; }
-      /**
-     * Imposta l'identificativo del pagamento
-     * @param int $id
-     */
-    public function setId(int $id): void { $this->idPag= $id; } 
+
+
     // ---------------- METODI GET ----------------
-     /**
-     * Restituisce l'utente che ha effettuato il pagamento
-     * @return EUtenteRegistrato
-     */
-    public function getIdUtenteRegistrato(): EUtenteRegistrato
+
+    public function getId(): ?int
     {
-        return $this->idUtenteRegistrato;
+        return $this->idPag;
     }
-    
-    /**
-     * Restituisce la spesa associata al pagamento
-     * @return ESpesa
-     */
-    public function getIdSpesa(): ESpesa
+
+    public function getUtenteRegistrato(): EUtenteRegistrato
     {
-        return $this->idSpesa;
+        return $this->utenteRegistrato;
     }
-     /**
-     * Restituisce la data del pagamento
-     * @return DateTimeImmutable
-     */
-    public function getData(): DateTimeImmutable
+
+    public function getSpesa(): ESpesa
+    {
+        return $this->spesa;
+    }
+
+    public function getData(): DateTime
     {
         return $this->data;
     }
-      /**
-     * Restituisce lo stato del pagamento
-     * @return string
-     */
+
     public function getStato(): string
     {
         return $this->stato;
     }
-      /**
-     * Restituisce la carta di credito usata per il pagamento
-     * @return ECartaDiCredito
-     */
+
     public function getCartaDiCredito(): ECartaDiCredito
     {
         return $this->cartaDiCredito;
     }
 
-    // ---------------- METODI SET ----------------
-      /**
-     * Imposta l'utente che effettua il pagamento
-     * @param EUtenteRegistrato $idUtenteRegistrato
-     */
-    public function setIdUtenteRegistrato(EUtenteRegistrato $idUtenteRegistrato): void
-    {
-        $this->idUtenteRegistrato = $idUtenteRegistrato;
-    }
-     /**
-     * Imposta la spesa associata al pagamento
-     * @param ESpesa $idSpesa
-     */
-    public function setIdSpesa(ESpesa $idSpesa): void
-    {
-        $this->idSpesa = $idSpesa;
-    }
     /**
-     * Imposta la data del pagamento
-     * @param DateTimeImmutable $data
+     * Restituisce la data formattata.
      */
-    public function setData(DateTimeImmutable $data): void
+    public function getDataFormattata(): string
+    {
+        if (!isset($this->data)) {
+            return "";
+        }
+
+        return $this->data->format('d/m/Y');
+    }
+
+
+    // ---------------- METODI SET ----------------
+
+    public function setId(?int $idPag): void
+    {
+        $this->idPag = $idPag;
+    }
+
+    public function setUtenteRegistrato(EUtenteRegistrato $utenteRegistrato): void
+    {
+        $this->utenteRegistrato = $utenteRegistrato;
+    }
+
+    public function setSpesa(ESpesa $spesa): void
+    {
+        $this->spesa = $spesa;
+    }
+
+    public function setData(DateTime $data): void
     {
         $this->data = $data;
     }
-      /**
-     * Imposta lo stato del pagamento
-     * @param string $stato
-     */
-    public function setStato(string $stato): void
-    {
-        $this->stato = $stato;
-    }
-      /**
-     * Imposta la carta di credito utilizzata
-     * @param ECartaDiCredito $cartaDiCredito
-     */
+
     public function setCartaDiCredito(ECartaDiCredito $cartaDiCredito): void
     {
         $this->cartaDiCredito = $cartaDiCredito;
     }
 
-    // ------------------ TOSTRING ---------------------------
-
-    /**
-     * Stampa i dettagli del pagamento
-     * @return string
-     */
-    public function __toString(): string
+    public function setStato(): void
     {
-        $dataFormattata = $this->data->format('d-m-Y');
-        return "idPagamento: {$this->getId()}\nUtente: {$this->idUtenteRegistrato}\nSpesa: {$this->idSpesa}\nData: {$dataFormattata}\nStato: {$this->stato}\nCarta di Credito: {$this->cartaDiCredito}\n";
+        $this->stato = "PAGATO";
     }
 
-    // --- Implementazione per la serializzazione JSON ---
-      /**
-     * Serializza l'oggetto EPagamento in formato JSON
-     * @return array Array associativo con i dati del pagamento
-     */
+
+    // ------------------ TOSTRING ---------------------------
+
+    public function __toString(): string
+    {
+        return "Pagamento{" .
+            "idPagamento=" . $this->idPag .
+            ", utente=" . ($this->utenteRegistrato !== null
+                ? $this->utenteRegistrato->getUsername()
+                : "null") .
+            ", spesa=" . ($this->spesa !== null
+                ? $this->spesa->getTipologia()
+                : "null") .
+            ", data=" . $this->getDataFormattata() .
+            ", stato='" . $this->stato . '\'' .
+            '}';
+    }
+
+
+    // ------------------ JSON ---------------------------
+
     public function jsonSerialize(): array
     {
         return [
             'id' => $this->idPag,
-            'idUtenteRegistrato' => $this->idUtenteRegistrato,
-            'idSpesa' => $this->idSpesa,
+            'utenteRegistrato' => $this->utenteRegistrato,
+            'spesa' => $this->spesa,
             'data' => $this->data->format('Y-m-d'),
             'stato' => $this->stato,
             'cartaDiCredito' => $this->cartaDiCredito
@@ -222,4 +216,4 @@ class EPagamento implements \JsonSerializable
     }
 }
 
-?> 
+?>
