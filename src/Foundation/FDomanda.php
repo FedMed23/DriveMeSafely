@@ -10,14 +10,19 @@ class FDomanda
 {
     private EntityManagerInterface $em;
 
-    // Costruttore: serve per collegarsi al database
+    // ---------------------- COSTRUTTORE ----------------------
+    /**
+     * Costruttore: collega Doctrine al database
+     */
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
-    // Salva una nuova domanda
+    /**
+     * Salva una nuova domanda
+     */
     public function save(EDomanda $domanda): void
     {
         $this->em->persist($domanda);
@@ -25,60 +30,63 @@ class FDomanda
     }
 
     // ---------------------- LETTURA ----------------------
-    // Recupera una domanda tramite ID
-    public function getDomandaById(int $id): ?EDomanda
+    /**
+     * Recupera una domanda tramite ID
+     */
+    public function findById(int $id): ?EDomanda
     {
-        return $this->em->getRepository(EDomanda::class)->find($id);
+        return $this->em->find(EDomanda::class, $id);
     }
 
-    // Recupera tutte le domande
-    public function getAllDomande(): array
+    /**
+     * Recupera tutte le domande ordinate
+     * per ID crescente.
+     */
+    public function findAll(): array
     {
-        return $this->em->getRepository(EDomanda::class)->findAll();
+        return $this->em
+            ->getRepository(EDomanda::class)
+            ->createQueryBuilder('d')
+            ->orderBy('d.idDomanda', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Recupera tutte le domande appartenenti
+     * a uno specifico argomento.
+     *
+     * Il confronto ignora maiuscole/minuscole
+     * e spazi iniziali/finali.
+     */
+    public function findByArgomento(string $argomento): array
+    {
+        return $this->em
+            ->getRepository(EDomanda::class)
+            ->createQueryBuilder('d')
+            ->where('LOWER(TRIM(d.argomento)) = LOWER(TRIM(:argomento))')
+            ->setParameter('argomento', $argomento)
+            ->getQuery()
+            ->getResult();
     }
 
     // ---------------------- AGGIORNAMENTO ----------------------
-    // Aggiorna una domanda
+    /**
+     * Aggiorna una domanda esistente
+     */
     public function update(EDomanda $domanda): void
     {
         $this->em->flush();
     }
 
     // ---------------------- ELIMINAZIONE ----------------------
-    // Elimina una domanda
+    /**
+     * Elimina una domanda
+     */
     public function delete(EDomanda $domanda): void
     {
         $this->em->remove($domanda);
         $this->em->flush();
-    }
-
-    // ---------------------- METODI PERSONALIZZATI ----------------------
-
-    // Trova tutte le domande con risposta corretta TRUE
-    public function getDomandeCorrette(): array
-    {
-        return $this->em->getRepository(EDomanda::class)->findBy([
-            'rispostaCorretta' => true
-        ]);
-    }
-
-    // Trova tutte le domande con risposta FALSE
-    public function getDomandeErrate(): array
-    {
-        return $this->em->getRepository(EDomanda::class)->findBy([
-            'rispostaCorretta' => false
-        ]);
-    }
-
-    // Cerca domande per parola nel contenuto (utile per quiz)
-    public function cercaPerContenuto(string $testo): array
-    {
-        return $this->em->getRepository(EDomanda::class)
-            ->createQueryBuilder('d')
-            ->where('d.contenuto LIKE :testo')
-            ->setParameter('testo', '%' . $testo . '%')
-            ->getQuery()
-            ->getResult();
     }
 }
 ?>
