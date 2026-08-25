@@ -21,85 +21,142 @@ use DateTimeImmutable;
  */
 
 class EPrenotazioneEsami implements \JsonSerializable
-{   /**
+{
+    /**
      * id identificativo della prenotazione
+     *
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_prenotazione_esame", type="integer")
      */
-    private ?int $idPrEs = null;
+    private ?int $idPrenotazioneEsame = null;
 
     /**
-     * Dipendente che effettua la prenotazione
-     * @var int
-     * @ORM\Column(type="integer")
+     * Dipendente che ha inserito la pratica in Motorizzazione
+     *
+     * @ORM\ManyToOne(targetEntity="EDipendente", fetch="EAGER")
+     * @ORM\JoinColumn(name="id_dipendente", nullable=false)
      */
-    private int $idDipendente;
+    private EDipendente $dipendente;
 
     /**
-     * Identificativo univoco dell'esame
-     * @var int
-     * @ORM\Column(type="integer")
+     * Sessione d'esame a cui partecipa
+     *
+     * @ORM\ManyToOne(targetEntity="EEsame", fetch="EAGER")
+     * @ORM\JoinColumn(name="id_esame", nullable=false)
      */
-    private int $idEsame;
+    private EEsame $esame;
 
     /**
-     * Data della prenotazione
+     * Iscritto che sostiene l'esame
+     *
+     * @ORM\ManyToOne(targetEntity="EIscritto", fetch="EAGER")
+     * @ORM\JoinColumn(name="id_iscritto", nullable=false)
+     */
+    private EIscritto $allievo;
+
+    /**
+     * Data e ora della prenotazione
+     *
      * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
+     * @ORM\Column(name="data_prenotazione", type="datetime_immutable", nullable=false)
      */
-    private \DateTimeImmutable $dataPrEs;
+    private \DateTimeImmutable $dataPrenotazione;
 
     /**
-     * Stato della prenotazione (es. completato, in attesa)
+     * Stato della prenotazione
+     *
      * @var string
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(name="stato", type="string", length=30, nullable=false)
      */
     private string $stato;
 
-    // ---------------- COSTRUTTORE ----------------
+    /**
+     * Esito finale dell'esame
+     *
+     * @var bool
+     * @ORM\Column(name="superato", type="boolean", nullable=false)
+     */
+    private bool $superato = false;
+
+
+    //-------------------------COSTRUTTORI-------------------------
 
     /**
-     * Crea una nuova istanza della classe EPrenotazioneEsami
-     * @param EDipendente $dipendente dipendente che effettua la prenotazione
-     * @param EEsame $esame esame prenotato
-     * @param DateTimeImmutable $data data della prenotazione
-     * @param string $stato stato della prenotazione
-
+     * Costruttore vuoto obbligatorio per Doctrine.
      */
-    public function __construct(
-        EDipendente $dipendente ,
+    public function __construct()
+    {
+    }
+
+    /**
+     * Costruttore completo della prenotazione.
+     */
+    public function init(
+        EDipendente $dipendente,
         EEsame $esame,
-        DateTimeImmutable $data,
+        EIscritto $allievo,
         string $stato
-    ) {
-        $this->idDipendente = $dipendente->getId();
-        $this->idEsame = $esame->getIdEsame();
-        $this->dataPrEs = $data;
+    ): void {
+        $this->dipendente = $dipendente;
+        $this->esame = $esame;
+        $this->allievo = $allievo;
+        $this->dataPrenotazione = new \DateTimeImmutable();
         $this->stato = $stato;
     }
-    //----------------------METODI GET/SET (ID)-----------------------------
-    
-    public function getId(): ?int { return $this->idPrEs; }
-    public function setId(int $id): void { $this->idPrEs= $id; } 
 
 
-    // ---------------- METODI GET ----------------
+    //----------------------METODI GETTER E SETTER-----------------------------
 
-    public function getIdDipendente(): int
+    public function getIdPrenotazioneEsame(): ?int
     {
-        return $this->idDipendente;
+        return $this->idPrenotazioneEsame;
     }
 
-    public function getIdEsame(): int
+    public function setIdPrenotazioneEsame(?int $id): void
     {
-        return $this->idEsame;
+        $this->idPrenotazioneEsame = $id;
     }
 
-    public function getData(): DateTimeImmutable
+    public function getDipendente(): EDipendente
     {
-        return $this->dataPrEs;
+        return $this->dipendente;
+    }
+
+    public function setDipendente(EDipendente $dipendente): void
+    {
+        $this->dipendente = $dipendente;
+    }
+
+    public function getEsame(): EEsame
+    {
+        return $this->esame;
+    }
+
+    public function setEsame(EEsame $esame): void
+    {
+        $this->esame = $esame;
+    }
+
+    public function getAllievo(): EIscritto
+    {
+        return $this->allievo;
+    }
+
+    public function setAllievo(EIscritto $allievo): void
+    {
+        $this->allievo = $allievo;
+    }
+
+    public function getDataPrenotazione(): \DateTimeImmutable
+    {
+        return $this->dataPrenotazione;
+    }
+
+    public function setDataPrenotazione(\DateTimeImmutable $data): void
+    {
+        $this->dataPrenotazione = $data;
     }
 
     public function getStato(): string
@@ -107,52 +164,49 @@ class EPrenotazioneEsami implements \JsonSerializable
         return $this->stato;
     }
 
-    // ---------------- METODI SET ----------------
-
-    public function setIdDipendente(EDipendente $dipendente): void
-    {
-        $this->idDipendente= $dipendente->getId();
-    }
-
-    public function setIdEsame(EEsame $esame): void
-    {
-        $this->idEsame = $esame->getId();
-    }
-
-    public function setData(DateTimeImmutable $data): void
-    {
-        $this->dataPrEs = $data;
-    }
-
     public function setStato(string $stato): void
     {
         $this->stato = $stato;
     }
 
-    // ------------------ TOSTRING ---------------------------
-
-    /**
-     * Stampa i dettagli del pagamento
-     * @return string
-     */
-    public function __toString(): string
+    public function isSuperato(): bool
     {
-        $dataFormattata = $this->dataPrEs->format('d-m-Y');
-        return "idPrenotazioneEsame: {$this->idPrEs}\nDipendente: {$this->idDipendente}\nID Esame: {$this->idEsame}\nData: {$dataFormattata}\nStato: {$this->stato}\n";
+        return $this->superato;
     }
- 
-    // ------- Implementazione per la serializzazione JSON --------
+
+    public function setSuperato(bool $superato): void
+    {
+        $this->superato = $superato;
+    }
+
+
+    //---------------------JSON-------------------------------
 
     public function jsonSerialize(): array
     {
         return [
-            'idPrEs' => $this->idPrEs,
-            'idDipendente' => $this->idDipendente,
-            'idEsame' => $this->idEsame,
-            'data' => $this->dataPrEs->format('Y-m-d'),
+            'idPrenotazioneEsame' => $this->idPrenotazioneEsame,
+            'dipendenteId' => $this->dipendente->getId(),
+            'esameId' => $this->esame->getIdEsame(),
+            'allievoId' => $this->allievo->getId(),
+            'dataPrenotazione' => $this->dataPrenotazione->format('Y-m-d H:i:s'),
             'stato' => $this->stato,
+            'superato' => $this->superato
         ];
+    }
+
+
+    //--------------------METODO TOSTRING--------------
+
+    public function __toString(): string
+    {
+        return "Esame: " .
+            $this->esame->getTipologia() .
+            " | Allievo: " .
+            $this->allievo->getCognome() .
+            " | Superato: " .
+            ($this->superato ? "true" : "false");
     }
 }
 
-?> 
+?>
