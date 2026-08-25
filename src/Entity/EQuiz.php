@@ -16,113 +16,225 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="quiz")
  */
-class EQuiz implements \JsonSerializable {
+class EQuiz implements \JsonSerializable
+{
     /**
      * id identificativo del quiz
+     *
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     * */
-    private ?int $idQuiz = null; 
-    
+     * @ORM\Column(name="id_quiz", type="integer")
+     */
+    private ?int $idQuiz = null;
+
     /**
      * Nome del quiz
+     *
      * @var string
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(name="nome", type="string", length=100, nullable=false)
      */
-    private string $nomeQuiz; 
+    private string $nome;
+
+    /**
+     * Descrizione del quiz
+     *
+     * @var string|null
+     * @ORM\Column(name="descrizione", type="string", length=500, nullable=true)
+     */
+    private ?string $descrizione = null;
+
+    /**
+     * Numero di domande del quiz
+     *
+     * @var int
+     * @ORM\Column(name="numero_domande", type="integer", nullable=false)
+     */
+    private int $numeroDomande;
+
+    /**
+     * Tempo massimo del quiz
+     *
+     * @var int
+     * @ORM\Column(name="tempo_massimo", type="integer", nullable=false)
+     */
+    private int $tempoMassimo;
+
     /**
      * Insieme di domande del quiz
-     * @var array
-     * @ORM\ManyToMany(targetEntity="EDomanda", cascade={"persist"})
+     *
+     * @var EDomanda[]
+     * @ORM\ManyToMany(targetEntity="EDomanda", fetch="LAZY")
      * @ORM\JoinTable(
      *     name="quiz_domanda",
-     *     joinColumns={@ORM\JoinColumn(name="quiz_id", referencedColumnName="idQuiz")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="domanda_id", referencedColumnName="idDomanda")}
-     *)
+     *     joinColumns={
+     *         @ORM\JoinColumn(name="quiz_id", referencedColumnName="id_quiz")
+     *     },
+     *     inverseJoinColumns={
+     *         @ORM\JoinColumn(name="domanda_id", referencedColumnName="id_domanda")
+     *     }
+     * )
+     * @ORM\OrderBy({"contenuto" = "ASC"})
      */
-    private array $domande = []; 
+    private array $domande = [];
 
-    //-------------------------COSTRUTTORE-------------------------
 
-    public function __construct(string $nome, array $domandeIniziali = []) {
-        $this->nomeQuiz = $nome;
-        
-        // Verifica dell'array 
-        foreach ($domandeIniziali as $domanda) {
-            if (!($domanda instanceof EDomanda)) {
-                throw new \InvalidArgumentException("L'array del quiz deve contenere solo oggetti EDomanda.");
-            }
-            $this->domande[] = $domanda;
-        }
+    //-------------------------COSTRUTTORI-------------------------
+
+    public function __construct()
+    {
     }
 
+    public function init(
+        string $nome,
+        ?string $descrizione,
+        int $numeroDomande,
+        int $tempoMassimo
+    ): void {
+        $this->nome = $nome;
+        $this->descrizione = $descrizione;
+        $this->numeroDomande = $numeroDomande;
+        $this->tempoMassimo = $tempoMassimo;
+    }
+
+
     //----------------------METODI GET/SET (ID)-----------------------------
-    
-    public function getId(): ?int { return $this->idQuiz; }
-    public function setId(int $id): void { $this->idQuiz= $id; } 
 
-    //----------------------METODI GET -----------------------------
+    public function getIdQuiz(): ?int
+    {
+        return $this->idQuiz;
+    }
 
-    public function getNomeQuiz(): string { return $this->nomeQuiz; }
+    public function setIdQuiz(?int $idQuiz): void
+    {
+        $this->idQuiz = $idQuiz;
+    }
+
+
+    //----------------------METODI GET-----------------------------
+
+    public function getNome(): string
+    {
+        return $this->nome;
+    }
+
+    public function getDescrizione(): ?string
+    {
+        return $this->descrizione;
+    }
+
+    public function getNumeroDomande(): int
+    {
+        return $this->numeroDomande;
+    }
+
+    public function getTempoMassimo(): int
+    {
+        return $this->tempoMassimo;
+    }
 
     /**
-     * @return EDomanda[] Restituisce l'array di domande
+     * @return EDomanda[]
      */
-    public function getDomande(): array {
+    public function getDomande(): array
+    {
         return $this->domande;
     }
 
-   //-----------------------------METODI SET-----------------------------
 
-    public function setNomeQuiz(string $nome): void { $this->nomeQuiz = $nome; }
-    
-    //----------------------Altri metodi -----------------------------
-    
+    //-----------------------------METODI SET-----------------------------
+
+    public function setNome(string $nome): void
+    {
+        $this->nome = $nome;
+    }
+
+    public function setDescrizione(?string $descrizione): void
+    {
+        $this->descrizione = $descrizione;
+    }
+
+    public function setNumeroDomande(int $numeroDomande): void
+    {
+        $this->numeroDomande = $numeroDomande;
+    }
+
+    public function setTempoMassimo(int $tempoMassimo): void
+    {
+        $this->tempoMassimo = $tempoMassimo;
+    }
+
+    public function setDomande(array $domande): void
+    {
+        $this->domande = $domande;
+    }
+
+
+    //----------------------Altri metodi-----------------------------
+
     /**
      * Aggiunge una domanda al quiz.
      */
-    public function addDomanda(EDomanda $domanda): void {
-        $this->domande[] = $domanda;
+    public function addDomanda(EDomanda $domanda): void
+    {
+        if (!in_array($domanda, $this->domande, true)) {
+            $this->domande[] = $domanda;
+        }
+
+        $domanda->getQuiz()->add($this);
     }
 
     /**
      * Rimuove una domanda dal quiz.
      */
-    public function removeDomanda(EDomanda $domanda): void {
-
+    public function removeDomanda(EDomanda $domanda): void
+    {
         $key = array_search($domanda, $this->domande, true);
+
         if ($key !== false) {
             unset($this->domande[$key]);
-            $this->domande = array_values($this->domande); // Riorganizza gli indici
+            $this->domande = array_values($this->domande);
         }
+
+        $domanda->getQuiz()->remove($this);
     }
+
 
     //---------------------JSON-------------------------------
 
-    public function jsonSerialize(): array {
+    public function jsonSerialize(): array
+    {
         return [
             'idQuiz' => $this->idQuiz,
-            'nomeQuiz' => $this->nomeQuiz,
-            // Serializzazione ID 
-            'domandeId' => array_map(fn($d) => $d->getId(), $this->domande)
+            'nome' => $this->nome,
+            'descrizione' => $this->descrizione,
+            'numeroDomande' => $this->numeroDomande,
+            'tempoMassimo' => $this->tempoMassimo,
+            'domandeId' => array_map(
+                fn($domanda) => $domanda->getId(),
+                $this->domande
+            )
         ];
     }
+
+
     //--------------------METODO TOSTRING--------------
 
     /**
      * Stampa i dettagli del quiz.
+     *
      * @return string
      */
-    public function __toString(): string  {
-        $output = "idQuiz: {$this->idQuiz}\nNome Quiz: {$this->nomeQuiz}\n--- Domande ---\n";
-        $numero=0;
-        foreach ($this->domande as $domanda) {
-            $numero++;
-            $output .= "Domanda {$numero}:\n" .(string)$domanda . "\n";
-        }
-        return $output;
+    public function __toString(): string
+    {
+        return "Quiz{" .
+            "idQuiz=" . $this->idQuiz .
+            ", nome='" . $this->nome . "'" .
+            ", numeroDomande=" . $this->numeroDomande .
+            ", tempoMassimo=" . $this->tempoMassimo . " minuti" .
+            ", domandeCaricate=" . ($this->domande !== null ? count($this->domande) : 0) .
+            '}';
     }
 }
+
 ?>
