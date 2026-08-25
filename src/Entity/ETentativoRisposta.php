@@ -17,88 +17,161 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="tentativo_risposta")
  */
-class ETentativoRisposta implements \JsonSerializable {
+class ETentativoRisposta implements \JsonSerializable
+{
     /**
      * Identificativo univoco del tentativo (chiave primaria)
+     *
      * @var int
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_tentativo", type="integer")
      */
-    private ?int $idTent = null;
+    private ?int $idTentativo = null;
 
     /**
      * Domanda associata alla risposta
+     *
      * @var EDomanda
-     * @ORM\ManyToOne(targetEntity="EDomanda")
-     * @ORM\JoinColumn(name="domanda_id", referencedColumnName="idDomanda", nullable=false)
+     * @ORM\ManyToOne(targetEntity="EDomanda", fetch="EAGER")
+     * @ORM\JoinColumn(name="id_domanda", nullable=false)
      */
-    private EDomanda $domanda;    
-    
+    private EDomanda $domanda;
+
     /**
-     * @ORM\ManyToOne(targetEntity="ESvolgimentoQuiz", inversedBy="tentativiRisposta")
-     * @ORM\JoinColumn(name="svolgimento_id", referencedColumnName="idSvolgimento", nullable=false)
+     * Svolgimento del quiz associato al tentativo
+     *
+     * @var ESvolgimentoQuiz
+     * @ORM\ManyToOne(targetEntity="ESvolgimentoQuiz", fetch="LAZY")
+     * @ORM\JoinColumn(name="id_svolgimento", nullable=false)
      */
-    private ESvolgimentoQuiz $svolgimento;
-    
-     /**
-     * Risposta dell'utente (V o F)
-     * @var bool
-     * @ORM\Column(type="boolean")  
-     */
-    private bool $rispostaUtente;   
-     /**
-     * Esito della risposta (true se giusta, false se sbagliata)
-     * @var bool
-     * @ORM\Column(type="boolean")  
-     */
-    private bool $esito;             
+    private ESvolgimentoQuiz $svolgimentoQuiz;
 
-//-------------------------COSTRUTTORE-------------------------
+    /**
+     * Risposta dell'utente (true o false)
+     *
+     * @var bool
+     * @ORM\Column(name="risposta_utente", type="boolean", nullable=false)
+     */
+    private bool $rispostaUtente;
 
-    public function __construct( ESvolgimentoQuiz $svolgimento, EDomanda $domanda, bool $rispostaUtente) {
-        $this->svolgimento = $svolgimento;
+    /**
+     * Esito della risposta (true se corretta, false se errata)
+     *
+     * @var bool
+     * @ORM\Column(name="corretta", type="boolean", nullable=false)
+     */
+    private bool $corretta;
+
+
+    //-------------------------COSTRUTTORI-------------------------
+
+    public function __construct()
+    {
+    }
+
+    public function init(
+        EDomanda $domanda,
+        ESvolgimentoQuiz $svolgimentoQuiz,
+        bool $rispostaUtente,
+        bool $corretta
+    ): void {
         $this->domanda = $domanda;
+        $this->svolgimentoQuiz = $svolgimentoQuiz;
         $this->rispostaUtente = $rispostaUtente;
-        $this->esito = ($rispostaUtente === $domanda->getRispostaCorretta());
+        $this->corretta = $corretta;
     }
- 
- //----------------------METODI GET-----------------------------   
-    public function getId(): ?int {
-        return $this->idTent;
-    }
-    public function getDomanda(): EDomanda { return $this->domanda; }
-    public function getSvolgimento(): ESvolgimentoQuiz { return $this->svolgimento; }
-    public function getRispostaUtente(): bool { return $this->rispostaUtente; }
-    public function isCorretta(): bool { return $this->esito; }
 
-//---------------------JSON-------------------------------
-    public function jsonSerialize(): array {
+
+    //----------------------METODI GET-----------------------------
+
+    public function getIdTentativo(): ?int
+    {
+        return $this->idTentativo;
+    }
+
+    public function getDomanda(): EDomanda
+    {
+        return $this->domanda;
+    }
+
+    public function getSvolgimentoQuiz(): ESvolgimentoQuiz
+    {
+        return $this->svolgimentoQuiz;
+    }
+
+    public function isRispostaUtente(): bool
+    {
+        return $this->rispostaUtente;
+    }
+
+    public function isCorretta(): bool
+    {
+        return $this->corretta;
+    }
+
+
+    //----------------------METODI SET-----------------------------
+
+    public function setIdTentativo(?int $idTentativo): void
+    {
+        $this->idTentativo = $idTentativo;
+    }
+
+    public function setDomanda(EDomanda $domanda): void
+    {
+        $this->domanda = $domanda;
+    }
+
+    public function setSvolgimentoQuiz(ESvolgimentoQuiz $svolgimentoQuiz): void
+    {
+        $this->svolgimentoQuiz = $svolgimentoQuiz;
+    }
+
+    public function setRispostaUtente(bool $rispostaUtente): void
+    {
+        $this->rispostaUtente = $rispostaUtente;
+    }
+
+    public function setCorretta(bool $corretta): void
+    {
+        $this->corretta = $corretta;
+    }
+
+
+    //---------------------JSON-------------------------------
+
+    public function jsonSerialize(): array
+    {
         return [
-            'idTent' => $this->idTent,
+            'idTentativo' => $this->idTentativo,
             'domandaId' => $this->domanda->getId(),
             'rispostaUtente' => $this->rispostaUtente,
-            'esito' => $this->esito
+            'corretta' => $this->corretta
         ];
     }
 
-//--------------------METODO TOSTRING--------------
+
+    //--------------------METODO TOSTRING--------------
 
     /**
      * Stampa i dettagli del tentativo.
+     *
      * @return string
      */
-    public function __toString(): string  {
-        $rispostaUtenteStr = $this->rispostaUtente ? "Vero" : "Falso";
-        $esitoStr = $this->esito ? "Corretta" : "Errata";
-        $print ="idTent: ".$this->idTent."\n".
-                " idDomanda: ".$this->domanda->getId()."\n".
-                " rispostaUtente: ".$rispostaUtenteStr."\n".
-                 "esito : ".$esitoStr."\n";
-        
-        return $print;
+    public function __toString(): string
+    {
+        $contenutoDomanda = ($this->domanda !== null)
+            ? $this->domanda->getContenuto()
+            : "N/D";
+
+        return "TentativoRisposta{" .
+            "idTentativo=" . $this->idTentativo .
+            ", domanda='" . $contenutoDomanda . "'" .
+            ", rispostaUtente=" . ($this->rispostaUtente ? "true" : "false") .
+            ", corretta=" . ($this->corretta ? "true" : "false") .
+            '}';
     }
 }
+
 ?>
-
-
