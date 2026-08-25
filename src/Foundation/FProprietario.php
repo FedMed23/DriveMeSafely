@@ -1,4 +1,5 @@
 <?php
+
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EProprietario;
@@ -14,8 +15,9 @@ class FProprietario
     }
 
     // ---------------- CREATE / UPDATE ----------------
+
     /**
-     * Salva un proprietario nuovo o aggiornato
+     * Salva un proprietario nuovo o aggiornato.
      */
     public function save(EProprietario $proprietario): void
     {
@@ -24,35 +26,76 @@ class FProprietario
     }
 
     // ---------------- READ ----------------
+
     /**
-     * Recupera un proprietario per ID
+     * Recupera il proprietario presente nel sistema.
+     *
+     * Restituisce il primo proprietario trovato
+     * oppure null se non ne esiste nessuno.
+     */
+    public function findProprietario(): ?EProprietario
+    {
+        $query = $this->em->createQuery(
+            'SELECT p
+             FROM ' . EProprietario::class . ' p'
+        );
+
+        $query->setMaxResults(1);
+
+        $risultato = $query->getResult();
+
+        return empty($risultato) ? null : $risultato[0];
+    }
+
+    /**
+     * Recupera un proprietario per ID.
      */
     public function findById(int $id): ?EProprietario
     {
-        return $this->em->getRepository(EProprietario::class)->find($id);
+        return $this->em
+            ->getRepository(EProprietario::class)
+            ->find($id);
     }
 
     /**
-     * Recupera tutti i proprietari
+     * Recupera tutti i proprietari.
      */
     public function findAll(): array
     {
-        return $this->em->getRepository(EProprietario::class)->findAll();
+        return $this->em
+            ->getRepository(EProprietario::class)
+            ->findAll();
     }
 
     /**
-     * Recupera un proprietario per username
+     * Cerca un proprietario tramite username.
+     *
+     * Restituisce null se lo username è nullo,
+     * vuoto oppure non presente nel database.
      */
-    public function findByUsername(string $username): ?EProprietario
+    public function findByUsername(?string $username): ?EProprietario
     {
-        return $this->em->getRepository(EProprietario::class)->findOneBy([
-            'username' => $username
-        ]);
+        if ($username === null || trim($username) === '') {
+            return null;
+        }
+
+        $query = $this->em->createQuery(
+            'SELECT p
+             FROM ' . EProprietario::class . ' p
+             WHERE p.username = :username'
+        );
+
+        $query->setParameter('username', trim($username));
+
+        $risultato = $query->getResult();
+
+        return empty($risultato) ? null : $risultato[0];
     }
 
     // ---------------- DELETE ----------------
+
     /**
-     * Elimina un proprietario
+     * Elimina un proprietario.
      */
     public function delete(EProprietario $proprietario): void
     {
