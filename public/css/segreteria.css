@@ -1,0 +1,11 @@
+.secretary-main { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+.staff-greeting { color: white; font-weight: bold; }
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px; }
+.card-amministrativa { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,.02); transition: all .2s ease-in-out; display: flex; flex-direction: column; justify-content: space-between; }
+.card-amministrativa:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,.05); border-color: #cbd5e1; }
+.card-amministrativa h3 { margin-top: 0; color: #1e293b; font-size: 1.4em; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+.card-amministrativa p { color: #64748b; font-size: .95em; line-height: 1.5; margin-bottom: 20px; }
+.btn-dashboard { display: block; text-align: center; padding: 10px 15px; background-color: #2b6cb0; color: white; text-decoration: none; font-weight: bold; border-radius: 6px; }
+.btn-dashboard:hover { background-color: #2c5282; }
+.btn-dark { background-color: #4a5568; } .btn-green { background-color: #2f855a; } .btn-purple { background-color: #6b46c1; }
+footer { text-align: center; margin-top: 60px; color: #a0aec0; font-size: .9em; }

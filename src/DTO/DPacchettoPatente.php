@@ -1,0 +1,37 @@
+<?php
+
+namespace CamassoMedelago\DriveMeSafely\DTO;
+
+use CamassoMedelago\DriveMeSafely\Entity\EPatente;
+
+class DPacchettoPatente
+{
+    private EPatente $patente;
+    private array $spese;
+    private float $importoTotale;
+
+    public function __construct(
+        EPatente $patente,
+        array $spese,
+        float $importoTotale
+    ) {
+        $this->patente = $patente;
+        $this->spese = $spese;
+        $this->importoTotale = $importoTotale;
+    }
+
+    public function getPatente(): EPatente
+    {
+        return $this->patente;
+    }
+
+    public function getSpese(): array
+    {
+        return $this->spese;
+    }
+
+    public function getImportoTotale(): float
+    {
+        return $this->importoTotale;
+    }
+}

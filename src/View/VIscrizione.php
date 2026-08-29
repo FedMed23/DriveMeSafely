@@ -5,9 +5,11 @@ use CamassoMedelago\DriveMeSafely\Smarty\StartSmarty;
 
 class VIscrizione
 {
+    private \Smarty\Smarty $smarty;
+
     public function __construct()
     {
-        $smarty = StartSmarty::configuration();
+        $this->smarty = StartSmarty::configuration();
     }
 
     /**
@@ -20,7 +22,7 @@ class VIscrizione
         $this->smarty->assign('pacchetti', $pacchetti);
 
         $this->smarty->display(
-            'iscrizione/pacchetti_patenti.tpl'
+            'pacchetti_patenti.tpl'
         );
     }
 
@@ -34,7 +36,7 @@ class VIscrizione
         $this->smarty->assign('pacchetto', $pacchetto);
 
         $this->smarty->display(
-            'iscrizione/dettaglio_pacchetto.tpl'
+            'dettaglio_pacchetto.tpl'
         );
     }
 
@@ -46,13 +48,14 @@ class VIscrizione
     public function showFormIscrizione($pacchetto, ?string $errore = null): void
     {
         $this->smarty->assign('pacchetto', $pacchetto);
+        $this->smarty->assign('oldData', []);
 
         if ($errore !== null) {
             $this->smarty->assign('errore', $errore);
         }
 
         $this->smarty->display(
-            'iscrizione/form_iscrizione.tpl'
+            'form_iscrizione.tpl'
         );
     }
 
@@ -66,19 +69,17 @@ class VIscrizione
         $this->smarty->assign('iscritto', $iscritto);
 
         $this->smarty->display(
-            'iscrizione/conferma_iscrizione.tpl'
+            'iscrizione/VConfermaIscrizione.tpl'
         );
     }
     
-        /**
-     * Gestisce gli errori di compilazione dei moduli (InvalidArgument / Runtime)
-     * Mostra un popup e torna indietro mantenendo i dati compilati dal browser.
-     */
-    public function showFormError(string $errorMessage, array $oldData = [], $pacchetto = null): void
-    {
-        echo "<script>alert('" . addslashes($errorMessage) . "'); window.history.back();</script>";
-        exit;
-    }
+        public function showFormError(string $errorMessage, array $oldData = [], $pacchetto = null): void
+        {
+            $this->smarty->assign('pacchetto', $pacchetto);
+            $this->smarty->assign('errore', $errorMessage);
+            $this->smarty->assign('oldData', $oldData);
+            $this->smarty->display('form_iscrizione.tpl');
+        }
 
     /**
      * Gestisce gli errori imprevisti o di sistema (Throwable / default HTTP 405)

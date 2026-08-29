@@ -4,14 +4,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Iscrizione Scuola Guida - DriveMeSafely</title>
-        <link rel="stylesheet" href="/css/style.css">
+        <link rel="stylesheet" href="{$request.contextPath}/css/style.css">
+        <style>
+            .campo-errore { display: block; color: #b42318; margin-top: 4px; }
+            .campo-non-valido { border: 1px solid #b42318; }
+        </style>
     </head>
     <body>
         <header>
             <h1>DriveMeSafely</h1>
             <nav>
                 <ul>
-                    <li><a href="index.php?page=home">Torna alla Home</a></li>
+                    <li><a href="{$homeUrl}">Torna alla Home</a></li>
                 </ul>
             </nav>
         </header>
@@ -23,58 +27,58 @@
                     ⚠️ {$errore}
                 </div>
             {/if}
-            <form id="iscrizione-form" action="index.php?page=iscrizione" method="POST">
+            <form id="iscrizione-form" action="{$request.contextPath}/home/iscrizione" method="POST">
                 <input type="hidden" name="idPa" value="{$pacchetto->getPatente()->getId()}">
                 <h3>1. Credenziali di Accesso</h3>
                 <div>
                     <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" value="{$oldData.username|default:''|escape}" minlength="1" maxlength="100" autocomplete="username" required>
                 </div>
                 <br>
                 <div>
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
+                    <input type="email" id="email" name="email" value="{$oldData.email|default:''|escape}" maxlength="100" autocomplete="email" required>
                 </div>
                 <br>
                 <div>
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" minlength="8" maxlength="64" autocomplete="new-password" required>
                 </div>
                 <br><hr><br>
                 <h3>2. Dati Anagrafici</h3>
                 <div>
                     <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" required>
+                    <input type="text" id="nome" name="nome" value="{$oldData.nome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ&#39; \-]&#123;2,50&#125;" autocomplete="given-name" required>
                 </div>
                 <br>
                 <div>
                     <label for="cognome">Cognome:</label>
-                    <input type="text" id="cognome" name="cognome" required>
+                    <input type="text" id="cognome" name="cognome" value="{$oldData.cognome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ&#39; \-]&#123;2,50&#125;" autocomplete="family-name" required>
                 </div>
                 <br>
                 <div>
                     <label for="codiceFiscale">Codice Fiscale:</label>
-                    <input type="text" id="codiceFiscale" name="codiceFiscale" required maxlength="16">
+                    <input type="text" id="codiceFiscale" name="codiceFiscale" value="{$oldData.codiceFiscale|default:''|escape}" minlength="16" maxlength="16" pattern="[A-Za-z0-9]&#123;16&#125;" autocomplete="off" required>
                 </div>
                 <br>
                 <div>
                     <label for="dataNascita">Data di Nascita:</label>
-                    <input type="date" id="dataNascita" name="dataNascita" required>
+                    <input type="date" id="dataNascita" name="dataNascita" value="{$oldData.dataNascita|default:''|escape}" max="{$smarty.now|date_format:'%Y-%m-%d'}" autocomplete="bday" required>
                 </div>
                 <br>
                 <div>
                     <label for="luogoNascita">Luogo di Nascita:</label>
-                    <input type="text" id="luogoNascita" name="luogoNascita" required>
+                    <input type="text" id="luogoNascita" name="luogoNascita" value="{$oldData.luogoNascita|default:''|escape}" minlength="2" maxlength="100" pattern="[A-Za-zÀ-ÿ .&#39;\-]&#123;2,100&#125;" autocomplete="off" required>
                 </div>
                 <br>
                 <div>
                     <label for="indirizzo">Indirizzo di Residenza:</label>
-                    <input type="text" id="indirizzo" name="indirizzo" required>
+                    <input type="text" id="indirizzo" name="indirizzo" value="{$oldData.indirizzo|default:''|escape}" minlength="5" maxlength="100" pattern="[A-Za-zÀ-ÿ0-9 .,&#39;\/\-]&#123;5,100&#125;" autocomplete="street-address" required>
                 </div>
                 <br>
                 <div>
                     <label for="telefono">Numero di Telefono:</label>
-                    <input type="text" id="telefono" name="telefono" required>
+                    <input type="tel" id="telefono" name="telefono" value="{$oldData.telefono|default:''|escape}" minlength="9" maxlength="15" pattern="\+?[0-9 ]&#123;9,15&#125;" autocomplete="tel" required>
                 </div>
                 <br><hr><br>
                 <h3>3. Patente scelta</h3>
@@ -85,6 +89,7 @@
                 <button type="submit" class="btn" style="width: 100%;">Conferma Iscrizione e Accedi</button>
             </form>
         </main>
+        <script src="{$request.contextPath}/js/iscrizione.js"></script>
         <footer>
             <p>© {$smarty.now|date_format:"%Y"} DriveMeSafely</p>
         </footer>

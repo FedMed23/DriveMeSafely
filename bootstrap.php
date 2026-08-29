@@ -16,6 +16,7 @@ $isDevMode = true;
 
 // ------------------- 2. Configurazione della cache -------------------
 $cache = new ArrayCache(); // cache in memoria Doctrine
+$proxyDir = __DIR__ . "/doctrine-proxies";
 
 // ------------------- 3. Parametri di connessione al DB -------------------
 $dbParams = [
@@ -27,7 +28,13 @@ $dbParams = [
 ];
 
 // ------------------- 3. Creazione della configurazione Doctrine -------------------
-$config = Setup::createAnnotationMetadataConfiguration($paths, $isDevMode,  null, $cache, false);
+$config = Setup::createAnnotationMetadataConfiguration(
+    $paths,
+    $isDevMode,
+    $proxyDir,
+    $cache,
+    false
+);
 
 
 // ------------------- 4. Creazione dell'Entity Manager -------------------

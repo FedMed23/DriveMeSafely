@@ -81,4 +81,3 @@ class FGeneric
             ->getResult();
     }
 }
-}

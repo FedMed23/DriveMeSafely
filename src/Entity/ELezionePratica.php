@@ -10,8 +10,9 @@ use DateTimeImmutable;
  * di una guida pratica.
  *
  * @ORM\Entity
- * @ORM\DiscriminatorValue("PRATICA")
  */
+#[ORM\Entity]
+#[ORM\DiscriminatorValue('PRATICA')]
 class ELezionePratica extends ELezione
 {
     /**

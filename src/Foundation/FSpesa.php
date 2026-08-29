@@ -2,6 +2,7 @@
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\ESpesa;
+use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FSpesa 
@@ -49,9 +50,25 @@ class FSpesa
 
     public function findSpeseIscritto(int $idIscritto): array
     {
-        return $this->em->createQuery('SELECT s FROM CamassoMedelago\DriveMeSafely\Entity\EIscritto i JOIN i.tipoPatente p JOIN p.spese s WHERE i.id = :idIscritto')
-            ->setParameter('idIscritto', $idIscritto)
-            ->getResult();
+        $iscritto = $this->em->find(EIscritto::class, $idIscritto);
+        if ($iscritto === null || $iscritto->getTipoPatente() === null) {
+            return [];
+        }
+
+        return $iscritto->getTipoPatente()->getSpese()->toArray();
+    }
+
+    public function isAssociataAIscritto(int $idIscritto, int $idSpesa): bool
+    {
+        return (int) $this->em->createQuery(
+            'SELECT COUNT(s.idSpesa)
+             FROM CamassoMedelago\DriveMeSafely\Entity\EIscritto i
+             JOIN i.tipoPatente p
+             JOIN p.spese s
+             WHERE i.id = :utente AND s.idSpesa = :spesa'
+        )->setParameter('utente', $idIscritto)
+            ->setParameter('spesa', $idSpesa)
+            ->getSingleScalarResult() > 0;
     }
 
     public function findSpeseProprietario(): array

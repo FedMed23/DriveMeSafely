@@ -15,10 +15,16 @@ class EProprietario extends EUtenteRegistrato
     /**
      * Costruttore vuoto obbligatorio per le specifiche JPA/Hibernate.
      */
-    public function __construct()
+    public function __construct(
+        string $nome = '',
+        string $cognome = '',
+        string $email = '',
+        string $username = '',
+        string $password = '',
+        bool $stato = true
+    )
     {
-        parent::__construct();
-        $this->setStatoAttivato();
+        parent::__construct($nome, $cognome, $email, $username, $password, $stato);
     }
 
     /**

@@ -44,7 +44,7 @@ class EPrenotazioneEsami implements \JsonSerializable
      * Sessione d'esame a cui partecipa
      *
      * @ORM\ManyToOne(targetEntity="EEsame", fetch="EAGER")
-     * @ORM\JoinColumn(name="id_esame", nullable=false)
+     * @ORM\JoinColumn(name="id_esame", referencedColumnName="id_esame", nullable=false)
      */
     private EEsame $esame;
 

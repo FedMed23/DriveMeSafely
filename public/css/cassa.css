@@ -1,0 +1,122 @@
+.contabilita-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.azioni-cassa {
+    margin-bottom: 25px;
+}
+
+.btn-gestione-spese {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    background: linear-gradient(135deg, #2d6cdf, #1a4ba3);
+    color: #fff;
+    padding: 18px 22px;
+    border-radius: 12px;
+    text-decoration: none;
+    box-shadow: 0 10px 20px rgba(31, 80, 182, 0.2);
+}
+
+.btn-gestione-spese span {
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-icon {
+    font-size: 1.8rem;
+}
+
+.btn-arrow {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.grafico-container {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px 0 35px;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.grafico-header h3 {
+    margin: 0;
+    color: #1e293b;
+}
+
+.grafico-header p {
+    color: #64748b;
+    margin: 8px 0 20px;
+}
+
+.grafico-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 700px;
+    height: 260px;
+    margin: 0 auto;
+}
+
+#graficoCassa {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#grafico-vuoto {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    color: #64748b;
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: 12px;
+}
+
+#grafico-vuoto strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #334155;
+}
+
+.tabella-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+}
+
+.tabella-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabella-card th,
+.tabella-card td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.tabella-card th {
+    background: #f8fafc;
+    color: #334155;
+}
+
+.tabella-card tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 640px) {
+    .btn-gestione-spese {
+        flex-wrap: wrap;
+    }
+}

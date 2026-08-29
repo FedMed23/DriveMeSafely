@@ -24,7 +24,7 @@ class CSvolgimentoQuiz
     private FSvolgimentoQuiz $fSvolgimentoQuiz;
   
   
-    public function __construct(FIscritto $fIscritto, FQuiz fQuiz, FSvolgimentoQuiz $fSvolgimentoQuiz)
+    public function __construct(FIscritto $fIscritto, FQuiz $fQuiz, FSvolgimentoQuiz $fSvolgimentoQuiz)
     {
         $this->fIscritto = $fIscritto;
         $this->fQuiz = $fQuiz;

@@ -10,6 +10,12 @@ class FIscritto
     {
         $this->em = $em;
     }
+
+    public function save(EIscritto $iscritto): void
+    {
+        $this->em->persist($iscritto);
+    }
+
     public function findById(int $id): ?EIscritto
     {
         return $this->em->find(EIscritto::class, $id);

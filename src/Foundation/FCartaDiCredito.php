@@ -41,6 +41,11 @@ class FCartaDiCredito
             ]);
     }
 
+    public function findByNumber(string $numeroCarta): ?ECartaDiCredito
+    {
+        return $this->findByNumeroCarta($numeroCarta);
+    }
+
     /**
      * Recupera tutte le carte in scadenza
      * entro una determinata data.

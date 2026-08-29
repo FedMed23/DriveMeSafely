@@ -1,6 +1,7 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use CamassoMedelago\DriveMeSafely\Utils\PasswordUtil;
 
 //Nota: punto da vedere: path foto profilo 
 /**
@@ -20,9 +21,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="tipo_utente", type="string")
  * @ORM\DiscriminatorMap({
- *     "iscritto" = "CamassoMedelago\DriveMeSafely\Entity\EIscritto",
- *     "dipendente" = "CamassoMedelago\DriveMeSafely\Entity\EDipendente",
- *     "proprietario" = "CamassoMedelago\DriveMeSafely\Entity\EProprietario"
+ *     "Iscritto" = "CamassoMedelago\DriveMeSafely\Entity\EIscritto",
+ *     "Dipendente" = "CamassoMedelago\DriveMeSafely\Entity\EDipendente",
+ *     "Proprietario" = "CamassoMedelago\DriveMeSafely\Entity\EProprietario"
  * })
  */
 abstract class EUtenteRegistrato implements \JsonSerializable

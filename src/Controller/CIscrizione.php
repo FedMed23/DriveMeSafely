@@ -4,7 +4,6 @@ namespace CamassoMedelago\DriveMeSafely\Controller;
 
 use CamassoMedelago\DriveMeSafely\Service\SIscrizione;
 use CamassoMedelago\DriveMeSafely\View\VIscrizione;
-use CamassoMedelago\DriveMeSafely\Utils\PasswordUtil;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CIscrizione
@@ -287,8 +286,6 @@ class CIscrizione
                     "Data di nascita non valida."
                 );
             }
-            $password_hash = PasswordUtil::hashPassword($password);
-
             /*
              * ---------------------------------------------------------
              * BUSINESS LOGIC
@@ -304,7 +301,7 @@ class CIscrizione
                 $cognome,
                 $username,
                 $email,
-                $password_hash,
+                $password,
                 $cf,
                 $indirizzo,
                 $luogoNascita,
@@ -330,7 +327,7 @@ class CIscrizione
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-            $_SESSION['utenteLoggato'] = $iscritto;
+            $_SESSION['utenteLoggatoId'] = $iscritto->getId();
             
             /*
              * ---------------------------------------------------------
@@ -348,15 +345,6 @@ class CIscrizione
 
         } catch (\InvalidArgumentException|\RuntimeException $e) {
             $pacchetto = null;
-            echo '<pre>';
-            echo "MESSAGGIO: " . $e->getMessage() . "\n";
-            echo "FILE: " . $e->getFile() . "\n";
-            echo "RIGA: " . $e->getLine() . "\n";
-            echo "\nTRACE:\n";
-            echo $e->getTraceAsString();
-            echo '</pre>';
-            exit;
-        
             if (isset($idPa) && $idPa > 0) {
                 $pacchetto = $this->service->getPacchetto($idPa);
             }
@@ -366,16 +354,28 @@ class CIscrizione
                 $_POST,
                 $pacchetto
             );
-        
+
+        } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+            $pacchetto = null;
+            if (isset($idPa) && $idPa > 0) {
+                $pacchetto = $this->service->getPacchetto($idPa);
+            }
+
+            $this->view->showFormError(
+                "Username, email o codice fiscale già presenti.",
+                $_POST,
+                $pacchetto
+            );
+
         } catch (\Throwable $e) {
-            echo '<pre>';
-            echo "MESSAGGIO: " . $e->getMessage() . "\n";
-            echo "FILE: " . $e->getFile() . "\n";
-            echo "RIGA: " . $e->getLine() . "\n";
-            echo "\nTRACE:\n";
-            echo $e->getTraceAsString();
-            echo '</pre>';
-            exit;
+            error_log(
+                sprintf(
+                    'Errore iscrizione: %s in %s:%d',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
+                )
+            );
             $this->view->showError(
                 "Si è verificato un errore imprevisto durante l'iscrizione.",
                 500

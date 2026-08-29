@@ -17,32 +17,50 @@ use DateTimeImmutable;
  * @ORM\Entity
  * @ORM\Table(name="carta_di_credito")
  */
-public class CartaDiCredito implements Serializable {
+#[ORM\Entity]
+#[ORM\Table(name: 'carta_di_credito')]
+class ECartaDiCredito implements \JsonSerializable {
 
     /**
-     * Numero della carta, utilizzato come chiave primaria.
+     * Identificativo della carta.
+     *
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\Column(name="id", type="integer")
      */
-    @Id
-    @Column(name = "numero_carta", length = 16, nullable = false)
-    private String numeroCarta;
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id', type: 'integer')]
+    private ?int $id = null;
+
+    /**
+     * @ORM\Column(name="numero_carta", type="string", length=16, unique=true)
+     */
+    private string $numeroCarta;
 
     /**
      * Nome del titolare della carta.
      */
-    @Column(name = "nome_titolare", length = 100, nullable = false)
-    private String nomeTitolare;
+    /**
+     * @ORM\Column(name="nome_titolare", type="string", length=100)
+     */
+    private string $nomeTitolare;
 
     /**
      * Cognome del titolare della carta.
      */
-    @Column(name = "cognome_titolare", length = 100, nullable = false)
-    private String cognomeTitolare;
+    /**
+     * @ORM\Column(name="cognome_titolare", type="string", length=100)
+     */
+    private string $cognomeTitolare;
 
     /**
      * Data di scadenza della carta.
      */
-    @Column(name = "data_scadenza", nullable = false)
-    private LocalDate dataScadenza;
+    /**
+     * @ORM\Column(name="data_scadenza", type="date_immutable")
+     */
+    private DateTimeImmutable $dataScadenza;
 
 
     // ------------------- COSTRUTTORI -------------------
@@ -50,37 +68,39 @@ public class CartaDiCredito implements Serializable {
     /**
      * Costruttore vuoto obbligatorio per JPA/Hibernate.
      */
-    public CartaDiCredito() {
+    public function __construct(
+        string $nomeTitolare = '',
+        string $cognomeTitolare = '',
+        ?DateTimeImmutable $dataScadenza = null,
+        string $numeroCarta = ''
+    ) {
+        $this->nomeTitolare = $nomeTitolare;
+        $this->cognomeTitolare = $cognomeTitolare;
+        $this->dataScadenza = $dataScadenza ?? new DateTimeImmutable();
+        $this->numeroCarta = $numeroCarta;
     }
 
     /**
      * Costruttore della classe CartaDiCredito.
      */
-    public CartaDiCredito(
-            String nomeTitolare,
-            String cognomeTitolare,
-            LocalDate dataScadenza,
-            String numeroCarta
-    ) {
-        this.nomeTitolare = nomeTitolare;
-        this.cognomeTitolare = cognomeTitolare;
-        this.dataScadenza = dataScadenza;
-        this.numeroCarta = numeroCarta;
-    }
 
 
     // ------------------- METODI GET -------------------
 
-    public String getNomeTitolareCarta() {
-        return this.nomeTitolare;
+    public function getNomeTitolareCarta(): string {
+        return $this->nomeTitolare;
     }
 
-    public String getCognomeTitolareCarta() {
-        return this.cognomeTitolare;
+    public function getId(): ?int {
+        return $this->id;
     }
 
-    public LocalDate getDataScadenza() {
-        return this.dataScadenza;
+    public function getCognomeTitolareCarta(): string {
+        return $this->cognomeTitolare;
+    }
+
+    public function getDataScadenza(): DateTimeImmutable {
+        return $this->dataScadenza;
     }
 
     /**
@@ -89,52 +109,45 @@ public class CartaDiCredito implements Serializable {
      * Esempio:
      * XXXX-XXXX-XXXX-1234
      */
-    public String getNumeroCartaMascherato() {
-        if (this.numeroCarta == null || this.numeroCarta.length() < 4) {
+    public function getNumeroCartaMascherato(): string {
+        if ($this->numeroCarta === '' || strlen($this->numeroCarta) < 4) {
             return "XXXX";
         }
 
-        return "XXXX-XXXX-XXXX-" +
-                this.numeroCarta.substring(this.numeroCarta.length() - 4);
+        return 'XXXX-XXXX-XXXX-' . substr($this->numeroCarta, -4);
     }
 
 
     // ------------------- METODI SET -------------------
 
-    public void setNomeTitolareCarta(String nomeTitolare) {
-        this.nomeTitolare = nomeTitolare;
+    public function setNomeTitolareCarta(string $nomeTitolare): void {
+        $this->nomeTitolare = $nomeTitolare;
     }
 
-    public void setCognomeTitolareCarta(String cognomeTitolare) {
-        this.cognomeTitolare = cognomeTitolare;
+    public function setCognomeTitolareCarta(string $cognomeTitolare): void {
+        $this->cognomeTitolare = $cognomeTitolare;
     }
 
-    public void setDataScadenza(LocalDate dataScadenza) {
-        this.dataScadenza = dataScadenza;
+    public function setDataScadenza(DateTimeImmutable $dataScadenza): void {
+        $this->dataScadenza = $dataScadenza;
     }
 
-    public void setNumeroCarta(String numeroCarta) {
-        this.numeroCarta = numeroCarta;
+    public function setNumeroCarta(string $numeroCarta): void {
+        $this->numeroCarta = $numeroCarta;
     }
 
 
     // ------------------- TOSTRING -------------------
 
-    @Override
-    public String toString() {
+    public function __toString(): string {
+        return "Nome Titolare: {$this->nomeTitolare}\n"
+            . "Cognome Titolare: {$this->cognomeTitolare}\n"
+            . "Data Scadenza: " . $this->dataScadenza->format('m-Y') . "\n"
+            . "Numero Carta: " . $this->getNumeroCartaMascherato() . "\n";
+    }
 
-        String dataFormattata = "";
-
-        if (this.dataScadenza != null) {
-            DateTimeFormatter formatter =
-                    DateTimeFormatter.ofPattern("MM-yyyy");
-
-            dataFormattata = this.dataScadenza.format(formatter);
-        }
-
-        return "Nome Titolare: " + this.nomeTitolare + "\n" +
-               " Cognome Titolare:" + this.cognomeTitolare + "\n" +
-               " Data Scadenza: " + dataFormattata + "\n" +
-               " Numero Carta: " + getNumeroCartaMascherato() + "\n";
+    public function jsonSerialize(): array
+    {
+        return ['numeroCarta' => $this->getNumeroCartaMascherato()];
     }
 }

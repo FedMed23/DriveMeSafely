@@ -1,6 +1,8 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * La classe EDomanda rappresenta il contenuto di una domanda del quiz e la sua risposta corretta.
@@ -54,7 +56,7 @@ class EDomanda implements \JsonSerializable
      * @var EQuiz[]
      * @ORM\ManyToMany(targetEntity="EQuiz", mappedBy="domande")
      */
-    private array $quizAssociati = [];
+    private Collection $quizAssociati;
 
     /**
      * Immagine associata alla domanda
@@ -72,6 +74,7 @@ class EDomanda implements \JsonSerializable
      */
     public function __construct()
     {
+        $this->quizAssociati = new ArrayCollection();
     }
 
     /**
@@ -120,7 +123,7 @@ class EDomanda implements \JsonSerializable
     /**
      * @return EQuiz[]
      */
-    public function getQuiz(): array
+    public function getQuiz(): Collection
     {
         return $this->quizAssociati;
     }
@@ -158,7 +161,7 @@ class EDomanda implements \JsonSerializable
      */
     public function setQuiz(array $quiz): void
     {
-        $this->quizAssociati = $quiz;
+        $this->quizAssociati = new ArrayCollection($quiz);
     }
 
     public function setImmagine(?string $immagine): void
@@ -189,11 +192,10 @@ class EDomanda implements \JsonSerializable
             'contenuto' => $this->contenuto,
             'rispostaCorretta' => $this->rispostaCorretta,
             'argomento' => $this->argomento,
-            'quiz' => $this->quizAssociati,
+            'quiz' => $this->quizAssociati->toArray(),
             'immagine' => $this->immagine
         ];
     }
 }
 
 ?>
-

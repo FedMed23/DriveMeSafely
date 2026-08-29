@@ -4,18 +4,15 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Pacchetti Patenti - DriveMeSafely</title>
-        <link rel="stylesheet" href="{$smarty.server.REQUEST_SCHEME}://{$smarty.server.HTTP_HOST}{$smarty.server.REQUEST_URI}">
-        <link rel="stylesheet" href="/DriveMeSafely/public/css/style.css">
-        <link rel="stylesheet" href="/DriveMeSafely/public/css/pacchetti.css">
+        <link rel="stylesheet" href="{$request.contextPath}/css/style.css">
+        <link rel="stylesheet" href="{$request.contextPath}/css/pacchetti.css">
     </head>
     <body>
     <header>
         <h1>DriveMeSafely</h1>
         <nav>
             <ul>
-                <li>
-                    <a href="index.php?page=home">Home</a>
-                </li>
+                <li><a href="{$homeUrl}">Home</a></li>
                 <li>
                     <a href="index.php?page=profilo" class="btn">
                         Profilo
@@ -60,7 +57,7 @@
                                 {$pacchetto->getImportoTotale()|number_format:2:",":"."} €
                             </span>
                         </div>
-                        <a href="index.php?page=pacchetto&idPa={$pacchetto->getPatente()->getId()}"
+                        <a href="{$request.contextPath}/home/iscrizione?idPa={$pacchetto->getPatente()->getId()}"
                         class="btn-pacchetto">
                             Visualizza pacchetto
                         </a>

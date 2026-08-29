@@ -2,6 +2,8 @@
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * La classe EQuiz rappresenta un set di domande.
@@ -76,13 +78,14 @@ class EQuiz implements \JsonSerializable
      * )
      * @ORM\OrderBy({"contenuto" = "ASC"})
      */
-    private array $domande = [];
+    private Collection $domande;
 
 
     //-------------------------COSTRUTTORI-------------------------
 
     public function __construct()
     {
+        $this->domande = new ArrayCollection();
     }
 
     public function init(
@@ -136,7 +139,7 @@ class EQuiz implements \JsonSerializable
     /**
      * @return EDomanda[]
      */
-    public function getDomande(): array
+    public function getDomande(): Collection
     {
         return $this->domande;
     }
@@ -166,7 +169,7 @@ class EQuiz implements \JsonSerializable
 
     public function setDomande(array $domande): void
     {
-        $this->domande = $domande;
+        $this->domande = new ArrayCollection($domande);
     }
 
 
@@ -177,11 +180,9 @@ class EQuiz implements \JsonSerializable
      */
     public function addDomanda(EDomanda $domanda): void
     {
-        if (!in_array($domanda, $this->domande, true)) {
-            $this->domande[] = $domanda;
+        if (!$this->domande->contains($domanda)) {
+            $this->domande->add($domanda);
         }
-
-        $domanda->getQuiz()->add($this);
     }
 
     /**
@@ -189,14 +190,7 @@ class EQuiz implements \JsonSerializable
      */
     public function removeDomanda(EDomanda $domanda): void
     {
-        $key = array_search($domanda, $this->domande, true);
-
-        if ($key !== false) {
-            unset($this->domande[$key]);
-            $this->domande = array_values($this->domande);
-        }
-
-        $domanda->getQuiz()->remove($this);
+        $this->domande->removeElement($domanda);
     }
 
 
@@ -211,8 +205,8 @@ class EQuiz implements \JsonSerializable
             'numeroDomande' => $this->numeroDomande,
             'tempoMassimo' => $this->tempoMassimo,
             'domandeId' => array_map(
-                fn($domanda) => $domanda->getId(),
-                $this->domande
+                fn($domanda) => $domanda->getIdDomanda(),
+                $this->domande->toArray()
             )
         ];
     }

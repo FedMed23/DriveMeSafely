@@ -3,10 +3,12 @@ namespace CamassoMedelago\DriveMeSafely\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use CamassoMedelago\DriveMeSafely\View\VHome;
+use CamassoMedelago\DriveMeSafely\Foundation\FUtenteRegistrato;
 
 class CHome
 {
     private VHome $view;
+    private FUtenteRegistrato $fUtente;
 
     /**
      * Il costruttore accetta l'EntityManagerInterface per allineamento con il Front Controller,
@@ -16,6 +18,7 @@ class CHome
     {
         // Anche se non usiamo $em qui dentro, serve riceverlo per non far crashare il Front Controller!
         $this->view = new VHome();
+        $this->fUtente = new FUtenteRegistrato($em);
     }
 
     /**
@@ -27,8 +30,11 @@ class CHome
             session_start();
         }
 
-        // Recupera l'oggetto allievo dalla sessione se presente
-        $utenteLoggato = $_SESSION['utenteLoggato'] ?? null;
+        $utenteLoggato = null;
+        $utenteId = $_SESSION['utenteLoggatoId'] ?? null;
+        if (is_int($utenteId) || (is_string($utenteId) && ctype_digit($utenteId))) {
+            $utenteLoggato = $this->fUtente->getById((int) $utenteId);
+        }
 
         // Invia i dati alla View per il rendering su Smarty
         $this->view->showHome($utenteLoggato);

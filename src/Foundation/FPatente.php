@@ -2,10 +2,10 @@
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EPatente;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
 
-class FPatente 
+class FPatente
 {
     private EntityManagerInterface $em;
 
@@ -19,12 +19,7 @@ class FPatente
      */
     public function findById(int $idPa): ?EPatente
     {
-            return $this->em->createQuery(
-                'SELECT p 
-                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
-                 WHERE p.idPa = :idPa'
-            )->setParameter('idPa', $idPa)
-             ->getOneOrNullResult(); 
+        return $this->em->getRepository(EPatente::class)->find($idPa);
     }
 
     /**
@@ -32,12 +27,19 @@ class FPatente
      */
     public function findByTipo(string $tipo): ?EPatente
     {
-            return $this->em->createQuery(
-                'SELECT p 
-                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
-                 WHERE p.tipo = :tipo'
-            )->setParameter('tipo', $tipo)
-             ->getOneOrNullResult();
+        return $this->em->getRepository(EPatente::class)->findOneBy([
+            'tipo' => $tipo,
+        ]);
+    }
+
+    /**
+     * Recupera tutte le patenti ordinate per ID.
+     */
+    public function findAll(): array
+    {
+        return $this->em->getRepository(EPatente::class)->findBy([], [
+            'idPa' => 'ASC',
+        ]);
     }
 
     /**
@@ -45,21 +47,52 @@ class FPatente
      */
     public function findPacchettoById(int $idPa): ?EPatente
     {
-            return $this->em->createQuery(
-                'SELECT DISTINCT p, s 
-                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p 
-                 LEFT JOIN p.spese s 
-                 WHERE p.idPa = :idPa'
-            )->setParameter('idPa', $idPa)
-             ->getOneOrNullResult();
-    }
-        public function findPacchettiPatenti(): array
-        {
-            return $this->em->createQuery(
-                'SELECT DISTINCT p, s 
-                 FROM CamassoMedelago\DriveMeSafely\Entity\EPatente p
-                 LEFT JOIN p.spese s
-                 ORDER BY p.tipo ASC'
-            )->getResult();
+        $patente = $this->findById($idPa);
+
+        if ($patente !== null) {
+            $this->loadSpese($patente);
         }
+
+        return $patente;
+    }
+
+    /**
+     * Recupera tutti i pacchetti patente con le relative spese caricate.
+     */
+    public function findPacchettiPatenti(): array
+    {
+        $patenti = $this->em->getRepository(EPatente::class)->findBy([], [
+            'tipo' => 'ASC',
+        ]);
+
+        foreach ($patenti as $patente) {
+            $this->loadSpese($patente);
+        }
+
+        return $patenti;
+    }
+
+    private function loadSpese(EPatente $patente): void
+    {
+        $rows = $this->em->getConnection()->fetchAllAssociative(
+            'SELECT id_spesa
+             FROM patente_has_spesa
+             WHERE id_patente = :id_patente
+             ORDER BY id_spesa',
+            ['id_patente' => $patente->getId()]
+        );
+
+        $spese = [];
+        foreach ($rows as $row) {
+            $spesa = $this->em->getRepository(
+                \CamassoMedelago\DriveMeSafely\Entity\ESpesa::class
+            )->find((int) $row['id_spesa']);
+
+            if ($spesa !== null) {
+                $spese[] = $spesa;
+            }
+        }
+
+        $patente->setSpese(new ArrayCollection($spese));
+    }
 }

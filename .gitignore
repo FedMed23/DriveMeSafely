@@ -2,4 +2,4 @@
 /vendor/
 .DS_Store
 templates_c/
-
+doctrine-proxies/

@@ -2,22 +2,16 @@
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
 
-/**
- * Elenco fisso e controllato delle aule fisiche presenti nell'autoscuola.
- * Impedisce refusi e ottimizza la pianificazione logistica del palinsesto.
- *
- * @author Camasso-Medelago
- */
-enum Aula: string
+enum EAula: string
 {
-    case AULA_A = 'Aula A (Sede Centrale - Piano Terra)';
-    case AULA_B = 'Aula B (Sede Centrale - Primo Piano)';
+    case AULA_A = 'AULA_A';
+    case AULA_B = 'AULA_B';
 
-    /**
-     * Restituisce il nome esteso dell'aula.
-     */
     public function getNomeEsteso(): string
     {
-        return $this->value;
+        return match ($this) {
+            self::AULA_A => 'Aula A (Sede Centrale - Piano Terra)',
+            self::AULA_B => 'Aula B (Sede Centrale - Primo Piano)',
+        };
     }
 }

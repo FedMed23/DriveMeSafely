@@ -13,19 +13,22 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="dipendente")
  */
-public class Dipendente extends UtenteRegistrato implements Serializable {
+#[ORM\Entity]
+#[ORM\Table(name: 'dipendente')]
+class EDipendente extends EUtenteRegistrato
+{
 
     /**
      * Ruolo del dipendente.
+     * @ORM\Column(name="ruolo", type="string", length=100)
      */
-    @Column(name = "ruolo", length = 100, nullable = false)
-    private String ruolo;
+    #[ORM\Column(name: 'ruolo', type: 'string', length: 100)]
+    private string $ruolo;
 
     /**
      * Stipendio del dipendente.
      */
-    @Column(name = "stipendio", nullable = false)
-    private float stipendio;
+    private float $stipendio = 0.0;
 
 
     // ------------------- COSTRUTTORI -------------------
@@ -33,8 +36,19 @@ public class Dipendente extends UtenteRegistrato implements Serializable {
     /**
      * Costruttore vuoto obbligatorio per JPA/Hibernate.
      */
-    public Dipendente() {
-        super();
+    public function __construct(
+        string $nome = '',
+        string $cognome = '',
+        string $email = '',
+        string $username = '',
+        string $password = '',
+        bool $stato = true,
+        string $ruolo = '',
+        float $stipendio = 0.0
+    ) {
+        parent::__construct($nome, $cognome, $email, $username, $password, $stato);
+        $this->ruolo = $ruolo;
+        $this->stipendio = $stipendio;
     }
 
     /**
@@ -43,50 +57,33 @@ public class Dipendente extends UtenteRegistrato implements Serializable {
      * Lo stipendio viene ricavato dall'oggetto Spesa,
      * come avveniva nella versione PHP.
      */
-    public Dipendente(
-            String nome,
-            String cognome,
-            String username,
-            String email,
-            String password,
-            String ruolo,
-            Spesa spesa
-    ) {
-        super(nome, cognome, username, email, password);
-
-        this.ruolo = ruolo;
-        this.stipendio = spesa.getImporto();
-    }
 
 
     // ------------------- METODI GET -------------------
 
-    public String getRuolo() {
-        return ruolo;
+    public function getRuolo(): string {
+        return $this->ruolo;
     }
 
-    public float getStipendio() {
-        return stipendio;
+    public function getStipendio(): float {
+        return $this->stipendio;
     }
 
 
     // ------------------- METODI SET -------------------
 
-    public void setRuolo(String ruolo) {
-        this.ruolo = ruolo;
+    public function setRuolo(string $ruolo): void {
+        $this->ruolo = $ruolo;
     }
 
-    public void setStipendio(float stipendio) {
-        this.stipendio = stipendio;
+    public function setStipendio(float $stipendio): void {
+        $this->stipendio = $stipendio;
     }
 
 
     // ------------------- TOSTRING -------------------
 
-    @Override
-    public String toString() {
-        return super.toString() +
-                "Ruolo: " + ruolo + "\n" +
-                "Stipendio: €" + stipendio + "\n";
+    public function __toString(): string {
+        return parent::__toString() . "Ruolo: {$this->ruolo}\nStipendio: €{$this->stipendio}\n";
     }
 }

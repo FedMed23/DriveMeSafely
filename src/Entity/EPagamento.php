@@ -3,6 +3,7 @@
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM; 
 use DateTimeImmutable;
+use DateTime;
 
 
 /**
@@ -47,7 +48,7 @@ class EPagamento implements \JsonSerializable
      * Spesa associata al pagamento
      *
      * @ORM\ManyToOne(targetEntity="ESpesa", fetch="LAZY")
-     * @ORM\JoinColumn(name="spesa_id", nullable=false)
+     * @ORM\JoinColumn(name="spesa_id", referencedColumnName="id_spesa", nullable=false)
      */
     private ESpesa $spesa;
 

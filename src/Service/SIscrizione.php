@@ -46,7 +46,7 @@ class SIscrizione
 
         foreach ($patenti as $patente) {
 
-            $spese = $patente->getSpese();
+            $spese = $patente->getSpese()->toArray();
 
             $importoTotale = 0.0;
 
@@ -82,7 +82,7 @@ class SIscrizione
             );
         }
 
-        $patente = $this->fPatente->getPatenteById($idPatente);
+        $patente = $this->fPatente->findPacchettoById($idPatente);
 
         if ($patente === null) {
             throw new \RuntimeException(
@@ -90,7 +90,7 @@ class SIscrizione
             );
         }
 
-        $spese = $this->patente->getSpese();
+        $spese = $patente->getSpese()->toArray();
 
         $importoTotale = 0.0;
 
@@ -147,7 +147,7 @@ class SIscrizione
             );
         }
 
-        $patente = $this->fPatente->getPatenteById($idPa);
+        $patente = $this->fPatente->findPacchettoById($idPa);
 
         if ($patente === null) {
             throw new \InvalidArgumentException(
@@ -414,6 +414,7 @@ class SIscrizione
         $this->em->beginTransaction();
         try {
             $this->fIscritto->save($iscritto);
+            $this->em->flush();
             $this->em->commit();
             
         } catch (\Throwable $e) {

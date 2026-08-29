@@ -5,6 +5,8 @@ use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use CamassoMedelago\DriveMeSafely\Entity\ETentativoRisposta;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
 *La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
@@ -40,7 +42,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * Quiz svolto
      *
      * @ORM\ManyToOne(targetEntity="EQuiz", fetch="LAZY")
-     * @ORM\JoinColumn(name="id_quiz", nullable=false)
+     * @ORM\JoinColumn(name="id_quiz", referencedColumnName="id_quiz", nullable=false)
      */
     private EQuiz $quiz;
 
@@ -48,7 +50,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * Iscritto che ha svolto il quiz
      *
      * @ORM\ManyToOne(targetEntity="EIscritto", fetch="LAZY")
-     * @ORM\JoinColumn(name="id_iscritto", nullable=false)
+     * @ORM\JoinColumn(name="id_iscritto", referencedColumnName="id", nullable=false)
      */
     private EIscritto $iscritto;
 
@@ -89,13 +91,14 @@ class ESvolgimentoQuiz implements \JsonSerializable
      *
      * @var ETentativoRisposta[]
      */
-    private array $tentativi = [];
+    private Collection $tentativi;
 
 
     //-------------------------COSTRUTTORI-------------------------
 
     public function __construct()
     {
+        $this->tentativi = new ArrayCollection();
     }
 
     public function init(
@@ -148,7 +151,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
     /**
      * @return ETentativoRisposta[]
      */
-    public function getTentativi(): array
+    public function getTentativi(): Collection
     {
         return $this->tentativi;
     }
@@ -188,7 +191,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
 
     public function setTentativi(array $tentativi): void
     {
-        $this->tentativi = $tentativi;
+        $this->tentativi = new ArrayCollection($tentativi);
     }
 
 
@@ -197,7 +200,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
     public function addTentativo(ETentativoRisposta $tentativo): void
     {
         if ($tentativo !== null) {
-            $this->tentativi[] = $tentativo;
+            $this->tentativi->add($tentativo);
 
             $tentativo->setSvolgimentoQuiz($this);
 
@@ -214,14 +217,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
     public function removeTentativo(ETentativoRisposta $tentativo): void
     {
         if ($tentativo !== null) {
-            $key = array_search($tentativo, $this->tentativi, true);
-
-            if ($key !== false) {
-                unset($this->tentativi[$key]);
-                $this->tentativi = array_values($this->tentativi);
-            }
-
-            $tentativo->setSvolgimentoQuiz(null);
+            $this->tentativi->removeElement($tentativo);
 
             // Storna l'errore se stiamo rimuovendo un tentativo errato
             if (!$tentativo->isCorretta() && $this->errori > 0) {

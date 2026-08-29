@@ -2,6 +2,7 @@
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
+use DateTime;
 
 /**
  * La classe EEsame contiene le proprietà e gli attributi riguardanti un esame di guida.
@@ -41,7 +42,7 @@ class EEsame implements \JsonSerializable
      * Tipologia dell'esame
      *
      * @var TipologiaEsame
-     * @ORM\Column(name="tipologia", type="string", length=15, nullable=false)
+     * @ORM\Column(name="tipologia", type="string", length=15, nullable=false, enumType="CamassoMedelago\DriveMeSafely\Entity\TipologiaEsame")
      */
     private TipologiaEsame $tipologia;
 

@@ -8,19 +8,23 @@ class StartSmarty
 {
     public static function configuration(): Smarty
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         $smarty = new Smarty();
 
         $smarty->setTemplateDir(__DIR__ . '/../templates/');
         $smarty->setCompileDir(__DIR__ . '/../templates_c/');
         $smarty->setCacheDir(__DIR__ . '/../cache/');
         $smarty->setConfigDir(__DIR__ . '/../configs/');
-        
-        // Calcola dinamicamente il context path (es: /DriveMeSafely/public)
+
         $contextPath = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-        
-        // Assegna l'array 'request' per far funzionare i tuoi template esistenti!
-        $smarty->assign('request', ['contextPath' => $contextPath ]);
-        
+        $homeUrl = $_SESSION['homeUrl'] ?? $contextPath . '/home';
+
+        $smarty->assign('request', ['contextPath' => $contextPath]);
+        $smarty->assign('homeUrl', $homeUrl);
+
         return $smarty;
     }
 }

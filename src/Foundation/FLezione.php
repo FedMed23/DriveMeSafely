@@ -9,6 +9,7 @@ use CamassoMedelago\DriveMeSafely\Entity\ELezioneTeoria;
 use CamassoMedelago\DriveMeSafely\Entity\ELezionePratica;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTimeImmutable;
+use CamassoMedelago\DriveMeSafely\Entity\EAula;
 
 class FLezione
 {
@@ -158,7 +159,7 @@ class FLezione
             ->where('lt.dataOra = :dataOra')
             ->andWhere('lt.aula = :aula')
             ->setParameter('dataOra', $dataOra)
-            ->setParameter('aula', $aula)
+            ->setParameter('aula', EAula::from($aula))
             ->getQuery()
             ->getSingleScalarResult();
 

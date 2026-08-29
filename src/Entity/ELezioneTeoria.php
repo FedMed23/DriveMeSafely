@@ -10,6 +10,7 @@ use DateTimeImmutable;
  *
  * @ORM\Entity
  */
+#[ORM\DiscriminatorValue('TEORIA')]
 class ELezioneTeoria extends ELezione
 {
     /**
@@ -20,10 +21,10 @@ class ELezioneTeoria extends ELezione
      *     type="string",
      *     length=50,
      *     nullable=true,
-     *     enumType="CamassoMedelago\DriveMeSafely\Entity\Aula"
+     *     enumType="CamassoMedelago\DriveMeSafely\Entity\EAula"
      * )
      */
-    private ?Aula $aula = null;
+    private ?EAula $aula = null;
 
     /**
      * Argomento ministeriale della lezione.
@@ -33,17 +34,17 @@ class ELezioneTeoria extends ELezione
      *     type="string",
      *     length=50,
      *     nullable=true,
-     *     enumType="CamassoMedelago\DriveMeSafely\Entity\ArgomentoMinisteriale"
+     *     enumType="CamassoMedelago\DriveMeSafely\Entity\EArgomentoMinisteriale"
      * )
      */
-    private ?ArgomentoMinisteriale $argomentoLezione = null;
+    private ?EArgomentoMinisteriale $argomentoLezione = null;
 
     // ---------------- COSTRUTTORE ----------------
 
     public function __construct(
         DateTimeImmutable $dataOra,
-        ?Aula $aula = null,
-        ?ArgomentoMinisteriale $argomento = null
+        ?EAula $aula = null,
+        ?EArgomentoMinisteriale $argomento = null
     ) {
         parent::__construct($dataOra);
 
@@ -53,25 +54,25 @@ class ELezioneTeoria extends ELezione
 
     // ---------------- GETTER ----------------
 
-    public function getAula(): ?Aula
+    public function getAula(): ?EAula
     {
         return $this->aula;
     }
 
-    public function getArgomentoLezione(): ?ArgomentoMinisteriale
+    public function getArgomentoLezione(): ?EArgomentoMinisteriale
     {
         return $this->argomentoLezione;
     }
 
     // ---------------- SETTER ----------------
 
-    public function setAula(?Aula $aula): void
+    public function setAula(?EAula $aula): void
     {
         $this->aula = $aula;
     }
 
     public function setArgomentoLezione(
-        ?ArgomentoMinisteriale $argomento
+        ?EArgomentoMinisteriale $argomento
     ): void {
         $this->argomentoLezione = $argomento;
     }

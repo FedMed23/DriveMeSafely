@@ -5,7 +5,7 @@ namespace CamassoMedelago\DriveMeSafely\Foundation;
 use CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato;
 use Doctrine\ORM\EntityManagerInterface;
 
-class FUtente
+class FUtenteRegistrato
 {
     private EntityManagerInterface $em;
 

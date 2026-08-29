@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Dettaglio pacchetto - DriveMeSafely</title>
-        <link rel="stylesheet" href="/css/style.css">
-        <link rel="stylesheet" href="/css/pacchetti.css">
+        <link rel="stylesheet" href="{$request.contextPath}/css/style.css">
+        <link rel="stylesheet" href="{$request.contextPath}/css/pacchetti.css">
     </head>
     <body>
         <header>
@@ -43,11 +43,9 @@
                                         <span class="spesa-tipologia">
                                             {$spesa->getTipologia()}
                                         </span>
-                                        {if $spesa->getDescrizione() !== null}
-                                            <span class="spesa-descrizione">
-                                                {$spesa->getDescrizione()}
-                                            </span>
-                                        {/if}
+                                        <span class="spesa-descrizione">
+                                            {$spesa->getTipologia()}
+                                        </span>
                                     </div>
                                     <span class="spesa-importo">
                                         {$spesa->getImporto()|number_format:2:",":"."} €
@@ -68,11 +66,11 @@
                     </span>
                 </div>
                 <div class="azioni">
-                    <a href="index.php?page=pacchetti_patenti"
+                    <a href="{$request.contextPath}/home/iscrizione"
                        class="btn-indietro">
                         ← Torna ai pacchetti
                     </a>
-                    <a href="index.php?page=iscrizione&idPa={$pacchetto->getPatente()->getId()}"
+                    <a href="{$request.contextPath}/home/iscrizione?idPa={$pacchetto->getPatente()->getId()}&form=1"
                        class="btn-iscrizione">
                         Procedi con l'iscrizione
                     </a>

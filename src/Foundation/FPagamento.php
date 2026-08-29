@@ -32,6 +32,30 @@ class FPagamento
         $this->em->flush();
     }
 
+    public function persist(EPagamento $pagamento): void
+    {
+        $this->em->persist($pagamento);
+    }
+
+    public function findByUtenteAndSpesa(
+        EUtenteRegistrato $utente,
+        ESpesa $spesa
+    ): ?EPagamento {
+        return $this->em->getRepository(EPagamento::class)
+            ->createQueryBuilder('p')
+            ->where('p.utenteRegistrato = :utente')
+            ->andWhere('p.spesa = :spesa')
+            ->andWhere('p.stato = :stato')
+            ->setParameter('utente', $utente)
+            ->setParameter('spesa', $spesa)
+            ->setParameter('stato', 'PAGATO')
+            ->orderBy('p.data', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
     // ---------------------- LETTURA ----------------------
 
     /**
@@ -75,7 +99,7 @@ class FPagamento
         return $this->em
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
-            ->where('p.idUtenteRegistrato = :utente')
+            ->where('p.utenteRegistrato = :utente')
             ->setParameter('utente', $utente)
             ->orderBy('p.data', 'DESC')
             ->getQuery()
@@ -167,9 +191,9 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('COUNT(p)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('s.idSpesa = :idSpesa')
-            ->andWhere('p.idUtenteRegistrato = :idIscritto')
+            ->andWhere('p.utenteRegistrato = :idIscritto')
             ->andWhere('p.stato = :stato')
             ->setParameter('idSpesa', $idSpesa)
             ->setParameter('idIscritto', $idIscritto)
@@ -192,10 +216,10 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('COUNT(p)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('s.idSpesa = :idSpesa')
             ->andWhere('s.ambito = :ambito')
-            ->andWhere('p.idUtenteRegistrato = :idProprietario')
+            ->andWhere('p.utenteRegistrato = :idProprietario')
             ->andWhere('p.stato = :stato')
             ->setParameter('idSpesa', $idSpesa)
             ->setParameter('ambito', 'PROPRIETARIO')
@@ -220,7 +244,7 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('SUM(s.importo)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('p.data = :data')
             ->andWhere('p.stato = :stato')
             ->andWhere('s.ambito = :ambito')
@@ -244,7 +268,7 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('SUM(s.importo)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('p.data = :data')
             ->andWhere('p.stato = :stato')
             ->andWhere('s.ambito = :ambito')
@@ -267,8 +291,8 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('SUM(s.importo)')
-            ->join('p.idSpesa', 's')
-            ->where('p.idUtenteRegistrato = :idUtente')
+            ->join('p.spesa', 's')
+            ->where('p.utenteRegistrato = :idUtente')
             ->setParameter('idUtente', $idUtente)
             ->getQuery()
             ->getSingleScalarResult();
@@ -286,9 +310,9 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('SUM(s.importo)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('s.ambito = :ambito')
-            ->andWhere('p.idUtenteRegistrato = :idProprietario')
+            ->andWhere('p.utenteRegistrato = :idProprietario')
             ->setParameter('ambito', 'PROPRIETARIO')
             ->setParameter('idProprietario', $idProprietario)
             ->getQuery()
@@ -307,7 +331,7 @@ class FPagamento
             ->getRepository(EPagamento::class)
             ->createQueryBuilder('p')
             ->select('SUM(s.importo)')
-            ->join('p.idSpesa', 's')
+            ->join('p.spesa', 's')
             ->where('p.stato = :stato')
             ->andWhere('s.ambito = :ambito')
             ->setParameter('stato', 'PAGATO')

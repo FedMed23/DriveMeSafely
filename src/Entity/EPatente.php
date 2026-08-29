@@ -34,7 +34,7 @@ class EPatente implements \JsonSerializable
      * @ORM\JoinTable(
      *     name="patente_has_spesa",
      *     joinColumns={@ORM\JoinColumn(name="id_patente", referencedColumnName="idPa")},
-     *     inverseJoinColumns={@ORM\JoinColumn(name="id_spesa", referencedColumnName="id")}
+     *     inverseJoinColumns={@ORM\JoinColumn(name="id_spesa", referencedColumnName="id_spesa")}
      * )
      * @ORM\OrderBy({"tipologia" = "ASC"})
      */

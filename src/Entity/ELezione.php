@@ -22,7 +22,7 @@ abstract class ELezione
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_lezione", type="integer")
      */
     protected ?int $idLezione = null;
 
@@ -30,7 +30,7 @@ abstract class ELezione
      * Data e ora della lezione.
      *
      * @var DateTimeImmutable
-     * @ORM\Column(type="datetime_immutable")
+     * @ORM\Column(name="data_ora", type="datetime_immutable")
      */
     protected DateTimeImmutable $dataOra;
 

@@ -34,7 +34,7 @@ class ETentativoRisposta implements \JsonSerializable
      *
      * @var EDomanda
      * @ORM\ManyToOne(targetEntity="EDomanda", fetch="EAGER")
-     * @ORM\JoinColumn(name="id_domanda", nullable=false)
+     * @ORM\JoinColumn(name="id_domanda", referencedColumnName="id_domanda", nullable=false)
      */
     private EDomanda $domanda;
 
@@ -43,9 +43,9 @@ class ETentativoRisposta implements \JsonSerializable
      *
      * @var ESvolgimentoQuiz
      * @ORM\ManyToOne(targetEntity="ESvolgimentoQuiz", fetch="LAZY")
-     * @ORM\JoinColumn(name="id_svolgimento", nullable=false)
+     * @ORM\JoinColumn(name="id_svolgimento", referencedColumnName="id_svolgimento", nullable=false)
      */
-    private ESvolgimentoQuiz $svolgimentoQuiz;
+    private ?ESvolgimentoQuiz $svolgimentoQuiz = null;
 
     /**
      * Risposta dell'utente (true o false)
@@ -95,7 +95,7 @@ class ETentativoRisposta implements \JsonSerializable
         return $this->domanda;
     }
 
-    public function getSvolgimentoQuiz(): ESvolgimentoQuiz
+    public function getSvolgimentoQuiz(): ?ESvolgimentoQuiz
     {
         return $this->svolgimentoQuiz;
     }
@@ -123,7 +123,7 @@ class ETentativoRisposta implements \JsonSerializable
         $this->domanda = $domanda;
     }
 
-    public function setSvolgimentoQuiz(ESvolgimentoQuiz $svolgimentoQuiz): void
+    public function setSvolgimentoQuiz(?ESvolgimentoQuiz $svolgimentoQuiz): void
     {
         $this->svolgimentoQuiz = $svolgimentoQuiz;
     }
