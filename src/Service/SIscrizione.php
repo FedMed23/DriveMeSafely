@@ -7,7 +7,7 @@ use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use CamassoMedelago\DriveMeSafely\Entity\EPatente;
-use CamassoMedelago\DriveMeSafely\DTO\DPacchettoPatente;
+use CamassoMedelago\DriveMeSafely\DTO\PacchettoPatenteDTO;
 use DateTimeImmutable;
 
 class SIscrizione
@@ -36,7 +36,7 @@ class SIscrizione
      * Per ogni patente vengono recuperate le relative spese
      * e viene calcolato il costo totale del pacchetto.
      *
-     * @return DPacchettoPatente[]
+     * @return PacchettoPatenteDTO[]
      */
     public function getPatenti(): array
     {
@@ -54,7 +54,7 @@ class SIscrizione
                 $importoTotale += (float)$spesa->getImporto();
             }
 
-            $pacchetti[] = new DPacchettoPatente(
+           $pacchetti[] = new PacchettoPatenteDTO(
                 $patente,
                 $spese,
                 $importoTotale
@@ -74,7 +74,7 @@ class SIscrizione
     /**
      * Restituisce il pacchetto patente selezionato.
      */
-    public function getPacchetto(int $idPatente): DPacchettoPatente
+    public function getPacchetto(int $idPatente): PacchettoPatenteDTO
     {
         if ($idPatente <= 0) {
             throw new \InvalidArgumentException(
@@ -98,7 +98,7 @@ class SIscrizione
             $importoTotale += (float)$spesa->getImporto();
         }
 
-        return new DPacchettoPatente(
+        return new PacchettoPatenteDTO(
             $patente,
             $spese,
             $importoTotale

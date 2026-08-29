@@ -32,3 +32,4 @@ class CassaDTO
         return $this->uscite;
     }
 }
+

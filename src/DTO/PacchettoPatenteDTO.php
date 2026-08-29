@@ -4,12 +4,10 @@ namespace CamassoMedelago\DriveMeSafely\DTO;
 
 use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 
-class DPacchettoPatente
+class PacchettoPatenteDTO
 {
     private EPatente $patente;
-
     private array $spese;
-
     private float $importoTotale;
 
     public function __construct(
@@ -37,3 +35,5 @@ class DPacchettoPatente
         return $this->importoTotale;
     }
 }
+
+
