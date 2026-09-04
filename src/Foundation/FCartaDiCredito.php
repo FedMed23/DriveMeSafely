@@ -6,16 +6,14 @@ namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\ECartaDiCredito;
 use CamassoMedelago\DriveMeSafely\Entity\EUtenteRegistrato;
+use CamassoMedelago\DriveMeSafely\Utils\CartaDiCreditoUtil;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FCartaDiCredito
 {
-    private EntityManagerInterface $em;
-
     // ---------------------- COSTRUTTORE ----------------------
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
@@ -30,14 +28,37 @@ class FCartaDiCredito
 
     // ---------------------- LETTURA ----------------------
     /**
-     * Recupera una carta tramite il numero della carta.
+     * Recupera una carta tramite il numero della carta (calcolando l'hash per la query).
      */
     public function findByNumeroCarta(string $numeroCarta): ?ECartaDiCredito
+    {
+        $numeroCartaNormalizzato = CartaDiCreditoUtil::normalizzaNumeroCarta($numeroCarta);
+        $hash = CartaDiCreditoUtil::hashNumeroCarta($numeroCartaNormalizzato);
+
+        // Ricerca per hash SHA-256
+        $carta = $this->findByNumeroCartaHash($hash);
+
+        // Fallback: se non trovata per hash, cerca per numero in chiaro (retrocompatibilità)
+        if ($carta === null && $numeroCartaNormalizzato !== '') {
+            $carta = $this->em
+                ->getRepository(ECartaDiCredito::class)
+                ->findOneBy([
+                    'numeroCarta' => $numeroCartaNormalizzato
+                ]);
+        }
+
+        return $carta;
+    }
+
+    /**
+     * Recupera una carta tramite l'hash del numero della carta.
+     */
+    public function findByNumeroCartaHash(string $hash): ?ECartaDiCredito
     {
         return $this->em
             ->getRepository(ECartaDiCredito::class)
             ->findOneBy([
-                'numeroCarta' => $numeroCarta
+                'numeroCarta' => $hash
             ]);
     }
 
@@ -140,4 +161,3 @@ class FCartaDiCredito
         $this->em->flush();
     }
 }
-?>

@@ -3,16 +3,15 @@
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EPrenotazioneEsami;
+use CamassoMedelago\DriveMeSafely\Entity\StatoPrenotazioneEsame;
+use CamassoMedelago\DriveMeSafely\Entity\TipologiaEsame;
 use Doctrine\ORM\EntityManagerInterface;
 use DateTimeImmutable;
 
 class FPrenotazioneEsami
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------- CREATE / UPDATE ----------------
@@ -88,17 +87,57 @@ class FPrenotazioneEsami
     }
 
     /**
+     * Recupera una prenotazione per allievo e sessione d'esame.
+     */
+    public function findByIscrittoAndEsame(int $idIscritto, int $idEsame): ?EPrenotazioneEsami
+    {
+        return $this->em
+            ->getRepository(EPrenotazioneEsami::class)
+            ->createQueryBuilder('p')
+            ->where('p.allievo = :idIscritto')
+            ->andWhere('p.esame = :idEsame')
+            ->setParameter('idIscritto', $idIscritto)
+            ->setParameter('idEsame', $idEsame)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * Verifica se un allievo ha già una prenotazione attiva per una determinata sessione d'esame.
+     */
+    public function isIscrittoGiaPrenotatoAdEsame(int $idIscritto, int $idEsame): bool
+    {
+        $conteggio = $this->em
+            ->getRepository(EPrenotazioneEsami::class)
+            ->createQueryBuilder('p')
+            ->select('COUNT(p.idPrenotazioneEsame)')
+            ->where('p.allievo = :idIscritto')
+            ->andWhere('p.esame = :idEsame')
+            ->andWhere('p.stato = :stato')
+            ->setParameter('idIscritto', $idIscritto)
+            ->setParameter('idEsame', $idEsame)
+            ->setParameter('stato', StatoPrenotazioneEsame::PRENOTATO)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $conteggio > 0;
+    }
+
+    /**
      * Conta quante volte un determinato allievo ha già sostenuto
      * o è stato prenotato per un esame della stessa tipologia.
      *
      * @param int $idIscritto
-     * @param string $tipologia
+     * @param string|TipologiaEsame $tipologia
      * @return int
      */
     public function contaTentativiPrecedenti(
         int $idIscritto,
-        string $tipologia
+        string|TipologiaEsame $tipologia
     ): int {
+        $tipo = $tipologia instanceof TipologiaEsame ? $tipologia : TipologiaEsame::tryFrom($tipologia);
+
         $conteggio = $this->em
             ->getRepository(EPrenotazioneEsami::class)
             ->createQueryBuilder('p')
@@ -107,7 +146,7 @@ class FPrenotazioneEsami
             ->where('IDENTITY(p.allievo) = :idIscritto')
             ->andWhere('e.tipologia = :tipologia')
             ->setParameter('idIscritto', $idIscritto)
-            ->setParameter('tipologia', $tipologia)
+            ->setParameter('tipologia', $tipo ?? $tipologia)
             ->getQuery()
             ->getSingleScalarResult();
 
@@ -115,22 +154,46 @@ class FPrenotazioneEsami
     }
 
     /**
-     * Verifica se l'allievo ha già superato un esame teorico
-     * precedente alla data corrente.
+     * Verifica se l'allievo ha già superato un esame teorico.
+     * L'esito è ricavato dalle effettuazioni collegate alla prenotazione (relazione 1:N).
      */
     public function haSuperatoEsameTeorico(int $idIscritto): bool
     {
         $conteggio = $this->em
-            ->getRepository(EPrenotazioneEsami::class)
-            ->createQueryBuilder('p')
-            ->select('COUNT(p)')
+            ->getRepository(\CamassoMedelago\DriveMeSafely\Entity\EEffettuazioneEsami::class)
+            ->createQueryBuilder('eff')
+            ->select('COUNT(eff)')
+            ->join('eff.prenotazioneEsame', 'p')
             ->join('p.esame', 'e')
             ->where('IDENTITY(p.allievo) = :idIscritto')
             ->andWhere('e.tipologia = :tipologia')
-            ->andWhere('p.superato = :superato')
-            ->andWhere('e.dataEs < CURRENT_TIMESTAMP()')
+            ->andWhere('eff.superato = :superato')
             ->setParameter('idIscritto', $idIscritto)
-            ->setParameter('tipologia', 'TEORIA')
+            ->setParameter('tipologia', TipologiaEsame::TEORIA)
+            ->setParameter('superato', true)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $conteggio > 0;
+    }
+
+    /**
+     * Verifica se l'allievo ha già superato un esame pratico.
+     * L'esito è ricavato dalle effettuazioni collegate alla prenotazione (relazione 1:N).
+     */
+    public function haSuperatoEsamePratico(int $idIscritto): bool
+    {
+        $conteggio = $this->em
+            ->getRepository(\CamassoMedelago\DriveMeSafely\Entity\EEffettuazioneEsami::class)
+            ->createQueryBuilder('eff')
+            ->select('COUNT(eff)')
+            ->join('eff.prenotazioneEsame', 'p')
+            ->join('p.esame', 'e')
+            ->where('IDENTITY(p.allievo) = :idIscritto')
+            ->andWhere('e.tipologia = :tipologia')
+            ->andWhere('eff.superato = :superato')
+            ->setParameter('idIscritto', $idIscritto)
+            ->setParameter('tipologia', TipologiaEsame::PRATICA)
             ->setParameter('superato', true)
             ->getQuery()
             ->getSingleScalarResult();
@@ -158,7 +221,34 @@ class FPrenotazioneEsami
             ->andWhere('p.stato = :stato')
             ->setParameter('idIscritto', $idIscritto)
             ->setParameter('dataOra', $dataOra)
-            ->setParameter('stato', 'PRENOTATO')
+            ->setParameter('stato', StatoPrenotazioneEsame::PRENOTATO)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $conteggio > 0;
+    }
+
+    /**
+     * Verifica se un allievo ha già un esame futuro attivo (PRENOTATO) per una determinata tipologia.
+     */
+    public function haPrenotazioneFuturaAttivaPerTipologia(
+        int $idIscritto,
+        string|TipologiaEsame $tipologia
+    ): bool {
+        $tipo = $tipologia instanceof TipologiaEsame ? $tipologia : TipologiaEsame::tryFrom($tipologia);
+
+        $conteggio = $this->em
+            ->getRepository(EPrenotazioneEsami::class)
+            ->createQueryBuilder('p')
+            ->select('COUNT(p.idPrenotazioneEsame)')
+            ->join('p.esame', 'e')
+            ->where('p.allievo = :idIscritto')
+            ->andWhere('e.tipologia = :tipologia')
+            ->andWhere('p.stato = :stato')
+            ->andWhere('e.dataEs > CURRENT_TIMESTAMP()')
+            ->setParameter('idIscritto', $idIscritto)
+            ->setParameter('tipologia', $tipo ?? $tipologia)
+            ->setParameter('stato', StatoPrenotazioneEsame::PRENOTATO)
             ->getQuery()
             ->getSingleScalarResult();
 

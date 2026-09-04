@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rules = {
         username: {
-            pattern: /^.{1,100}$/,
-            message: 'Inserisci uno username valido.'
+            pattern: /^[A-Za-z0-9_.-]{3,50}$/,
+            message: 'Lo username deve avere 3-50 caratteri (lettere, numeri, trattini, punti o underscore).'
         },
         nome: {
             pattern: /^[\p{L}' -]{2,50}$/u,
@@ -67,20 +67,47 @@ document.addEventListener('DOMContentLoaded', () => {
             ? value.toUpperCase()
             : value)) {
             message = rule.message;
+        } else if (field.name === 'telefono' && value !== '') {
+            const digits = value.replace(/[^0-9]/g, '');
+            if (!rule.pattern.test(value) || digits.length < 9 || digits.length > 15) {
+                message = rule.message;
+            }
         } else if (field.name === 'email' && value !== ''
             && !field.validity.valid) {
             message = 'Inserisci un indirizzo email valido.';
         } else if (field.name === 'dataNascita' && value !== '') {
             const birthDate = new Date(`${value}T00:00:00`);
             const today = new Date();
+            const limiteSecolare = new Date(
+                today.getFullYear() - 120,
+                today.getMonth(),
+                today.getDate()
+            );
+            const tipoPatente = (form.dataset.tipoPatente || '').toUpperCase().trim();
+
+            let etaMinima = 18;
+            if (tipoPatente === 'AM') {
+                etaMinima = 14;
+            } else if (tipoPatente === 'A1' || tipoPatente === 'B1') {
+                etaMinima = 16;
+            } else if (['C', 'CE', 'D1', 'D1E'].includes(tipoPatente)) {
+                etaMinima = 21;
+            } else if (['A', 'D', 'DE'].includes(tipoPatente)) {
+                etaMinima = 24;
+            } else {
+                etaMinima = 18;
+            }
+
             const minimumDate = new Date(
-                today.getFullYear() - 16,
+                today.getFullYear() - etaMinima,
                 today.getMonth(),
                 today.getDate()
             );
 
-            if (birthDate > today || birthDate > minimumDate) {
-                message = 'Devi avere almeno 16 anni.';
+            if (isNaN(birthDate.getTime()) || birthDate > today || birthDate < limiteSecolare) {
+                message = 'Inserisci una data di nascita valida.';
+            } else if (birthDate > minimumDate) {
+                message = `Devi avere almeno ${etaMinima} anni per la patente ${tipoPatente || 'scelta'}.`;
             }
         }
 
@@ -114,6 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (firstInvalid) {
                 firstInvalid.focus();
+            }
+        } else {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Iscrizione in corso...';
             }
         }
     });

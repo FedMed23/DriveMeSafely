@@ -8,35 +8,46 @@ use DateTimeImmutable;
 /**
  * La classe ELezioneTeoria rappresenta una specifica lezione in aula.
  *
+ * Nota: il valore del discriminatore ("TEORIA") è già definito dalla mappa
+ * dei discriminatori sulla classe madre ELezione (attributo DiscriminatorMap);
+ * l'equivalente annotazione DiscriminatorValue in stile docblock non esiste
+ * più in questa versione di Doctrine (sostituita dall'attributo PHP nativo),
+ * ma non è comunque necessaria qui perché la mappa è già completa.
+ *
  * @ORM\Entity
  */
+#[ORM\Entity]
 #[ORM\DiscriminatorValue('TEORIA')]
 class ELezioneTeoria extends ELezione
 {
     /**
      * Aula nella quale si svolge la lezione.
      *
-     * @ORM\Column(
-     *     name="aula",
-     *     type="string",
-     *     length=50,
-     *     nullable=true,
-     *     enumType="CamassoMedelago\DriveMeSafely\Entity\EAula"
-     * )
+     * @var EAula|null
+     * @ORM\Column(name="aula", type="string", length=50, nullable=true, enumType="CamassoMedelago\DriveMeSafely\Entity\EAula")
      */
+    #[ORM\Column(
+        name: 'aula',
+        type: 'string',
+        length: 50,
+        nullable: true,
+        enumType: EAula::class
+    )]
     private ?EAula $aula = null;
 
     /**
      * Argomento ministeriale della lezione.
      *
-     * @ORM\Column(
-     *     name="argomento",
-     *     type="string",
-     *     length=50,
-     *     nullable=true,
-     *     enumType="CamassoMedelago\DriveMeSafely\Entity\EArgomentoMinisteriale"
-     * )
+     * @var EArgomentoMinisteriale|null
+     * @ORM\Column(name="argomento", type="string", length=50, nullable=true, enumType="CamassoMedelago\DriveMeSafely\Entity\EArgomentoMinisteriale")
      */
+    #[ORM\Column(
+        name: 'argomento',
+        type: 'string',
+        length: 50,
+        nullable: true,
+        enumType: EArgomentoMinisteriale::class
+    )]
     private ?EArgomentoMinisteriale $argomentoLezione = null;
 
     // ---------------- COSTRUTTORE ----------------

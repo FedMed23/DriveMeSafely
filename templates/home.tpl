@@ -13,7 +13,7 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="{$homeUrl}">Home</a></li>
+                    <li><a href="{$request.contextPath}/home">Home</a></li>
                     <li><a href="{$request.contextPath}/corsi">Corsi</a></li>
                     <li><a href="{$request.contextPath}/patenti">Patenti</a></li>
                     <li><a href="{$request.contextPath}/chi-siamo">Chi siamo</a></li>

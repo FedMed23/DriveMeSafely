@@ -11,11 +11,13 @@ class CProprietario
 {
     private FUtenteRegistrato $fUtente;
     private VProprietario $view;
+    private string $contextPath;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, string $contextPath = '')
     {
         $this->fUtente = new FUtenteRegistrato($em);
         $this->view = new VProprietario();
+        $this->contextPath = $contextPath;
     }
 
     public function dashboard(): void
@@ -29,7 +31,7 @@ class CProprietario
         $utente = $id === null ? null : $this->fUtente->getById($id);
 
         if (!$utente instanceof EProprietario) {
-            header('Location: ' . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/home/login');
+            header('Location: ' . $this->contextPath . '/home/login');
             exit;
         }
 

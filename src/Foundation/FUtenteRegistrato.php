@@ -7,11 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FUtenteRegistrato
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ------------------- SAVE -------------------
@@ -84,4 +81,3 @@ class FUtenteRegistrato
         $this->em->flush();
     }
 }
-?>

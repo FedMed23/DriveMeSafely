@@ -11,12 +11,14 @@ class CIscrizione
     private EntityManagerInterface $em;
     private SIscrizione $service;
     private VIscrizione $view;
+    private string $contextPath;
 
-    public function __construct(EntityManagerInterface $em
-    ) {
+    public function __construct(EntityManagerInterface $em, string $contextPath = '')
+    {
         $this->em = $em;
         $this->service = new SIscrizione($em);
         $this->view = new VIscrizione();
+        $this->contextPath = $contextPath;
     }
     /**
      * Gestisce il caso d'uso dell'iscrizione.
@@ -67,29 +69,14 @@ class CIscrizione
 
             $idPaParam = $_GET['idPa'] ?? null;
 
-
-            /*
-             * ---------------------------------------------------------
-             * CASO 1
-             * Nessun pacchetto selezionato.
-             *
-             * Equivalente alla PacchettiPatentiServlet:
-             *
-             * service.getPatenti()
-             * ---------------------------------------------------------
-             */
-
+            //1)Caso in cui nessun pacchette viene selezionato
             if ($idPaParam === null || trim($idPaParam) === '') {
                 $pacchetti = $this->service->getPatenti();
                 $this->view->showPacchetti($pacchetti);
                 return;
             }
-            /*
-             * ---------------------------------------------------------
-             * Controllo dell'id della patente
-             * ---------------------------------------------------------
-             */
 
+            //Controllo id patente
             if (!ctype_digit((string) $idPaParam)) {
                 $this->view->showError(
                     "Identificativo patente non valido.",
@@ -99,14 +86,7 @@ class CIscrizione
             }
             $idPa = (int) $idPaParam;
 
-
-            /*
-             * ---------------------------------------------------------
-             * CASO 2 / 3
-             *
-             * Recuperiamo il pacchetto selezionato.
-             * ---------------------------------------------------------
-             */
+            //2)Caso in cui un pacchetto è stato selezionato, recupero dei dettagli
             $pacchetto = $this->service->getPacchetto($idPa);
             if ($pacchetto === null) {
                 $this->view->showError(
@@ -115,69 +95,42 @@ class CIscrizione
                 );
                 return;
             }
-            /*
-             * ---------------------------------------------------------
-             * CASO 3
-             *
-             * Se è stato richiesto il form di iscrizione,
-             * visualizziamo il form passando il pacchetto.
-             *
-             * Esempio:
-             *
-             * /iscrizione?idPa=1&form=1
-             * ---------------------------------------------------------
-             */
+            
+            //3)Caso in cui è stato richiesto il form di iscrizione con il pacchetto selezionato
             if (isset($_GET['form'])) {
+                if ($this->isUtenteAutenticato()) {
+                    header('Location: ' . $this->contextPath . '/home');
+                    exit;
+                }
                 $this->view->showFormIscrizione($pacchetto);
                 return;
             }
 
-            /*
-             * ---------------------------------------------------------
-             * CASO 2
-             *
-             * Nessun parametro "form":
-             * mostriamo il dettaglio del pacchetto.
-             * ---------------------------------------------------------
-             */
+            //4)Caso in cui nessun parametro "form" è presente: mostriamo il dettaglio del pacchetto.
 
             $this->view->showDettaglioPacchetto($pacchetto);
 
-    } catch (\InvalidArgumentException|\RuntimeException $e) {
-    $pacchetto = null;
-    echo '<pre>';
-    echo "MESSAGGIO: " . $e->getMessage() . "\n";
-    echo "FILE: " . $e->getFile() . "\n";
-    echo "RIGA: " . $e->getLine() . "\n";
-    echo "\nTRACE:\n";
-    echo $e->getTraceAsString();
-    echo '</pre>';
-            
-    //if (isset($idPa) && $idPa > 0) {
-    //    $pacchetto = $this->service->getPacchetto($idPa);
-    //}
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            $this->view->showError(
+                $e->getMessage(),
+                400
+            );
 
-    //$this->view->showFormError(
-    //    $e->getMessage(),
-    //    $_POST,
-     //   $pacchetto
-    //);
-
-    } catch (\Throwable $e) {
-        echo '<pre>';
-        echo "MESSAGGIO: " . $e->getMessage() . "\n";
-        echo "FILE: " . $e->getFile() . "\n";
-        echo "RIGA: " . $e->getLine() . "\n";
-        echo "\nTRACE:\n";
-        echo $e->getTraceAsString();
-        echo '</pre>';
-        exit;
-        $this->view->showError(
-            "Si è verificato un errore imprevisto durante l'iscrizione.",
-            500
-        );
+        } catch (\Throwable $e) {
+            error_log(
+                sprintf(
+                    'Errore visualizzazione iscrizione: %s in %s:%d',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
+                )
+            );
+            $this->view->showError(
+                "Si è verificato un errore imprevisto durante la visualizzazione.",
+                500
+            );
+        }
     }
-}
 
     /**
      * Gestisce il POST del form di iscrizione.
@@ -189,13 +142,14 @@ class CIscrizione
      */
     private function post(): void
     {
+        $pacchetto = null;
         try {
-            /*
-             * ---------------------------------------------------------
-             * Recupero ID patente
-             * ---------------------------------------------------------
-             */
-
+            if ($this->isUtenteAutenticato()) {
+                header('Location: ' . $this->contextPath . '/home');
+                exit;
+            }
+            
+            //1) Recupero ID patente selezionata
             $idPaParam = $_POST['idPa'] ?? null;
 
             if (
@@ -208,25 +162,20 @@ class CIscrizione
             }
 
             $idPa = (int) $idPaParam;
+            $pacchetto = $this->service->getPacchetto($idPa);
+            if ($pacchetto === null) {
+                throw new \InvalidArgumentException(
+                    "Pacchetto patente selezionato non valido."
+                );
+            }
 
-
-            /*
-             * ---------------------------------------------------------
-             * Recupero dati account
-             * ---------------------------------------------------------
-             */
-
+            //2) Recupero dati account
             $username = $_POST['username'] ?? null;
             $email = $_POST['email'] ?? null;
             $password = $_POST['password'] ?? null;
 
 
-            /*
-             * ---------------------------------------------------------
-             * Recupero dati anagrafici
-             * ---------------------------------------------------------
-             */
-
+            //3) Recupero dati anagrafici
             $nome = $_POST['nome'] ?? null;
             $cognome = $_POST['cognome'] ?? null;
             $cf = $_POST['codiceFiscale'] ?? null;
@@ -235,15 +184,7 @@ class CIscrizione
             $indirizzo = $_POST['indirizzo'] ?? null;
             $telefono = $_POST['telefono'] ?? null;
 
-
-            /*
-             * ---------------------------------------------------------
-             * Normalizzazione dei dati
-             *
-             * Il controller si occupa della rappresentazione HTTP.
-             * ---------------------------------------------------------
-             */
-
+            //4) Normalizzazione dei dati
             $username = $username !== null ? trim($username) : null;
             $email = $email !== null ? strtolower(trim($email)): null; 
             $nome = $nome !== null ? trim($nome) : null;
@@ -259,13 +200,26 @@ class CIscrizione
                 ? trim($telefono)
                 : null;
 
+            //5) Controllo presenza di tutti i campi obbligatori
+            // (evita un TypeError quando un campo mancante viene passato
+            // come null a un parametro string non-nullable del Service)
+            if (
+                $username === null || $username === '' ||
+                $email === null || $email === '' ||
+                $password === null || $password === '' ||
+                $nome === null || $nome === '' ||
+                $cognome === null || $cognome === '' ||
+                $cf === null || $cf === '' ||
+                $luogoNascita === null || $luogoNascita === '' ||
+                $indirizzo === null || $indirizzo === '' ||
+                $telefono === null || $telefono === ''
+            ) {
+                throw new \InvalidArgumentException(
+                    "Tutti i campi del modulo di iscrizione sono obbligatori."
+                );
+            }
 
-            /*
-             * ---------------------------------------------------------
-             * Conversione data di nascita
-             * ---------------------------------------------------------
-             */
-
+            //6) Conversione data di nascita
             if (
                 $dataNascitaParam === null ||
                 trim($dataNascitaParam) === ''
@@ -275,25 +229,14 @@ class CIscrizione
                 );
             }
 
-            try {
-                $dataNascita = new \DateTimeImmutable(
-                    $dataNascitaParam
-                );
-
-            } catch (\Exception $e) {
-
+            $dataNascita = \DateTimeImmutable::createFromFormat('!Y-m-d', trim($dataNascitaParam));
+            if ($dataNascita === false || $dataNascita->format('Y-m-d') !== trim($dataNascitaParam)) {
                 throw new \InvalidArgumentException(
-                    "Data di nascita non valida."
+                    "Formato data di nascita non valido (richiesto AAAA-MM-GG)."
                 );
             }
-            /*
-             * ---------------------------------------------------------
-             * BUSINESS LOGIC
-             *
-             * Tutta la logica dell'iscrizione viene delegata
-             * al Service.
-             * ---------------------------------------------------------
-             */
+            //7) BUSINESS LOGIC
+            // Tutta la logica dell'iscrizione viene delegata al Service.
 
             $iscritto = $this->service->iscrizione(
                 $idPa,
@@ -309,46 +252,24 @@ class CIscrizione
                 $telefono
             );
 
-            /*
-             * ---------------------------------------------------------
-             * Salvataggio definitivo
-             * ---------------------------------------------------------
-             */
+            //8) Salvataggio definitivo
             $this->service->confermaIscrizione(
                 $iscritto
             );
 
-            /*
-             * ---------------------------------------------------------
-             * LOGIN AUTOMATICO
-             * ---------------------------------------------------------
-             */
-
+            //9) Login automatico
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
+            session_regenerate_id(true);
             $_SESSION['utenteLoggatoId'] = $iscritto->getId();
             
-            /*
-             * ---------------------------------------------------------
-             * REDIRECT ALLA HOME
-             *
-             * Per ora lasciamo il redirect relativo.
-             * Lo sistemeremo definitivamente quando configureremo
-             * FCFrontController e il routing.
-             * ---------------------------------------------------------
-             */
-
-            header('Location: /DriveMeSafely/public/');
+            //10) REDIRECT ALLA HOME
+            header('Location: ' . $this->contextPath . '/');
             exit;
 
 
         } catch (\InvalidArgumentException|\RuntimeException $e) {
-            $pacchetto = null;
-            if (isset($idPa) && $idPa > 0) {
-                $pacchetto = $this->service->getPacchetto($idPa);
-            }
-        
             $this->view->showFormError(
                 $e->getMessage(),
                 $_POST,
@@ -356,11 +277,6 @@ class CIscrizione
             );
 
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-            $pacchetto = null;
-            if (isset($idPa) && $idPa > 0) {
-                $pacchetto = $this->service->getPacchetto($idPa);
-            }
-
             $this->view->showFormError(
                 "Username, email o codice fiscale già presenti.",
                 $_POST,
@@ -381,5 +297,16 @@ class CIscrizione
                 500
             );
         }
+    }
+
+    private function isUtenteAutenticato(): bool
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $utenteId = $_SESSION['utenteLoggatoId'] ?? null;
+
+        return is_int($utenteId) || (is_string($utenteId) && ctype_digit($utenteId) && (int) $utenteId > 0);
     }
 }

@@ -7,11 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FProprietario
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------- CREATE / UPDATE ----------------
@@ -103,4 +100,3 @@ class FProprietario
         $this->em->flush();
     }
 }
-?>

@@ -15,7 +15,7 @@
             <h1>DriveMeSafely</h1>
             <nav>
                 <ul>
-                    <li><a href="{$homeUrl}">Torna alla Home</a></li>
+                    <li><a href="{$request.contextPath}/home">Torna alla Home</a></li>
                 </ul>
             </nav>
         </header>
@@ -27,8 +27,8 @@
                     ⚠️ {$errore}
                 </div>
             {/if}
-            <form id="iscrizione-form" action="{$request.contextPath}/home/iscrizione" method="POST">
-                <input type="hidden" name="idPa" value="{$pacchetto->getPatente()->getId()}">
+            <form id="iscrizione-form" action="{$request.contextPath}/home/iscrizione" method="POST" data-tipo-patente="{if isset($pacchetto) && $pacchetto->getPatente()}{$pacchetto->getPatente()->getTipo()}{/if}">
+                <input type="hidden" name="idPa" value="{if isset($pacchetto) && $pacchetto->getPatente()}{$pacchetto->getPatente()->getId()}{else}{$oldData.idPa|default:''|escape}{/if}">
                 <h3>1. Credenziali di Accesso</h3>
                 <div>
                     <label for="username">Username:</label>
@@ -48,17 +48,17 @@
                 <h3>2. Dati Anagrafici</h3>
                 <div>
                     <label for="nome">Nome:</label>
-                    <input type="text" id="nome" name="nome" value="{$oldData.nome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ&#39; \-]&#123;2,50&#125;" autocomplete="given-name" required>
+                    <input type="text" id="nome" name="nome" value="{$oldData.nome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ' \-]{ldelim}2,50{rdelim}" autocomplete="given-name" required>
                 </div>
                 <br>
                 <div>
                     <label for="cognome">Cognome:</label>
-                    <input type="text" id="cognome" name="cognome" value="{$oldData.cognome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ&#39; \-]&#123;2,50&#125;" autocomplete="family-name" required>
+                    <input type="text" id="cognome" name="cognome" value="{$oldData.cognome|default:''|escape}" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ÿ' \-]{ldelim}2,50{rdelim}" autocomplete="family-name" required>
                 </div>
                 <br>
                 <div>
                     <label for="codiceFiscale">Codice Fiscale:</label>
-                    <input type="text" id="codiceFiscale" name="codiceFiscale" value="{$oldData.codiceFiscale|default:''|escape}" minlength="16" maxlength="16" pattern="[A-Za-z0-9]&#123;16&#125;" autocomplete="off" required>
+                    <input type="text" id="codiceFiscale" name="codiceFiscale" value="{$oldData.codiceFiscale|default:''|escape}" minlength="16" maxlength="16" pattern="[A-Za-z0-9]{ldelim}16{rdelim}" autocomplete="off" required>
                 </div>
                 <br>
                 <div>
@@ -68,23 +68,27 @@
                 <br>
                 <div>
                     <label for="luogoNascita">Luogo di Nascita:</label>
-                    <input type="text" id="luogoNascita" name="luogoNascita" value="{$oldData.luogoNascita|default:''|escape}" minlength="2" maxlength="100" pattern="[A-Za-zÀ-ÿ .&#39;\-]&#123;2,100&#125;" autocomplete="off" required>
+                    <input type="text" id="luogoNascita" name="luogoNascita" value="{$oldData.luogoNascita|default:''|escape}" minlength="2" maxlength="100" pattern="[A-Za-zÀ-ÿ .'\-]{ldelim}2,100{rdelim}" autocomplete="off" required>
                 </div>
                 <br>
                 <div>
                     <label for="indirizzo">Indirizzo di Residenza:</label>
-                    <input type="text" id="indirizzo" name="indirizzo" value="{$oldData.indirizzo|default:''|escape}" minlength="5" maxlength="100" pattern="[A-Za-zÀ-ÿ0-9 .,&#39;\/\-]&#123;5,100&#125;" autocomplete="street-address" required>
+                    <input type="text" id="indirizzo" name="indirizzo" value="{$oldData.indirizzo|default:''|escape}" minlength="5" maxlength="100" pattern="[A-Za-zÀ-ÿ0-9 .,'/\-]{ldelim}5,100{rdelim}" autocomplete="street-address" required>
                 </div>
                 <br>
                 <div>
                     <label for="telefono">Numero di Telefono:</label>
-                    <input type="tel" id="telefono" name="telefono" value="{$oldData.telefono|default:''|escape}" minlength="9" maxlength="15" pattern="\+?[0-9 ]&#123;9,15&#125;" autocomplete="tel" required>
+                    <input type="tel" id="telefono" name="telefono" value="{$oldData.telefono|default:''|escape}" minlength="9" maxlength="15" pattern="\+?[0-9 ]{ldelim}9,15{rdelim}" autocomplete="tel" required>
                 </div>
                 <br><hr><br>
                 <h3>3. Patente scelta</h3>
-                <div>Iscrizione per la patente di tipologia:
-                    <strong>{$pacchetto->getPatente()->getTipo()}</strong>
-                </div>
+                {if isset($pacchetto) && $pacchetto->getPatente()}
+                    <div>Iscrizione per la patente di tipologia:
+                        <strong>{$pacchetto->getPatente()->getTipo()}</strong>
+                    </div>
+                {else}
+                    <div>Iscrizione per la patente selezionata</div>
+                {/if}
                 <br><br>
                 <button type="submit" class="btn" style="width: 100%;">Conferma Iscrizione e Accedi</button>
             </form>

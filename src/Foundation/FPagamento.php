@@ -12,13 +12,10 @@ use DateTimeImmutable;
 
 class FPagamento
 {
-    private EntityManagerInterface $em;
-
     // ---------------------- COSTRUTTORE ----------------------
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
@@ -390,4 +387,4 @@ class FPagamento
         $this->em->flush();
     }
 }
-?>
+

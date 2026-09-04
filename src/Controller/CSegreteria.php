@@ -11,6 +11,7 @@ class CSegreteria
 {
     public function __construct(
         private EntityManagerInterface $em,
+        private string $contextPath = '',
         private ?FUtenteRegistrato $fUtente = null,
         private ?VSegreteria $view = null
     ) {
@@ -29,7 +30,7 @@ class CSegreteria
         $utente = $id === null ? null : $this->fUtente->getById($id);
 
         if (!$utente instanceof EDipendente) {
-            header('Location: ' . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . '/home/login');
+            header('Location: ' . $this->contextPath . '/home/login');
             exit;
         }
 

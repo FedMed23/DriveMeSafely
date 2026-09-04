@@ -11,7 +11,7 @@
         <h1>DriveMeSafely</h1>
         <nav>
             <ul>
-                <li><a href="{$homeUrl}">Home</a></li>
+                <li><a href="{if $utente instanceof \CamassoMedelago\DriveMeSafely\Entity\EProprietario}{$request.contextPath}/home/proprietario{else}{$request.contextPath}/home{/if}">Home</a></li>
                 <li><a href="{$request.contextPath}/home/logout">Logout</a></li>
             </ul>
         </nav>

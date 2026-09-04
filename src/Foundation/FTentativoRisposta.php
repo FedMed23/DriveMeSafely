@@ -9,11 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FTentativoRisposta
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ------------------- INSERIMENTO / SALVATAGGIO -------------------
@@ -281,4 +278,4 @@ class FTentativoRisposta
             ->getSingleScalarResult();
     }
 }
-?>
+

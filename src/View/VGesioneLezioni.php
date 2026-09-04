@@ -8,7 +8,7 @@ use CamassoMedelago\DriveMeSafely\Smarty\StartSmarty;
 
 class VGesioneLezioni
 {
-    public function show(array $lezioni, ?string $successo, ?string $errore): void
+    public function show(array $lezioni, ?string $successo, ?string $errore, array $istruttoriSuggeriti = [], array $vettureSuggerite = []): void
     {
         $smarty = StartSmarty::configuration();
         $eventi = array_map(static function ($lezione): array {
@@ -26,8 +26,16 @@ class VGesioneLezioni
         ));
         $smarty->assign('aule', EAula::cases());
         $smarty->assign('argomenti', EArgomentoMinisteriale::cases());
-        $smarty->assign('successo', $successo !== null);
+        $smarty->assign('istruttoriSuggeriti', $istruttoriSuggeriti);
+        $smarty->assign('vettureSuggerite', $vettureSuggerite);
+        $smarty->assign('successo', $successo);
         $smarty->assign('errore', $errore);
         $smarty->display('gestione_lezioni.tpl');
+    }
+
+    public function showError(string $messaggio, int $codiceHttp = 400): void
+    {
+        http_response_code($codiceHttp);
+        echo htmlspecialchars($messaggio, ENT_QUOTES, 'UTF-8');
     }
 }

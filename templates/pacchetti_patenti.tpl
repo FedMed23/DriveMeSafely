@@ -12,17 +12,13 @@
         <h1>DriveMeSafely</h1>
         <nav>
             <ul>
-                <li><a href="{$homeUrl}">Home</a></li>
-                <li>
-                    <a href="index.php?page=profilo" class="btn">
-                        Profilo
-                    </a>
-                </li>
-                <li>
-                    <a href="index.php?page=logout">
-                        Logout
-                    </a>
-                </li>
+                <li><a href="{$request.contextPath}/home">Home</a></li>
+                {if isset($utenteLoggato)}
+                    <li><a href="{$request.contextPath}/home/profilo" class="btn">Profilo</a></li>
+                    <li><a href="{$request.contextPath}/home/logout">Logout</a></li>
+                {else}
+                    <li><a href="{$request.contextPath}/home/login">Login</a></li>
+                {/if}
             </ul>
         </nav>
     </header>

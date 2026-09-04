@@ -13,7 +13,7 @@
         <nav>
             <ul>
                 <li><span class="staff-greeting">Ciao, {$utenteLoggato->getNome()}</span></li>
-                <li><a href="{$homeUrl}">Home</a></li>
+                <li><a href="{$request.contextPath}/home/proprietario">Home</a></li>
                 <li><a href="{$request.contextPath}/home/logout">Logout</a></li>
             </ul>
         </nav>
@@ -25,7 +25,7 @@
         <div class="dashboard-grid">
             <div class="card-amministrativa">
                 <div>
-                    <h3>💰 Cassa e pagamento spese</h3>
+                    <h3> Cassa e pagamento spese</h3>
                     <p>Controlla i movimenti della cassa, le entrate e le uscite giornaliere.</p>
                 </div>
                 <a href="{$request.contextPath}/home/contabilita" class="btn-dashboard btn-purple">Apri Cassa</a>

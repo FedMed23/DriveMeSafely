@@ -3,6 +3,7 @@
 namespace CamassoMedelago\DriveMeSafely\Service;
 
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
+use CamassoMedelago\DriveMeSafely\Entity\EDipendente;
 use CamassoMedelago\DriveMeSafely\Entity\EPagamento;
 use CamassoMedelago\DriveMeSafely\Entity\ESpesa;
 use CamassoMedelago\DriveMeSafely\Entity\EProprietario;
@@ -13,9 +14,11 @@ use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
 use CamassoMedelago\DriveMeSafely\Foundation\FUtenteRegistrato;
 use CamassoMedelago\DriveMeSafely\Foundation\FPagamento;
 use CamassoMedelago\DriveMeSafely\Foundation\FCartaDiCredito;
+use CamassoMedelago\DriveMeSafely\Utils\CartaDiCreditoUtil;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 
+//Service che gestisce le operazioni relative alle spese e ai pagamenti, sia dell'iscritto sia del proprieterio
 class SPagamentoSpese
 {
     private EntityManagerInterface $em;
@@ -53,6 +56,8 @@ class SPagamentoSpese
             }
         } elseif ($utente instanceof EProprietario) {
             $spese = $this->fSpesa->findSpeseProprietario();
+        } elseif ($utente instanceof EDipendente) {
+            throw new \InvalidArgumentException('I dipendenti non hanno spese personali da visualizzare o saldare.');
         } else {
             throw new \InvalidArgumentException('Tipo di utente non riconosciuto.');
         }
@@ -88,11 +93,7 @@ class SPagamentoSpese
         ];
     }
 
-    /**
-     * Restituisce lo storico e il riepilogo giornaliero della cassa.
-     *
-     * La cassa è disponibile esclusivamente al proprietario.
-     */
+    //1)Metodo che restituisce i movimenti di cassa giornalieri per il proprieterio
     public function getMovimentiCassa(int $idProprietario): CassaDTO
     {
         $utente = $this->fUtente->getById($idProprietario);
@@ -127,19 +128,31 @@ class SPagamentoSpese
     }
 
     //3)Gestisce il pagamento di una spesa da parte di un utente, verificando la validità dei dati della carta di credito e creando un oggetto EPagamento.
-    public function pagaSpesa(int $idUtente, int $idSpesa, string $numeroCarta, string $nomeTitolare, string $cognomeTitolare, DateTimeImmutable $dataScadenza): EPagamento {
+    public function pagaSpesa(
+        int $idUtente,
+        int $idSpesa,
+        string $numeroCarta,
+        string $nomeTitolare,
+        string $cognomeTitolare,
+        DateTimeImmutable $dataScadenza,
+        ?string $cvv = null
+    ): EPagamento {
         
         //1)Controllo parametri utente
         $utente = $this->fUtente->getById($idUtente);
         if ($utente === null) {
             throw new \InvalidArgumentException('Utente non trovato.');
         }
+
+        if ($utente instanceof EDipendente) {
+            throw new \InvalidArgumentException('I dipendenti non possono effettuare pagamenti di spese.');
+        }
         
         //2)Controllo parametri spesa
         $spesa = $this->getSpesa($idSpesa);
         $this->verificaSpesaAccessibile($utente, $spesa);
 
-        //3)Verifica che sia un iscritto o un proprietario
+        //3)Verifica che la spesa non sia già stata pagata
         if ($utente instanceof EIscritto) {
             $pagata = $this->fPagamento->spesaPagataIscritto($idSpesa, $idUtente);
         } else {
@@ -150,42 +163,68 @@ class SPagamentoSpese
             throw new \InvalidArgumentException('Spesa già pagata.');
         }
 
-        //4)Verifica dei dati della carta di credito
-        $numeroCarta = trim($numeroCarta);
+        //4)Normalizzazione e verifica dei dati della carta di credito
+        $numeroCartaNormalizzato = CartaDiCreditoUtil::normalizzaNumeroCarta($numeroCarta);
         $nomeTitolare = trim($nomeTitolare);
         $cognomeTitolare = trim($cognomeTitolare);
 
-        if (!preg_match('/^[0-9]{16}$/', $numeroCarta)) {
-            throw new \InvalidArgumentException('Numero carta errato.');
+        // Validazione algoritmo di Luhn e lunghezza standard
+        if (!CartaDiCreditoUtil::validaLuhn($numeroCartaNormalizzato)) {
+            throw new \InvalidArgumentException('Numero carta non valido.');
         }
 
-        if ($dataScadenza < new DateTimeImmutable('today')) {
+        // Validazione CVV se presente
+        if ($cvv !== null && $cvv !== '' && !CartaDiCreditoUtil::validaCvv($cvv)) {
+            throw new \InvalidArgumentException('Codice CVV non valido (richieste 3 o 4 cifre).');
+        }
+
+        // Verifica scadenza: la carta è valida fino alle 23:59:59 dell'ultimo giorno del mese indicato
+        if (CartaDiCreditoUtil::isCartaScaduta($dataScadenza)) {
             throw new \InvalidArgumentException('Carta scaduta.');
         }
 
+        if (!CartaDiCreditoUtil::isDataScadenzaValida($dataScadenza)) {
+            throw new \InvalidArgumentException('Data di scadenza non valida.');
+        }
+
         if (
-            !$this->nomeValido($nomeTitolare)
-            || !$this->nomeValido($cognomeTitolare)
+            !CartaDiCreditoUtil::validaTitolare($nomeTitolare)
+            || !CartaDiCreditoUtil::validaTitolare($cognomeTitolare)
         ) {
             throw new \InvalidArgumentException(
-                'Nome e cognome del titolare non validi.'
+                'Nome e cognome del titolare non validi (ammessi 2-50 caratteri, inclusi accenti, spazi e apostrofi).'
             );
         }
 
-        $carta = $this->fCarta->findByNumeroCarta($numeroCarta);
+        // Ricerca per hash SHA-256 (conservazione sicura secondo PCI-DSS)
+        $hashCarta = CartaDiCreditoUtil::hashNumeroCarta($numeroCartaNormalizzato);
+        $ultimeCifre = CartaDiCreditoUtil::estraiUltimeCifre($numeroCartaNormalizzato);
+        $carta = $this->fCarta->findByNumeroCartaHash($hashCarta);
 
-        //Da sistemare 
         if ($carta === null) {
-            $carta = new ECartaDiCredito( $nomeTitolare,$cognomeTitolare,$dataScadenza,$numeroCarta);
-        } elseif (
-            $carta->getNomeTitolareCarta() !== $nomeTitolare
-            || $carta->getCognomeTitolareCarta() !== $cognomeTitolare
-            || $carta->getDataScadenza()->format('Y-m-d')
-                !== $dataScadenza->format('Y-m-d')
-        ) {
-            throw new \InvalidArgumentException(
-                'I dati del titolare non corrispondono alla carta.'
+            // Fallback ricerca per numero in chiaro (retrocompatibilità)
+            $carta = $this->fCarta->findByNumeroCarta($numeroCartaNormalizzato);
+        }
+
+        if ($carta === null) {
+            $carta = new ECartaDiCredito(
+                $nomeTitolare,
+                $cognomeTitolare,
+                $dataScadenza,
+                $hashCarta,
+                $ultimeCifre
             );
+        } else {
+            // Verifica corrispondenza dati anagrafici e mese/anno di scadenza
+            $stessoNome = mb_strtolower($carta->getNomeTitolareCarta()) === mb_strtolower($nomeTitolare);
+            $stessoCognome = mb_strtolower($carta->getCognomeTitolareCarta()) === mb_strtolower($cognomeTitolare);
+            $stessaScadenza = $carta->getDataScadenza()->format('Y-m') === $dataScadenza->format('Y-m');
+
+            if (!$stessoNome || !$stessoCognome || !$stessaScadenza) {
+                throw new \InvalidArgumentException(
+                    'I dati del titolare non corrispondono alla carta.'
+                );
+            }
         }
         
         //Creazione del pagamento
@@ -195,20 +234,43 @@ class SPagamentoSpese
         return $pagamento;
     }
 
-    //4)Conferma del pagamento della spesa 
+    //4)Conferma transazionale e atomica del pagamento della spesa 
     public function confermaPagamento(EPagamento $pagamento): void
     {
         $this->em->beginTransaction();
         try {
+            $utente = $pagamento->getUtenteRegistrato();
+            $spesa = $pagamento->getSpesa();
+            $idUtente = (int) $utente->getId();
+            $idSpesa = (int) $spesa->getIdSpesa();
+
+            // Riverifica concorrenza: controlla se la spesa è stata saldata nel frattempo
+            $giaPagata = $utente instanceof EIscritto
+                ? $this->fPagamento->spesaPagataIscritto($idSpesa, $idUtente)
+                : $this->fPagamento->spesaPagataProprietario($idSpesa, $idUtente);
+
+            if ($giaPagata) {
+                throw new \InvalidArgumentException('Spesa già pagata da un\'altra transazione.');
+            }
+
             $carta = $pagamento->getCartaDiCredito();
             if ($carta->getId() === null) {
-                $this->em->persist($carta);
+                // Controllo atomico per evitare duplicati concorrenti su numero_carta hash
+                $cartaEsistente = $this->fCarta->findByNumeroCartaHash($carta->getNumeroCarta());
+                if ($cartaEsistente !== null) {
+                    $pagamento->setCartaDiCredito($cartaEsistente);
+                } else {
+                    $this->em->persist($carta);
+                }
             }
+
             $this->fPagamento->persist($pagamento);
             $this->em->flush();
             $this->em->commit();
         } catch (\Throwable $e) {
-            $this->em->rollback();
+            if ($this->em->getConnection()->isTransactionActive()) {
+                $this->em->rollback();
+            }
             throw $e;
         }
     }

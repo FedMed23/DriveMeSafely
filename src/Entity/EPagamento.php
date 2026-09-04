@@ -23,7 +23,8 @@ use DateTime;
  * @ORM\Entity
  * @ORM\Table(name="pagamento")
  */
-
+#[ORM\Entity]
+#[ORM\Table(name: 'pagamento')]
 class EPagamento implements \JsonSerializable
 {
     /**
@@ -31,9 +32,12 @@ class EPagamento implements \JsonSerializable
      *
      * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_pag", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_pag', type: 'integer')]
     private ?int $idPag = null;
 
     /**
@@ -42,6 +46,8 @@ class EPagamento implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="EUtenteRegistrato", fetch="LAZY")
      * @ORM\JoinColumn(name="utente_id", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: EUtenteRegistrato::class, fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'utente_id', nullable: false)]
     private EUtenteRegistrato $utenteRegistrato;
 
     /**
@@ -50,6 +56,8 @@ class EPagamento implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="ESpesa", fetch="LAZY")
      * @ORM\JoinColumn(name="spesa_id", referencedColumnName="id_spesa", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ESpesa::class, fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'spesa_id', referencedColumnName: 'id_spesa', nullable: false)]
     private ESpesa $spesa;
 
     /**
@@ -58,6 +66,7 @@ class EPagamento implements \JsonSerializable
      * @var DateTime
      * @ORM\Column(name="data_pagamento", type="date", nullable=false)
      */
+    #[ORM\Column(name: 'data_pagamento', type: 'date', nullable: false)]
     private DateTime $data;
 
     /**
@@ -66,6 +75,7 @@ class EPagamento implements \JsonSerializable
      * @var string
      * @ORM\Column(type="string", length=100, nullable=false)
      */
+    #[ORM\Column(name: 'stato', type: 'string', length: 100, nullable: false)]
     private string $stato;
 
     /**
@@ -78,6 +88,8 @@ class EPagamento implements \JsonSerializable
      * )
      * @ORM\JoinColumn(name="carta_id", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ECartaDiCredito::class, cascade: ['persist', 'merge'], fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'carta_id', nullable: false)]
     private ECartaDiCredito $cartaDiCredito;
 
 

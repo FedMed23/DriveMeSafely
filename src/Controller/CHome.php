@@ -14,9 +14,9 @@ class CHome
      * Il costruttore accetta l'EntityManagerInterface per allineamento con il Front Controller,
      * e inizializza la View in totale autonomia.
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, string $contextPath = '')
     {
-        // Anche se non usiamo $em qui dentro, serve riceverlo per non far crashare il Front Controller!
+        // Anche se non usiamo $em/$contextPath qui dentro, servono per non far crashare il Front Controller!
         $this->view = new VHome();
         $this->fUtente = new FUtenteRegistrato($em);
     }

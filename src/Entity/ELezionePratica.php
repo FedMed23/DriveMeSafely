@@ -9,6 +9,12 @@ use DateTimeImmutable;
  * Classe figlia che rappresenta la prenotazione specifica
  * di una guida pratica.
  *
+ * Nota: il valore del discriminatore ("PRATICA") è già definito dalla mappa
+ * dei discriminatori sulla classe madre ELezione (attributo DiscriminatorMap);
+ * l'equivalente annotazione DiscriminatorValue in stile docblock non esiste
+ * più in questa versione di Doctrine (sostituita dall'attributo PHP nativo),
+ * ma non è comunque necessaria qui perché la mappa è già completa.
+ *
  * @ORM\Entity
  */
 #[ORM\Entity]
@@ -18,15 +24,19 @@ class ELezionePratica extends ELezione
     /**
      * Istruttore assegnato alla guida pratica.
      *
+     * @var string|null
      * @ORM\Column(name="istruttore", type="string", length=100, nullable=true)
      */
+    #[ORM\Column(name: 'istruttore', type: 'string', length: 100, nullable: true)]
     private ?string $istruttore = null;
 
     /**
      * Vettura utilizzata durante la guida.
      *
+     * @var string|null
      * @ORM\Column(name="vettura", type="string", length=50, nullable=true)
      */
+    #[ORM\Column(name: 'vettura', type: 'string', length: 50, nullable: true)]
     private ?string $vettura = null;
 
 

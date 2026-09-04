@@ -2,6 +2,8 @@
 namespace CamassoMedelago\DriveMeSafely\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeImmutable;
+use CamassoMedelago\DriveMeSafely\Entity\StatoPrenotazioneEsame;
+
 /**
  * La classe EPrenotazioneEsami rappresenta una prenotazione effettuata da un dipendente
  * per un determinato esame.
@@ -67,18 +69,10 @@ class EPrenotazioneEsami implements \JsonSerializable
     /**
      * Stato della prenotazione
      *
-     * @var string
-     * @ORM\Column(name="stato", type="string", length=30, nullable=false)
+     * @var StatoPrenotazioneEsame
+     * @ORM\Column(name="stato", type="string", length=30, nullable=false, enumType="CamassoMedelago\DriveMeSafely\Entity\StatoPrenotazioneEsame")
      */
-    private string $stato;
-
-    /**
-     * Esito finale dell'esame
-     *
-     * @var bool
-     * @ORM\Column(name="superato", type="boolean", nullable=false)
-     */
-    private bool $superato = false;
+    private StatoPrenotazioneEsame $stato = StatoPrenotazioneEsame::PRENOTATO;
 
 
     //-------------------------COSTRUTTORI-------------------------
@@ -88,6 +82,8 @@ class EPrenotazioneEsami implements \JsonSerializable
      */
     public function __construct()
     {
+        $this->dataPrenotazione = new \DateTimeImmutable();
+        $this->stato = StatoPrenotazioneEsame::PRENOTATO;
     }
 
     /**
@@ -97,13 +93,13 @@ class EPrenotazioneEsami implements \JsonSerializable
         EDipendente $dipendente,
         EEsame $esame,
         EIscritto $allievo,
-        string $stato
+        StatoPrenotazioneEsame|string $stato = StatoPrenotazioneEsame::PRENOTATO
     ): void {
         $this->dipendente = $dipendente;
         $this->esame = $esame;
         $this->allievo = $allievo;
         $this->dataPrenotazione = new \DateTimeImmutable();
-        $this->stato = $stato;
+        $this->stato = is_string($stato) ? (StatoPrenotazioneEsame::tryFrom($stato) ?? StatoPrenotazioneEsame::PRENOTATO) : $stato;
     }
 
 
@@ -159,24 +155,14 @@ class EPrenotazioneEsami implements \JsonSerializable
         $this->dataPrenotazione = $data;
     }
 
-    public function getStato(): string
+    public function getStato(): StatoPrenotazioneEsame
     {
         return $this->stato;
     }
 
-    public function setStato(string $stato): void
+    public function setStato(StatoPrenotazioneEsame|string $stato): void
     {
-        $this->stato = $stato;
-    }
-
-    public function isSuperato(): bool
-    {
-        return $this->superato;
-    }
-
-    public function setSuperato(bool $superato): void
-    {
-        $this->superato = $superato;
+        $this->stato = is_string($stato) ? (StatoPrenotazioneEsame::tryFrom($stato) ?? StatoPrenotazioneEsame::PRENOTATO) : $stato;
     }
 
 
@@ -190,8 +176,7 @@ class EPrenotazioneEsami implements \JsonSerializable
             'esameId' => $this->esame->getIdEsame(),
             'allievoId' => $this->allievo->getId(),
             'dataPrenotazione' => $this->dataPrenotazione->format('Y-m-d H:i:s'),
-            'stato' => $this->stato,
-            'superato' => $this->superato
+            'stato' => $this->stato->value
         ];
     }
 
@@ -201,11 +186,11 @@ class EPrenotazioneEsami implements \JsonSerializable
     public function __toString(): string
     {
         return "Esame: " .
-            $this->esame->getTipologia() .
+            $this->esame->getTipologia()->getDescrizione() .
             " | Allievo: " .
             $this->allievo->getCognome() .
-            " | Superato: " .
-            ($this->superato ? "true" : "false");
+            " | Stato: " .
+            $this->stato->getDescrizione();
     }
 }
 

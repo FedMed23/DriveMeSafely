@@ -8,15 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FDipendente
 {
-    private EntityManagerInterface $em;
-
     // ---------------------- COSTRUTTORE ----------------------
     /**
      * Costruttore: collega Doctrine al database
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
@@ -111,4 +108,3 @@ class FDipendente
         $this->em->flush();
     }
 }
-?>

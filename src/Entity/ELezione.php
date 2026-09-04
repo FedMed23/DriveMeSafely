@@ -13,17 +13,29 @@ use DateTimeImmutable;
  * @ORM\Table(name="lezione")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="tipo_lezione", type="string", length=20)
+ * @ORM\DiscriminatorMap({
+ *     "TEORIA" = "CamassoMedelago\DriveMeSafely\Entity\ELezioneTeoria",
+ *     "PRATICA" = "CamassoMedelago\DriveMeSafely\Entity\ELezionePratica"
+ * })
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'lezione')]
+#[ORM\InheritanceType('SINGLE_TABLE')]
+#[ORM\DiscriminatorColumn(name: 'tipo_lezione', type: 'string', length: 20)]
+#[ORM\DiscriminatorMap(['TEORIA' => ELezioneTeoria::class, 'PRATICA' => ELezionePratica::class])]
 abstract class ELezione
 {
     /**
      * Identificativo univoco della lezione.
      *
-     * @var int|null
+     * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_lezione", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_lezione', type: 'integer')]
     protected ?int $idLezione = null;
 
     /**
@@ -32,7 +44,17 @@ abstract class ELezione
      * @var DateTimeImmutable
      * @ORM\Column(name="data_ora", type="datetime_immutable")
      */
+    #[ORM\Column(name: 'data_ora', type: 'datetime_immutable')]
     protected DateTimeImmutable $dataOra;
+
+    /**
+     * Indica se la lezione è stata annullata dalla segreteria.
+     *
+     * @var bool
+     * @ORM\Column(name="annullata", type="boolean")
+     */
+    #[ORM\Column(name: 'annullata', type: 'boolean')]
+    protected bool $annullata = false;
 
 
     // ------------------------- COSTRUTTORI -------------------------
@@ -92,6 +114,14 @@ abstract class ELezione
         return $this->dataOra->format('d/m/Y H:i');
     }
 
+    /**
+     * Indica se la lezione è stata annullata dalla segreteria.
+     */
+    public function isAnnullata(): bool
+    {
+        return $this->annullata;
+    }
+
 
     // ------------------------- METODI SET -------------------------
 
@@ -103,6 +133,11 @@ abstract class ELezione
     public function setDataOra(DateTimeImmutable $dataOra): void
     {
         $this->dataOra = $dataOra;
+    }
+
+    public function setAnnullata(bool $annullata): void
+    {
+        $this->annullata = $annullata;
     }
 
 

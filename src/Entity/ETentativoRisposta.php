@@ -1,8 +1,8 @@
 <?php
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
-use Doctrine\ORM\Mapping as ORM;
 
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * La classe ETentativoRisposta rappresenta una singola risposta data dall'utente 
@@ -17,6 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="tentativo_risposta")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'tentativo_risposta')]
 class ETentativoRisposta implements \JsonSerializable
 {
     /**
@@ -24,9 +26,12 @@ class ETentativoRisposta implements \JsonSerializable
      *
      * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_tentativo", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_tentativo', type: 'integer')]
     private ?int $idTentativo = null;
 
     /**
@@ -36,6 +41,8 @@ class ETentativoRisposta implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="EDomanda", fetch="EAGER")
      * @ORM\JoinColumn(name="id_domanda", referencedColumnName="id_domanda", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: EDomanda::class, fetch: 'EAGER')]
+    #[ORM\JoinColumn(name: 'id_domanda', referencedColumnName: 'id_domanda', nullable: false)]
     private EDomanda $domanda;
 
     /**
@@ -45,6 +52,8 @@ class ETentativoRisposta implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="ESvolgimentoQuiz", fetch="LAZY")
      * @ORM\JoinColumn(name="id_svolgimento", referencedColumnName="id_svolgimento", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ESvolgimentoQuiz::class, fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'id_svolgimento', referencedColumnName: 'id_svolgimento', nullable: false)]
     private ?ESvolgimentoQuiz $svolgimentoQuiz = null;
 
     /**
@@ -53,6 +62,7 @@ class ETentativoRisposta implements \JsonSerializable
      * @var bool
      * @ORM\Column(name="risposta_utente", type="boolean", nullable=false)
      */
+    #[ORM\Column(name: 'risposta_utente', type: 'boolean', nullable: false)]
     private bool $rispostaUtente;
 
     /**
@@ -61,6 +71,7 @@ class ETentativoRisposta implements \JsonSerializable
      * @var bool
      * @ORM\Column(name="corretta", type="boolean", nullable=false)
      */
+    #[ORM\Column(name: 'corretta', type: 'boolean', nullable: false)]
     private bool $corretta;
 
 

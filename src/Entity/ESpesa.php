@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="spesa")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'spesa')]
 class ESpesa implements \JsonSerializable
 {
     /**
@@ -15,22 +17,28 @@ class ESpesa implements \JsonSerializable
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer", name="id_spesa")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_spesa', type: 'integer')]
     private ?int $idSpesa = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'tipologia', type: 'string', length: 255, nullable: false)]
     private string $tipologia;
 
     /**
      * @ORM\Column(type="float", nullable=false)
      */
+    #[ORM\Column(name: 'importo', type: 'float', nullable: false)]
     private float $importo;
 
     /**
      * Valori consigliati: "PATENTE" o "PROPRIETARIO"
      * @ORM\Column(type="string", length=50, nullable=false)
      */
+    #[ORM\Column(name: 'ambito', type: 'string', length: 50, nullable: false)]
     private string $ambito;
 
 

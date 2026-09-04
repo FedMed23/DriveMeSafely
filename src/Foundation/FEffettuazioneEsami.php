@@ -4,16 +4,14 @@
 namespace CamassoMedelago\DriveMeSafely\Foundation;
 
 use CamassoMedelago\DriveMeSafely\Entity\EEffettuazioneEsami;
+use CamassoMedelago\DriveMeSafely\Entity\EPrenotazioneEsami;
 use Doctrine\ORM\EntityManagerInterface;
 
 class FEffettuazioneEsami
 {
-    private EntityManagerInterface $em;
-
     // Costruttore: collega Doctrine al database
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
@@ -52,20 +50,38 @@ class FEffettuazioneEsami
 
     // ---------------------- METODI PERSONALIZZATI ----------------------
 
-    // Trova tutte le effettuazioni di un iscritto
-    public function getByIdIscritto(int $idIscritto): array
+    // Trova tutte le effettuazioni di una prenotazione esame specifica
+    public function getByPrenotazioneEsame(EPrenotazioneEsami $prenotazioneEsame): array
     {
         return $this->em->getRepository(EEffettuazioneEsami::class)->findBy([
-            'idIscritto' => $idIscritto
+            'prenotazioneEsame' => $prenotazioneEsame
         ]);
     }
 
-    // Trova tutte le effettuazioni di un esame specifico
+    // Trova tutte le effettuazioni di un iscritto (tramite la prenotazione da cui derivano)
+    public function getByIdIscritto(int $idIscritto): array
+    {
+        return $this->em
+            ->getRepository(EEffettuazioneEsami::class)
+            ->createQueryBuilder('e')
+            ->join('e.prenotazioneEsame', 'p')
+            ->where('IDENTITY(p.allievo) = :idIscritto')
+            ->setParameter('idIscritto', $idIscritto)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // Trova tutte le effettuazioni di un esame specifico (tramite la prenotazione da cui derivano)
     public function getByEsame($esame): array
     {
-        return $this->em->getRepository(EEffettuazioneEsami::class)->findBy([
-            'esame' => $esame
-        ]);
+        return $this->em
+            ->getRepository(EEffettuazioneEsami::class)
+            ->createQueryBuilder('e')
+            ->join('e.prenotazioneEsame', 'p')
+            ->where('p.esame = :esame')
+            ->setParameter('esame', $esame)
+            ->getQuery()
+            ->getResult();
     }
 
     // Trova tutti gli esami superati
@@ -95,4 +111,3 @@ class FEffettuazioneEsami
             ->getResult();
     }
 }
-?>

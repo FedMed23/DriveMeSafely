@@ -10,11 +10,13 @@ class CContabilita
 {
     private SPagamentoSpese $service;
     private VContabilita $view;
+    private string $contextPath;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, string $contextPath = '')
     {
         $this->service = new SPagamentoSpese($em);
         $this->view = new VContabilita();
+        $this->contextPath = $contextPath;
     }
 
     public function contabilita(): void
@@ -40,7 +42,7 @@ class CContabilita
 
     private function redirect(string $path): never
     {
-        header('Location: ' . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/') . $path);
+        header('Location: ' . $this->contextPath . $path);
         exit;
     }
 }

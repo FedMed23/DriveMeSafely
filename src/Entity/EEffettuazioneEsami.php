@@ -5,6 +5,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
 *La classe EEffettuazioneEsami rappresenta lo svolgimento dell'esame da parte dell'utente iscritto alla scuola guida.
+ * Ogni effettuazione è legata alla prenotazione dell'esame da cui deriva: iscritto ed esame
+ * sono quindi ricavabili tramite la prenotazione, senza doverli duplicare.
  * @access public
  * @author Camasso-Medelago
  * @package Entity
@@ -19,24 +21,17 @@ class EEffettuazioneEsami implements \JsonSerializable {
      * @var int|null
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id_eff_es", type="integer")
      */
     private ?int $idEffEs = null;
 
     /**
-     * Esame associato all’effettuazione
-     * @var EEsame
-     * @ORM\ManyToOne(targetEntity="EEsame")
-     * @ORM\JoinColumn(name="id_esame", referencedColumnName="idEsame", nullable=false)
+     * Prenotazione esame da cui deriva questa effettuazione
+     * @var EPrenotazioneEsami
+     * @ORM\ManyToOne(targetEntity="EPrenotazioneEsami", fetch="EAGER")
+     * @ORM\JoinColumn(name="id_prenotazione_esame", referencedColumnName="id_prenotazione_esame", nullable=false)
      */
-    private EEsame $esame;
-
-    /**
-     * ID dell’iscritto che ha svolto l’esame
-     * @var int
-     * @ORM\Column(type="integer")  
-     */
-    private int $idIscritto;
+    private EPrenotazioneEsami $prenotazioneEsame;
 
     /**
      * Numero di tentativi effettuati
@@ -57,15 +52,13 @@ class EEffettuazioneEsami implements \JsonSerializable {
     /**
      * Costruttore della classe EEffettuazioneEsami
      * 
-     * @param EEsame $esame Esame svolto
-     * @param EIscritto $_iscritto Oggetto dell’iscritto che ha sostenuto l’esame
+     * @param EPrenotazioneEsami $prenotazioneEsame Prenotazione esame da cui deriva l'effettuazione
      * @param int $_tentativi Numero di tentativi effettuati
      * @param bool $_superato Esito dell’esame (true/false)
      */
-    public function __construct(EEsame $esame, EIscritto $_iscritto, int $_tentativi, bool $_superato)
+    public function __construct(EPrenotazioneEsami $prenotazioneEsame, int $_tentativi, bool $_superato)
     {
-        $this->esame = $esame;
-        $this->idIscritto = $_iscritto->getId();
+        $this->prenotazioneEsame = $prenotazioneEsame;
         $this->tentativi = $_tentativi;
         $this->superato = $_superato;
     }
@@ -92,23 +85,32 @@ class EEffettuazioneEsami implements \JsonSerializable {
 
 
     //----------------------METODI GET-----------------------------
-    
+
     /**
-     * Restituisce l’esame associato
+     * Restituisce la prenotazione esame associata
+     * @return EPrenotazioneEsami
+     */
+    public function getPrenotazioneEsame(): EPrenotazioneEsami
+    {
+        return $this->prenotazioneEsame;
+    }
+
+    /**
+     * Restituisce l’esame associato (ricavato dalla prenotazione)
      * @return EEsame
      */
     public function getEsame(): EEsame
     {
-        return $this->esame;
+        return $this->prenotazioneEsame->getEsame();
     }
 
     /**
-     * Restituisce l’ID dell’iscritto che ha sostenuto l’esame
-     * @return int
+     * Restituisce l’iscritto che ha sostenuto l’esame (ricavato dalla prenotazione)
+     * @return EIscritto
      */
-    public function getIdIscritto(): int
+    public function getIscritto(): EIscritto
     {
-        return $this->idIscritto;
+        return $this->prenotazioneEsame->getAllievo();
     }
 
     /**
@@ -132,21 +134,12 @@ class EEffettuazioneEsami implements \JsonSerializable {
     //---------------------- METODI SET -----------------------------
 
     /**
-     * Imposta l’iscritto (salvando solo l’ID)
-     * @param EIscritto $iscritto
+     * Imposta la prenotazione esame associata
+     * @param EPrenotazioneEsami $prenotazioneEsame
      */
-    public function setIscritto(EIscritto $iscritto): void
+    public function setPrenotazioneEsame(EPrenotazioneEsami $prenotazioneEsame): void
     {
-        $this->idIscritto = $iscritto->getId();
-    }
-
-    /**
-     * Imposta l’esame associato
-     * @param EEsame $esame
-     */
-    public function setEsame(EEsame $esame): void
-    {
-        $this->esame = $esame;
+        $this->prenotazioneEsame = $prenotazioneEsame;
     }
 
     /**
@@ -175,7 +168,7 @@ class EEffettuazioneEsami implements \JsonSerializable {
  */
 public function __toString(): string
     {
-        return "idEffettuazioneEsame: {$this->getId()}\nIscritto: {$this->idIscritto}\n Esame: {$this->esame}\nTentativi: {$this->tentativi}\nSuperato: {$this->superato}\n";
+        return "idEffettuazioneEsame: {$this->getId()}\nPrenotazione: {$this->prenotazioneEsame->getIdPrenotazioneEsame()}\nTentativi: {$this->tentativi}\nSuperato: {$this->superato}\n";
     }
  //---------------------Implementazione per la serializzazione JSON-------------------------------
      /**
@@ -185,8 +178,7 @@ public function __toString(): string
     public function jsonSerialize(): array {
         return [
             'idEffEs' => $this->idEffEs,
-            'Esame' => $this->esame,
-            'iscrittoId' => $this->idIscritto,
+            'idPrenotazioneEsame' => $this->prenotazioneEsame->getIdPrenotazioneEsame(),
             'tentativi' => $this->tentativi,
             'superato' => $this->superato,
         ];

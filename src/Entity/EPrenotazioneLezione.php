@@ -16,16 +16,21 @@ use DateTimeImmutable;
  * @ORM\Entity
  * @ORM\Table(name="prenotazione_lezione")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'prenotazione_lezione')]
 class EPrenotazioneLezione implements \JsonSerializable
 {
     /**
      * Identificativo univoco della prenotazione.
      *
-     * @var int|null
+     * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_prenotazione", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_prenotazione', type: 'integer')]
     private ?int $idPrenotazione = null;
 
     /**
@@ -33,12 +38,10 @@ class EPrenotazioneLezione implements \JsonSerializable
      *
      * @var EIscritto
      * @ORM\ManyToOne(targetEntity="EIscritto")
-     * @ORM\JoinColumn(
-     *     name="id_iscritto",
-     *     referencedColumnName="id",
-     *     nullable=false
-     * )
+     * @ORM\JoinColumn(name="id_iscritto", referencedColumnName="id", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: EIscritto::class)]
+    #[ORM\JoinColumn(name: 'id_iscritto', referencedColumnName: 'id', nullable: false)]
     private EIscritto $iscritto;
 
     /**
@@ -49,24 +52,19 @@ class EPrenotazioneLezione implements \JsonSerializable
      *
      * @var ELezione
      * @ORM\ManyToOne(targetEntity="ELezione")
-     * @ORM\JoinColumn(
-     *     name="id_lezione",
-     *     referencedColumnName="id_lezione",
-     *     nullable=false
-     * )
+     * @ORM\JoinColumn(name="id_lezione", referencedColumnName="id_lezione", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ELezione::class)]
+    #[ORM\JoinColumn(name: 'id_lezione', referencedColumnName: 'id_lezione', nullable: false)]
     private ELezione $lezione;
 
     /**
      * Data e ora della prenotazione.
      *
      * @var DateTimeImmutable
-     * @ORM\Column(
-     *     name="data_prenotazione",
-     *     type="datetime_immutable",
-     *     nullable=false
-     * )
+     * @ORM\Column(name="data_prenotazione", type="datetime_immutable", nullable=false)
      */
+    #[ORM\Column(name: 'data_prenotazione', type: 'datetime_immutable', nullable: false)]
     private DateTimeImmutable $dataPrenotazione;
 
     /**
@@ -74,15 +72,11 @@ class EPrenotazioneLezione implements \JsonSerializable
      *
      * Valore predefinito: PRENOTATA.
      *
-     * @var string
-     * @ORM\Column(
-     *     name="stato",
-     *     type="string",
-     *     length=50,
-     *     nullable=false
-     * )
+     * @var StatoPrenotazione
+     * @ORM\Column(name="stato", type="string", length=50, nullable=false, enumType="CamassoMedelago\DriveMeSafely\Entity\StatoPrenotazione")
      */
-    private string $stato = "PRENOTATA";
+    #[ORM\Column(name: 'stato', type: 'string', length: 50, nullable: false, enumType: StatoPrenotazione::class)]
+    private StatoPrenotazione $stato;
 
     /**
      * Presenza dell'allievo.
@@ -92,37 +86,27 @@ class EPrenotazioneLezione implements \JsonSerializable
      * null  = non ancora registrato
      *
      * @var bool|null
-     * @ORM\Column(
-     *     name="presente",
-     *     type="boolean",
-     *     nullable=true
-     * )
+     * @ORM\Column(name="presente", type="boolean", nullable=true)
      */
+    #[ORM\Column(name: 'presente', type: 'boolean', nullable: true)]
     private ?bool $presente = null;
 
     /**
      * Note dell'istruttore.
      *
      * @var string|null
-     * @ORM\Column(
-     *     name="note_istruttore",
-     *     type="string",
-     *     length=500,
-     *     nullable=true
-     * )
+     * @ORM\Column(name="note_istruttore", type="string", length=500, nullable=true)
      */
+    #[ORM\Column(name: 'note_istruttore', type: 'string', length: 500, nullable: true)]
     private ?string $noteIstruttore = null;
 
     /**
      * Voto conseguito nella guida.
      *
      * @var int|null
-     * @ORM\Column(
-     *     name="voto_guida",
-     *     type="integer",
-     *     nullable=true
-     * )
+     * @ORM\Column(name="voto_guida", type="integer", nullable=true)
      */
+    #[ORM\Column(name: 'voto_guida', type: 'integer', nullable: true)]
     private ?int $votoGuida = null;
 
 
@@ -136,7 +120,7 @@ class EPrenotazioneLezione implements \JsonSerializable
     public function __construct()
     {
         $this->dataPrenotazione = new DateTimeImmutable();
-        $this->stato = "PRENOTATA";
+        $this->stato = StatoPrenotazione::PRENOTATA;
         $this->presente = null;
     }
 
@@ -146,17 +130,13 @@ class EPrenotazioneLezione implements \JsonSerializable
     public static function crea(
         EIscritto $iscritto,
         ELezione $lezione,
-        ?string $stato = null
+        ?StatoPrenotazione $stato = null
     ): self {
         $prenotazione = new self();
 
         $prenotazione->iscritto = $iscritto;
         $prenotazione->lezione = $lezione;
-
-        $prenotazione->stato = $stato !== null
-            ? strtoupper(trim($stato))
-            : "PRENOTATA";
-
+        $prenotazione->stato = $stato ?? StatoPrenotazione::PRENOTATA;
         $prenotazione->presente = null;
 
         return $prenotazione;
@@ -210,16 +190,14 @@ class EPrenotazioneLezione implements \JsonSerializable
     }
 
 
-    public function getStato(): string
+    public function getStato(): StatoPrenotazione
     {
         return $this->stato;
     }
 
-    public function setStato(?string $stato): void
+    public function setStato(StatoPrenotazione $stato): void
     {
-        $this->stato = $stato !== null
-            ? strtoupper(trim($stato))
-            : "PRENOTATA";
+        $this->stato = $stato;
     }
 
 
@@ -270,7 +248,7 @@ class EPrenotazioneLezione implements \JsonSerializable
             'dataPrenotazione' =>
                 $this->dataPrenotazione->format('Y-m-d H:i:s'),
 
-            'stato' => $this->stato,
+            'stato' => $this->stato->value,
 
             'presente' => $this->presente,
 
@@ -297,7 +275,7 @@ class EPrenotazioneLezione implements \JsonSerializable
             "\nData Prenotazione: " .
             $dataFormattata .
             "\nStato: " .
-            $this->stato .
+            $this->stato->getDescrizione() .
             "\nPresente: " .
             ($this->presente === null
                 ? "Non registrato"

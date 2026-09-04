@@ -2,7 +2,6 @@
 
 namespace CamassoMedelago\DriveMeSafely\View;
 
-use CamassoMedelago\DriveMeSafely\Entity\EProprietario;
 use CamassoMedelago\DriveMeSafely\Entity\ESpesa;
 use CamassoMedelago\DriveMeSafely\Smarty\StartSmarty;
 
@@ -18,13 +17,7 @@ class VPagamentoSpese
         $smarty->assign('spesa', $spesa);
         $smarty->assign('errore', $errore);
         $smarty->assign('oldData', $oldData);
-
-        $contextPath = $smarty->getTemplateVars('request')['contextPath'];
-        $homeUrl = $utente instanceof EProprietario
-            ? $contextPath . '/home/proprietario'
-            : $contextPath . '/home';
-
-        $smarty->assign('homeUrl', $homeUrl);
+        $smarty->assign('utente', $utente);
         $smarty->display('form_pagamento.tpl');
     }
 

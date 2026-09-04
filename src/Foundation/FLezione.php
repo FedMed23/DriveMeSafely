@@ -8,16 +8,14 @@ use CamassoMedelago\DriveMeSafely\Entity\ELezione;
 use CamassoMedelago\DriveMeSafely\Entity\ELezioneTeoria;
 use CamassoMedelago\DriveMeSafely\Entity\ELezionePratica;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\LockMode;
 use DateTimeImmutable;
 use CamassoMedelago\DriveMeSafely\Entity\EAula;
 
 class FLezione
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------- CREATE / UPDATE ----------------
@@ -49,6 +47,20 @@ class FLezione
         return $this->em
             ->getRepository(ELezione::class)
             ->find($idLezione);
+    }
+
+    /**
+     * Recupera e blocca uno slot durante la prenotazione.
+     *
+     * Il lock impedisce a due richieste contemporanee di confermare la stessa
+     * guida pratica prima che una delle due abbia salvato la prenotazione.
+     * Deve essere invocato all'interno di una transazione.
+     */
+    public function findByIdForUpdate(int $idLezione): ?ELezione
+    {
+        return $this->em
+            ->getRepository(ELezione::class)
+            ->find($idLezione, LockMode::PESSIMISTIC_WRITE);
     }
 
     /**
@@ -101,69 +113,161 @@ class FLezione
             ->getResult();
     }
 
+    /**
+     * Recupera i nomi degli istruttori già usati in precedenza, senza
+     * duplicati. Serve a proporli come suggerimento in fase di
+     * inserimento, per evitare che la segreteria digiti lo stesso nome
+     * in modi diversi (maiuscole, spazi, refusi).
+     *
+     * @return string[]
+     */
+    public function findIstruttoriDistinti(): array
+    {
+        $righe = $this->em
+            ->getRepository(ELezionePratica::class)
+            ->createQueryBuilder('lp')
+            ->select('DISTINCT lp.istruttore AS istruttore')
+            ->where('lp.istruttore IS NOT NULL')
+            ->orderBy('lp.istruttore', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map(
+            static fn (array $riga): string => (string) $riga['istruttore'],
+            $righe
+        );
+    }
+
+    /**
+     * Recupera le targhe/vetture già usate in precedenza, senza
+     * duplicati. Stesso scopo di findIstruttoriDistinti(): ridurre gli
+     * errori di battitura che spezzerebbero il controllo di conflitto
+     * su istruttoreVeicoloInUso().
+     *
+     * @return string[]
+     */
+    public function findVettureDistinte(): array
+    {
+        $righe = $this->em
+            ->getRepository(ELezionePratica::class)
+            ->createQueryBuilder('lp')
+            ->select('DISTINCT lp.vettura AS vettura')
+            ->where('lp.vettura IS NOT NULL')
+            ->orderBy('lp.vettura', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map(
+            static fn (array $riga): string => (string) $riga['vettura'],
+            $righe
+        );
+    }
+
     // ---------------- CONTROLLI DI DISPONIBILITÀ ----------------
 
     /**
      * Verifica se un istruttore o una vettura sono già occupati
-     * in una determinata data e ora.
+     * in una determinata data e ora (o entro l'intervallo di 1 ora di durata).
      *
-     * Restituisce true se esiste almeno una guida pratica
-     * che utilizza l'istruttore oppure la vettura indicata.
+     * @param DateTimeImmutable $dataOra Inizio dello slot
+     * @param string $istruttore Nome normalizzato dell'istruttore
+     * @param string $vettura Targa normalizzata della vettura
+     * @param int $durataMinuti Durata dello slot (default 60 minuti)
      */
     public function istruttoreVeicoloInUso(
         DateTimeImmutable $dataOra,
         string $istruttore,
-        string $vettura
+        string $vettura,
+        int $durataMinuti = 60
     ): bool {
-        if (
-            $dataOra === null ||
-            $istruttore === null ||
-            $vettura === null
-        ) {
+        if ($istruttore === '' || $vettura === '') {
             return false;
         }
 
-        $occupato = $this->em
+        $istruttoreNormalizzato = mb_strtoupper(preg_replace('/\s+/', ' ', trim($istruttore)));
+        $vetturaNormalizzata = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $vettura));
+
+        $inizioNuova = $dataOra;
+        $fineNuova = $dataOra->modify("+{$durataMinuti} minutes");
+
+        // Consideriamo le lezioni che iniziano nell'intervallo compreso tra 1 ora prima e 1 ora dopo
+        $limiteInferiore = $dataOra->modify("-{$durataMinuti} minutes");
+        $limiteSuperiore = $fineNuova;
+
+        $lezioni = $this->em
             ->getRepository(ELezionePratica::class)
             ->createQueryBuilder('lp')
-            ->select('COUNT(lp.idLezione)')
-            ->where('lp.dataOra = :dataOra')
-            ->andWhere(
-                '(lp.istruttore = :istruttore OR lp.vettura = :vettura)'
-            )
-            ->setParameter('dataOra', $dataOra)
-            ->setParameter('istruttore', $istruttore)
-            ->setParameter('vettura', $vettura)
+            ->where('lp.dataOra > :limiteInferiore AND lp.dataOra < :limiteSuperiore')
+            ->setParameter('limiteInferiore', $limiteInferiore)
+            ->setParameter('limiteSuperiore', $limiteSuperiore)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getResult();
 
-        return (int) $occupato > 0;
+        foreach ($lezioni as $lp) {
+            /** @var ELezionePratica $lp */
+            $istruttoreEsistente = mb_strtoupper(preg_replace('/\s+/', ' ', trim((string) $lp->getIstruttore())));
+            $vetturaEsistente = strtoupper(preg_replace('/[^A-Za-z0-9]/', '', (string) $lp->getVettura()));
+
+            if ($istruttoreEsistente === $istruttoreNormalizzato || $vetturaEsistente === $vetturaNormalizzata) {
+                $inizioEsistente = $lp->getDataOra();
+                $fineEsistente = $inizioEsistente->modify("+{$durataMinuti} minutes");
+
+                // Condizione di sovrapposizione tra due intervalli: inizio1 < fine2 AND inizio2 < fine1
+                if ($inizioNuova < $fineEsistente && $inizioEsistente < $fineNuova) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
      * Verifica se un'aula è già occupata da una lezione teorica
-     * nella stessa data e ora.
+     * nella stessa data e ora (o entro l'intervallo di 1 ora di durata).
      */
     public function aulaInUso(
         DateTimeImmutable $dataOra,
-        string $aula
+        string $aula,
+        int $durataMinuti = 60
     ): bool {
-        if ($dataOra === null || $aula === null) {
+        if ($aula === '') {
             return false;
         }
 
-        $occupata = $this->em
+        $aulaEnum = EAula::tryFrom($aula);
+        if ($aulaEnum === null) {
+            return false;
+        }
+
+        $inizioNuova = $dataOra;
+        $fineNuova = $dataOra->modify("+{$durataMinuti} minutes");
+
+        $limiteInferiore = $dataOra->modify("-{$durataMinuti} minutes");
+        $limiteSuperiore = $fineNuova;
+
+        $lezioni = $this->em
             ->getRepository(ELezioneTeoria::class)
             ->createQueryBuilder('lt')
-            ->select('COUNT(lt.idLezione)')
-            ->where('lt.dataOra = :dataOra')
-            ->andWhere('lt.aula = :aula')
-            ->setParameter('dataOra', $dataOra)
-            ->setParameter('aula', EAula::from($aula))
+            ->where('lt.aula = :aula')
+            ->andWhere('lt.dataOra > :limiteInferiore AND lt.dataOra < :limiteSuperiore')
+            ->setParameter('aula', $aulaEnum)
+            ->setParameter('limiteInferiore', $limiteInferiore)
+            ->setParameter('limiteSuperiore', $limiteSuperiore)
             ->getQuery()
-            ->getSingleScalarResult();
+            ->getResult();
 
-        return (int) $occupata > 0;
+        foreach ($lezioni as $lt) {
+            /** @var ELezioneTeoria $lt */
+            $inizioEsistente = $lt->getDataOra();
+            $fineEsistente = $inizioEsistente->modify("+{$durataMinuti} minutes");
+
+            if ($inizioNuova < $fineEsistente && $inizioEsistente < $fineNuova) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ---------------- DELETE ----------------
@@ -177,4 +281,3 @@ class FLezione
         $this->em->flush();
     }
 }
-?>

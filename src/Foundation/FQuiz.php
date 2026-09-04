@@ -8,11 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FQuiz
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------- CREATE / UPDATE ----------------
@@ -123,4 +120,3 @@ class FQuiz
         $this->em->flush();
     }
 }
-?>

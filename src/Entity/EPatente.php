@@ -10,6 +10,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(name="patente")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'patente')]
 class EPatente implements \JsonSerializable
 {
     /**
@@ -17,16 +19,21 @@ class EPatente implements \JsonSerializable
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'idPa', type: 'integer')]
     private ?int $idPa = null; 
 
     /**
      * @ORM\Column(type="string", length=2, nullable=false)  
      */
+    #[ORM\Column(name: 'tipo', type: 'string', length: 2, nullable: false)]
     private string $tipo;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
      */
+    #[ORM\Column(name: 'descrizione', type: 'string', length: 255, nullable: false)]
     private string $descrizione;
 
     /**
@@ -38,6 +45,13 @@ class EPatente implements \JsonSerializable
      * )
      * @ORM\OrderBy({"tipologia" = "ASC"})
      */
+    #[ORM\ManyToMany(targetEntity: ESpesa::class)]
+    #[ORM\JoinTable(
+        name: 'patente_has_spesa',
+        joinColumns: [new ORM\JoinColumn(name: 'id_patente', referencedColumnName: 'idPa')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'id_spesa', referencedColumnName: 'id_spesa')]
+    )]
+    #[ORM\OrderBy(['tipologia' => 'ASC'])]
     private Collection $spese;
 
     /**

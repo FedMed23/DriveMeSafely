@@ -7,11 +7,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FSpesa 
 {
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------- CREATE / UPDATE / DELETE ----------------
@@ -93,7 +90,7 @@ class FSpesa
     
     public function getTotaleSpeseByTipo(string $tipo): float
     {
-        // Nota: Corretto l'errore logico presente nel file Java (mancava la clausola WHERE)
+       
         return (float) $this->em->createQuery('SELECT SUM(s.importo) FROM CamassoMedelago\DriveMeSafely\Entity\ESpesa s WHERE LOWER(TRIM(s.tipologia)) = LOWER(TRIM(:tipo))')
             ->setParameter('tipo', $tipo)
             ->getSingleScalarResult() ?? 0.0;
@@ -161,4 +158,3 @@ class FSpesa
          ->getResult();
     }
 }
-?>

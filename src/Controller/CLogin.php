@@ -12,25 +12,52 @@ class CLogin
 {
     private SLogin $service;
     private VLogin $view;
+    private string $contextPath;
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $em, string $contextPath = '')
     {
         $this->service = new SLogin($em);
         $this->view = new VLogin();
+        $this->contextPath = $contextPath;
     }
 
+    /**
+     * Gestisce il caso d'uso del login.
+     *
+     * GET  -> visualizzazione form di accesso con captcha
+     * POST -> elaborazione delle credenziali inviate
+     */
     public function login(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $this->showForm();
-            return;
-        }
+        switch ($_SERVER['REQUEST_METHOD']) {
+            case 'GET':
+                $this->get();
+                break;
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->view->showError('Metodo HTTP non supportato.', 405);
-            return;
-        }
+            case 'POST':
+                $this->post();
+                break;
 
+            default:
+                http_response_code(405);
+                $this->view->showError('Metodo HTTP non supportato.', 405);
+                break;
+        }
+    }
+
+    /**
+     * Gestisce la richiesta GET: visualizza il form di login con un nuovo captcha.
+     */
+    private function get(): void
+    {
+        $this->showForm();
+    }
+
+    /**
+     * Gestisce la richiesta POST: verifica captcha e credenziali, autentica l'utente.
+     */
+    private function post(): void
+    {
         $session = $this->getSession();
         $captcha = filter_input(INPUT_POST, 'captcha', FILTER_VALIDATE_INT);
         $expectedCaptcha = $_SESSION['rispostaEsattaCaptcha'] ?? null;
@@ -60,8 +87,7 @@ class CLogin
                 $utente instanceof EProprietario => '/home/proprietario',
                 default => '/home',
             };
-            $_SESSION['homeUrl'] = $destinazione;
-            header('Location: ' . $this->contextPath() . $destinazione);
+            header('Location: ' . $this->contextPath . $destinazione);
             exit;
         } catch (\InvalidArgumentException $e) {
             $this->showForm($e->getMessage(), $_POST, $session);
@@ -89,7 +115,7 @@ class CLogin
         }
         session_destroy();
 
-        header('Location: ' . $this->contextPath() . '/');
+        header('Location: ' . $this->contextPath . '/');
         exit;
     }
 
@@ -115,10 +141,5 @@ class CLogin
         }
 
         return true;
-    }
-
-    private function contextPath(): string
-    {
-        return rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
     }
 }

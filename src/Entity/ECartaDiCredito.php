@@ -1,15 +1,19 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
+
+use CamassoMedelago\DriveMeSafely\Utils\CartaDiCreditoUtil;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeImmutable;
 
 /** 
-*La classe ECartaDiCredito contiene le proprietà e gli attributi riguardanti una carta di credito
-* Gli attributi che la descrivono sono:
+ * La classe ECartaDiCredito contiene le proprietà e gli attributi riguardanti una carta di credito
+ * Gli attributi che la descrivono sono:
  * - nomeTitolare: nome del titolare della carta di credito
  * - cognomeTitolare: cognome del titolare della carta di credito
  * - dataScadenza: data di scadenza della carta di credito
- * - numeroCarta: numero della carta di credito
+ * - numeroCarta: hash crittografico del numero della carta di credito
+ * - ultimeCifre: ultime 4 cifre della carta (per visualizzazione mascherata)
+ *
  * @access public
  * @author Camasso-Medelago
  * @package Entity
@@ -34,55 +38,75 @@ class ECartaDiCredito implements \JsonSerializable {
     private ?int $id = null;
 
     /**
-     * @ORM\Column(name="numero_carta", type="string", length=16, unique=true)
+     * Hash SHA-256 del numero della carta.
+     *
+     * @ORM\Column(name="numero_carta", type="string", length=64, unique=true)
      */
+    #[ORM\Column(name: 'numero_carta', type: 'string', length: 64, unique: true)]
     private string $numeroCarta;
 
     /**
-     * Nome del titolare della carta.
+     * Ultime 4 cifre della carta per visualizzazione e mascheramento sicuro.
+     *
+     * @ORM\Column(name="ultime_cifre", type="string", length=4, nullable=true)
      */
+    #[ORM\Column(name: 'ultime_cifre', type: 'string', length: 4, nullable: true)]
+    private ?string $ultimeCifre = null;
+
     /**
+     * Nome del titolare della carta.
+     *
      * @ORM\Column(name="nome_titolare", type="string", length=100)
      */
+    #[ORM\Column(name: 'nome_titolare', type: 'string', length: 100)]
     private string $nomeTitolare;
 
     /**
      * Cognome del titolare della carta.
-     */
-    /**
+     *
      * @ORM\Column(name="cognome_titolare", type="string", length=100)
      */
+    #[ORM\Column(name: 'cognome_titolare', type: 'string', length: 100)]
     private string $cognomeTitolare;
 
     /**
      * Data di scadenza della carta.
+     *
+     * @ORM\Column(name="data_scadenza", type="datetime_immutable")
      */
-    /**
-     * @ORM\Column(name="data_scadenza", type="date_immutable")
-     */
+    #[ORM\Column(name: 'data_scadenza', type: 'datetime_immutable')]
     private DateTimeImmutable $dataScadenza;
 
 
     // ------------------- COSTRUTTORI -------------------
 
     /**
-     * Costruttore vuoto obbligatorio per JPA/Hibernate.
+     * Costruttore della classe CartaDiCredito.
      */
     public function __construct(
         string $nomeTitolare = '',
         string $cognomeTitolare = '',
         ?DateTimeImmutable $dataScadenza = null,
-        string $numeroCarta = ''
+        string $numeroCarta = '',
+        ?string $ultimeCifre = null
     ) {
         $this->nomeTitolare = $nomeTitolare;
         $this->cognomeTitolare = $cognomeTitolare;
         $this->dataScadenza = $dataScadenza ?? new DateTimeImmutable();
-        $this->numeroCarta = $numeroCarta;
-    }
 
-    /**
-     * Costruttore della classe CartaDiCredito.
-     */
+        if ($numeroCarta !== '') {
+            if (strlen($numeroCarta) === 64 && ctype_xdigit($numeroCarta)) {
+                $this->numeroCarta = $numeroCarta;
+                $this->ultimeCifre = $ultimeCifre;
+            } else {
+                $this->numeroCarta = CartaDiCreditoUtil::hashNumeroCarta($numeroCarta);
+                $this->ultimeCifre = $ultimeCifre ?? CartaDiCreditoUtil::estraiUltimeCifre($numeroCarta);
+            }
+        } else {
+            $this->numeroCarta = '';
+            $this->ultimeCifre = $ultimeCifre;
+        }
+    }
 
 
     // ------------------- METODI GET -------------------
@@ -103,18 +127,27 @@ class ECartaDiCredito implements \JsonSerializable {
         return $this->dataScadenza;
     }
 
+    public function getNumeroCarta(): string {
+        return $this->numeroCarta;
+    }
+
+    public function getUltimeCifre(): ?string {
+        return $this->ultimeCifre;
+    }
+
     /**
-     * Restituisce il numero della carta mascherato.
-     *
-     * Esempio:
-     * XXXX-XXXX-XXXX-1234
+     * Restituisce il numero della carta mascherato (es. XXXX-XXXX-XXXX-1234).
      */
     public function getNumeroCartaMascherato(): string {
-        if ($this->numeroCarta === '' || strlen($this->numeroCarta) < 4) {
-            return "XXXX";
+        if ($this->ultimeCifre !== null && strlen($this->ultimeCifre) === 4) {
+            return 'XXXX-XXXX-XXXX-' . $this->ultimeCifre;
         }
 
-        return 'XXXX-XXXX-XXXX-' . substr($this->numeroCarta, -4);
+        if ($this->numeroCarta !== '' && strlen($this->numeroCarta) >= 4 && strlen($this->numeroCarta) <= 19) {
+            return CartaDiCreditoUtil::mascheraNumeroCarta($this->numeroCarta);
+        }
+
+        return 'XXXX-XXXX-XXXX-XXXX';
     }
 
 
@@ -133,7 +166,18 @@ class ECartaDiCredito implements \JsonSerializable {
     }
 
     public function setNumeroCarta(string $numeroCarta): void {
-        $this->numeroCarta = $numeroCarta;
+        if (strlen($numeroCarta) === 64 && ctype_xdigit($numeroCarta)) {
+            $this->numeroCarta = $numeroCarta;
+        } else {
+            $this->numeroCarta = CartaDiCreditoUtil::hashNumeroCarta($numeroCarta);
+            if ($this->ultimeCifre === null) {
+                $this->ultimeCifre = CartaDiCreditoUtil::estraiUltimeCifre($numeroCarta);
+            }
+        }
+    }
+
+    public function setUltimeCifre(?string $ultimeCifre): void {
+        $this->ultimeCifre = $ultimeCifre;
     }
 
 

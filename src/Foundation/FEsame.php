@@ -8,15 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FEsame
 {
-    private EntityManagerInterface $em;
-
     // ---------------------- COSTRUTTORE ----------------------
     /**
      * Costruttore: collega Doctrine al database
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly EntityManagerInterface $em)
     {
-        $this->em = $em;
     }
 
     // ---------------------- SALVATAGGIO ----------------------
@@ -91,4 +88,3 @@ class FEsame
         $this->em->flush();
     }
 }
-?>

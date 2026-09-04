@@ -12,7 +12,7 @@
             <h1>DriveMeSafely - Area Personale</h1>
             <nav>
                 <ul>
-                    <li><a href="{$homeUrl}">Home</a></li>
+                    <li><a href="{$request.contextPath}/home/proprietario">Home</a></li>
                     <li><a href="{$request.contextPath}/home/logout">Logout</a></li>
                 </ul>
             </nav>

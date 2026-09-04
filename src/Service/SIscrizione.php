@@ -5,39 +5,30 @@ use Doctrine\ORM\EntityManagerInterface;
 use CamassoMedelago\DriveMeSafely\Foundation\FIscritto;
 use CamassoMedelago\DriveMeSafely\Foundation\FPatente;
 use CamassoMedelago\DriveMeSafely\Foundation\FSpesa;
+use CamassoMedelago\DriveMeSafely\Foundation\FUtenteRegistrato;
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use CamassoMedelago\DriveMeSafely\Entity\EPatente;
 use CamassoMedelago\DriveMeSafely\DTO\PacchettoPatenteDTO;
 use DateTimeImmutable;
 
+//Service che implementa la logica di business dell'iscrizione
 class SIscrizione
 {
     private EntityManagerInterface $em;
     private FIscritto $fIscritto;
+    private FUtenteRegistrato $fUtente;
     private FPatente $fPatente;
     private FSpesa $fSpesa;
 
     public function __construct(EntityManagerInterface $em) {
         $this->em = $em;
         $this->fIscritto = new FIscritto($em);
+        $this->fUtente   = new FUtenteRegistrato($em);
         $this->fPatente  = new FPatente($em);
         $this->fSpesa    = new FSpesa($em);
     }
 
-    /*
-     * ============================================================
-     * 1. VISUALIZZAZIONE PACCHETTI PATENTE
-     * ============================================================
-     */
-
-    /**
-     * Restituisce tutti i pacchetti patente disponibili.
-     *
-     * Per ogni patente vengono recuperate le relative spese
-     * e viene calcolato il costo totale del pacchetto.
-     *
-     * @return PacchettoPatenteDTO[]
-     */
+    //1)Metodo che riporta tutte le patenti disponibili per l'iscrizione 
     public function getPatenti(): array
     {
         $patenti = $this->fPatente->findPacchettiPatenti();
@@ -64,18 +55,10 @@ class SIscrizione
         return $pacchetti;
     }
 
-
-    /*
-     * ============================================================
-     * 2. SELEZIONE PACCHETTO
-     * ============================================================
-     */
-
-    /**
-     * Restituisce il pacchetto patente selezionato.
-     */
+    //2)Metodo che riporta il pacchetto patente selezionato dall'utente
     public function getPacchetto(int $idPatente): PacchettoPatenteDTO
     {
+        //Controllo che l'id della patente sia valido
         if ($idPatente <= 0) {
             throw new \InvalidArgumentException(
                 "Non è stato selezionato un pacchetto valido."
@@ -106,21 +89,8 @@ class SIscrizione
     }
 
 
-    /*
-     * ============================================================
-     * 3. ISCRIZIONE
-     * ============================================================
-     */
-
-    /**
-     * Valida i dati inseriti e crea l'entità EIscritto.
-     *
-     * ATTENZIONE:
-     * questo metodo NON salva ancora l'iscritto.
-     *
-     * Il salvataggio avviene solamente con
-     * confermaIscrizione().
-     */
+   
+    //3)Metodo che crea l'entità EIscritto con i dati inseriti dall'utente, non viene ancora salvato nel db
     public function iscrizione(
         int $idPa,
         string $nome,
@@ -135,12 +105,7 @@ class SIscrizione
         string $telefono
     ): EIscritto {
 
-        /*
-         * --------------------------------------------------------
-         * Patente
-         * --------------------------------------------------------
-         */
-
+        //Controllo patente
         if ($idPa <= 0) {
             throw new \InvalidArgumentException(
                 "Non è stato selezionato un pacchetto valido."
@@ -155,13 +120,7 @@ class SIscrizione
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Nome
-         * --------------------------------------------------------
-         */
-
+        //Controllo nome
         if (trim($nome) === '') {
             throw new \InvalidArgumentException(
                 "Il nome non può essere nullo o vuoto."
@@ -176,12 +135,7 @@ class SIscrizione
             );
         }
 
-        /*
-         * --------------------------------------------------------
-         * Cognome
-         * --------------------------------------------------------
-         */
-
+        //Controllo cognome
         if (trim($cognome) === '') {
             throw new \InvalidArgumentException(
                 "Il cognome non può essere nullo o vuoto."
@@ -195,30 +149,26 @@ class SIscrizione
                 "Cognome non valido."
             );
         }
-        /*
-         * --------------------------------------------------------
-         * Data di nascita
-         * --------------------------------------------------------
-         */
 
+        //Controllo data di nascita
         if (!$this->isDataValida($dataNascita)) {
             throw new \InvalidArgumentException(
                 "Data di nascita non valida."
             );
         }
 
-        if (!$this->isIdoneoPatente($dataNascita)) {
+        $etaMinima = $this->getEtaMinimaPerPatente($patente->getTipo());
+        if (!$this->isIdoneoPatente($dataNascita, $etaMinima)) {
             throw new \InvalidArgumentException(
-                "Iscrizione non valida: l'età minima per l'iscrizione è 16 anni."
+                sprintf(
+                    "Iscrizione non valida: l'età minima per la patente %s è %d anni.",
+                    $patente->getTipo(),
+                    $etaMinima
+                )
             );
         }
 
-        /*
-         * --------------------------------------------------------
-         * Codice fiscale
-         * --------------------------------------------------------
-         */
-
+        //Controllo codice fiscale
         if (trim($codiceFiscale) === '') {
             throw new \InvalidArgumentException(
                 "Il codice fiscale non può essere nullo o vuoto."
@@ -239,13 +189,7 @@ class SIscrizione
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Username
-         * --------------------------------------------------------
-         */
-
+        //Controllo username
         if (trim($username) === '') {
             throw new \InvalidArgumentException(
                 "Lo username non può essere nullo o vuoto."
@@ -254,19 +198,19 @@ class SIscrizione
 
         $usernamePulito = trim($username);
 
-        if ($this->fIscritto->findByUsername($usernamePulito) !== null) {
+        if (!$this->isUsernameValido($usernamePulito)) {
+            throw new \InvalidArgumentException(
+                "Lo username può contenere solo lettere, numeri, trattini e underscore (3-50 caratteri)."
+            );
+        }
+
+        if ($this->fUtente->getByUsername($usernamePulito) !== null) {
             throw new \RuntimeException(
                 "Username non valido o già utilizzato."
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Password
-         * --------------------------------------------------------
-         */
-
+        //Controllo password
         if (trim($password) === '') {
             throw new \InvalidArgumentException(
                 "La password non può essere nulla o vuota."
@@ -281,13 +225,7 @@ class SIscrizione
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Telefono
-         * --------------------------------------------------------
-         */
-
+        //Controllo del telefono
         if (trim($telefono) === '') {
             throw new \InvalidArgumentException(
                 "Il numero di telefono non può essere nullo."
@@ -302,13 +240,7 @@ class SIscrizione
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Email
-         * --------------------------------------------------------
-         */
-
+        //Controllo email
         if (trim($email) === '') {
             throw new \InvalidArgumentException(
                 "L'email non può essere nulla o vuota."
@@ -323,19 +255,13 @@ class SIscrizione
             );
         }
 
-        if ($this->fIscritto->findByEmail($emailPulita) !== null) {
+        if ($this->fUtente->getByEmail($emailPulita) !== null) {
             throw new \RuntimeException(
-                "L'email inserita è già associata a un allievo."
+                "L'email inserita è già associata a un utente registrato."
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Indirizzo
-         * --------------------------------------------------------
-         */
-
+        //Controllo indirizzo
         if (trim($indirizzo) === '') {
             throw new \InvalidArgumentException(
                 "L'indirizzo non può essere nullo o vuoto."
@@ -351,12 +277,7 @@ class SIscrizione
         }
 
 
-        /*
-         * --------------------------------------------------------
-         * Luogo di nascita
-         * --------------------------------------------------------
-         */
-
+        //Controllo luogo di nascita
         if (trim($luogoNascita) === '') {
             throw new \InvalidArgumentException(
                 "Il luogo di nascita non può essere nullo o vuoto."
@@ -371,13 +292,7 @@ class SIscrizione
             );
         }
 
-
-        /*
-         * --------------------------------------------------------
-         * Creazione dell'entità
-         * --------------------------------------------------------
-         */
-
+        //Creazione dell'iscritto
         $iscritto = new EIscritto(
             $nomePulito,
             $cognomePulito,
@@ -397,18 +312,7 @@ class SIscrizione
     }
 
 
-    /*
-     * ============================================================
-     * 4. CONFERMA ISCRIZIONE
-     * ============================================================
-     */
-
-    /**
-     * Salva definitivamente l'iscritto nel database.
-     */
-        /**
-     * Esegue il salvataggio in modo atomico (Stile esplicito).
-     */
+    //4)Metodo che salva l'entità EIscritto nel database
     public function confermaIscrizione(EIscritto $iscritto): void
     {
         $this->em->beginTransaction();
@@ -424,13 +328,7 @@ class SIscrizione
         }
     }
 
-
-    /*
-     * ============================================================
-     * 5. METODI DI VALIDAZIONE
-     * ============================================================
-     */
-
+    //Metodi ausiliari per la validazione dei dati inseriti dall'utente
     private function isNomeValido(string $valore): bool
     {
         return mb_strlen($valore) >= 2
@@ -442,30 +340,56 @@ class SIscrizione
     }
 
 
+    public function getEtaMinimaPerPatente(string $tipoPatente): int
+    {
+        $tipo = strtoupper(trim($tipoPatente));
+
+        return match ($tipo) {
+            'AM' => 14,
+            'A1', 'B1' => 16,
+            'A2', 'B', 'BE', 'B96' => 18,
+            'C1', 'C1E' => 18,
+            'C', 'CE', 'D1', 'D1E' => 21,
+            'A', 'D', 'DE' => 24,
+            default => 18,
+        };
+    }
+
     private function isIdoneoPatente(
-        DateTimeImmutable $data
+        DateTimeImmutable $data,
+        int $etaMinima = 18
     ): bool {
         $dataMinima = new DateTimeImmutable(
-            '-16 years'
+            "-{$etaMinima} years"
         );
 
         return $data <= $dataMinima;
     }
 
 
+    private function isUsernameValido(string $username): bool
+    {
+        return mb_strlen($username) >= 3
+            && mb_strlen($username) <= 50
+            && preg_match('/^[A-Za-z0-9_.-]+$/', $username);
+    }
+
     private function isDataValida(
         DateTimeImmutable $data
     ): bool {
         $oggi = new DateTimeImmutable('today');
+        $limiteSecolare = new DateTimeImmutable('-120 years');
 
-        return $data <= $oggi;
+        return $data <= $oggi && $data >= $limiteSecolare;
     }
 
     private function isTelefonoValido(
         string $telefono
     ): bool {
-        return strlen($telefono) >= 9
-            && strlen($telefono) <= 15
+        $soloCifre = preg_replace('/[^0-9]/', '', $telefono);
+
+        return strlen($soloCifre) >= 9
+            && strlen($soloCifre) <= 15
             && preg_match(
                 '/^\+?[0-9 ]+$/',
                 $telefono
@@ -522,7 +446,7 @@ class SIscrizione
         ) {
             return false;
         }
-
+        //Espressioni regolari
         return preg_match('/[A-Z]/', $password)
             && preg_match('/[a-z]/', $password)
             && preg_match('/[0-9]/', $password)

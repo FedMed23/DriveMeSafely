@@ -1,5 +1,6 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
+
 use CamassoMedelago\DriveMeSafely\Entity\EQuiz;
 use CamassoMedelago\DriveMeSafely\Entity\EIscritto;
 use CamassoMedelago\DriveMeSafely\Entity\ETentativoRisposta;
@@ -9,23 +10,24 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 /**
-*La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
-*alla scuola guida.
-*Gli attributi che la descrivono sono:
-* -idSvolgimento: id dello svolgimento del quiz
-* -quiz: oggetto della classe EQuiz
-* -idIscritto: l'id dell'iscritto che ha effettuato il quiz
-* -dataSvolgimento: data e ora dello svolgimento del quiz
-* -errori: errori commessi nel quiz
-* -tentativiRisposta: array delle risposte dell'utente alle domande del quiz
-* -superato: riporta se il quiz è statu superato o meno (True/False)
-* @access public
-* @package Entity
-* @author Camasso-Medelago
-* @ORM\Entity
-* @ORM\Table(name="svolgimento_quiz")
-*/
-
+ * La classe ESvolgimentoQuiz rappresenta lo svolgimento del quiz da parte dell'utente iscritto 
+ * alla scuola guida.
+ * Gli attributi che la descrivono sono:
+ * -idSvolgimento: id dello svolgimento del quiz
+ * -quiz: oggetto della classe EQuiz
+ * -idIscritto: l'id dell'iscritto che ha effettuato il quiz
+ * -dataSvolgimento: data e ora dello svolgimento del quiz
+ * -errori: errori commessi nel quiz
+ * -tentativiRisposta: array delle risposte dell'utente alle domande del quiz
+ * -superato: riporta se il quiz è statu superato o meno (True/False)
+ * @access public
+ * @package Entity
+ * @author Camasso-Medelago
+ * @ORM\Entity
+ * @ORM\Table(name="svolgimento_quiz")
+ */
+#[ORM\Entity]
+#[ORM\Table(name: 'svolgimento_quiz')]
 class ESvolgimentoQuiz implements \JsonSerializable
 {
     /**
@@ -33,9 +35,12 @@ class ESvolgimentoQuiz implements \JsonSerializable
      *
      * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_svolgimento", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_svolgimento', type: 'integer')]
     private ?int $idSvolgimento = null;
 
     /**
@@ -44,6 +49,8 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="EQuiz", fetch="LAZY")
      * @ORM\JoinColumn(name="id_quiz", referencedColumnName="id_quiz", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: EQuiz::class, fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'id_quiz', referencedColumnName: 'id_quiz', nullable: false)]
     private EQuiz $quiz;
 
     /**
@@ -52,6 +59,8 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * @ORM\ManyToOne(targetEntity="EIscritto", fetch="LAZY")
      * @ORM\JoinColumn(name="id_iscritto", referencedColumnName="id", nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: EIscritto::class, fetch: 'LAZY')]
+    #[ORM\JoinColumn(name: 'id_iscritto', referencedColumnName: 'id', nullable: false)]
     private EIscritto $iscritto;
 
     /**
@@ -60,6 +69,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * @var DateTimeImmutable
      * @ORM\Column(name="data_svolgimento", type="datetime_immutable", nullable=false)
      */
+    #[ORM\Column(name: 'data_svolgimento', type: 'datetime_immutable', nullable: false)]
     private \DateTimeImmutable $dataSvolgimento;
 
     /**
@@ -68,6 +78,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * @var int
      * @ORM\Column(name="errori", type="integer", nullable=false)
      */
+    #[ORM\Column(name: 'errori', type: 'integer', nullable: false)]
     private int $errori;
 
     /**
@@ -76,6 +87,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
      * @var bool
      * @ORM\Column(name="superato", type="boolean", nullable=false)
      */
+    #[ORM\Column(name: 'superato', type: 'boolean', nullable: false)]
     private bool $superato;
 
     /**
@@ -91,6 +103,13 @@ class ESvolgimentoQuiz implements \JsonSerializable
      *
      * @var ETentativoRisposta[]
      */
+    #[ORM\OneToMany(
+        targetEntity: ETentativoRisposta::class,
+        mappedBy: 'svolgimentoQuiz',
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+        fetch: 'LAZY'
+    )]
     private Collection $tentativi;
 
 
@@ -201,16 +220,7 @@ class ESvolgimentoQuiz implements \JsonSerializable
     {
         if ($tentativo !== null) {
             $this->tentativi->add($tentativo);
-
             $tentativo->setSvolgimentoQuiz($this);
-
-            // Logica di auto-computazione di sicurezza
-            if (!$tentativo->isCorretta()) {
-                $this->errori++;
-            }
-
-            // Aggiorna lo stato: promosso se gli errori complessivi sono inferiori o uguali a 3
-            $this->superato = ($this->errori <= 3);
         }
     }
 
@@ -218,13 +228,6 @@ class ESvolgimentoQuiz implements \JsonSerializable
     {
         if ($tentativo !== null) {
             $this->tentativi->removeElement($tentativo);
-
-            // Storna l'errore se stiamo rimuovendo un tentativo errato
-            if (!$tentativo->isCorretta() && $this->errori > 0) {
-                $this->errori--;
-            }
-
-            $this->superato = ($this->errori <= 3);
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 namespace CamassoMedelago\DriveMeSafely\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,6 +19,8 @@ use Doctrine\Common\Collections\Collection;
  * @ORM\Entity
  * @ORM\Table(name="quiz")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'quiz')]
 class EQuiz implements \JsonSerializable
 {
     /**
@@ -25,9 +28,12 @@ class EQuiz implements \JsonSerializable
      *
      * @var int
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_quiz", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_quiz', type: 'integer')]
     private ?int $idQuiz = null;
 
     /**
@@ -36,6 +42,7 @@ class EQuiz implements \JsonSerializable
      * @var string
      * @ORM\Column(name="nome", type="string", length=100, nullable=false)
      */
+    #[ORM\Column(name: 'nome', type: 'string', length: 100, nullable: false)]
     private string $nome;
 
     /**
@@ -44,6 +51,7 @@ class EQuiz implements \JsonSerializable
      * @var string|null
      * @ORM\Column(name="descrizione", type="string", length=500, nullable=true)
      */
+    #[ORM\Column(name: 'descrizione', type: 'string', length: 500, nullable: true)]
     private ?string $descrizione = null;
 
     /**
@@ -52,14 +60,16 @@ class EQuiz implements \JsonSerializable
      * @var int
      * @ORM\Column(name="numero_domande", type="integer", nullable=false)
      */
+    #[ORM\Column(name: 'numero_domande', type: 'integer', nullable: false)]
     private int $numeroDomande;
 
     /**
-     * Tempo massimo del quiz
+     * Tempo massimo del quiz in minuti
      *
      * @var int
      * @ORM\Column(name="tempo_massimo", type="integer", nullable=false)
      */
+    #[ORM\Column(name: 'tempo_massimo', type: 'integer', nullable: false)]
     private int $tempoMassimo;
 
     /**
@@ -78,6 +88,13 @@ class EQuiz implements \JsonSerializable
      * )
      * @ORM\OrderBy({"contenuto" = "ASC"})
      */
+    #[ORM\ManyToMany(targetEntity: EDomanda::class, fetch: 'LAZY')]
+    #[ORM\JoinTable(
+        name: 'quiz_domanda',
+        joinColumns: [new ORM\JoinColumn(name: 'quiz_id', referencedColumnName: 'id_quiz')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'domanda_id', referencedColumnName: 'id_domanda')]
+    )]
+    #[ORM\OrderBy(['contenuto' => 'ASC'])]
     private Collection $domande;
 
 

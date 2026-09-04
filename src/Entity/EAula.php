@@ -14,4 +14,15 @@ enum EAula: string
             self::AULA_B => 'Aula B (Sede Centrale - Primo Piano)',
         };
     }
+
+    /**
+     * Ritorna la capienza massima dell'aula.
+     */
+    public function getCapienzaMassima(): int
+    {
+        return match ($this) {
+            self::AULA_A => 30,
+            self::AULA_B => 25,
+        };
+    }
 }

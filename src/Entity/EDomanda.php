@@ -1,5 +1,6 @@
 <?php
 namespace CamassoMedelago\DriveMeSafely\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,6 +15,8 @@ use Doctrine\Common\Collections\Collection;
  * @ORM\Entity
  * @ORM\Table(name="domanda")
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'domanda')]
 class EDomanda implements \JsonSerializable
 {
     /**
@@ -21,9 +24,12 @@ class EDomanda implements \JsonSerializable
      *
      * @var int|null
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue(strategy="IDENTITY")
      * @ORM\Column(name="id_domanda", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[ORM\Column(name: 'id_domanda', type: 'integer')]
     private ?int $idDomanda = null;
 
     /**
@@ -32,6 +38,7 @@ class EDomanda implements \JsonSerializable
      * @var string
      * @ORM\Column(type="string", length=300, nullable=false)
      */
+    #[ORM\Column(name: 'contenuto', type: 'string', length: 300, nullable: false)]
     private string $contenuto;
 
     /**
@@ -40,6 +47,7 @@ class EDomanda implements \JsonSerializable
      * @var bool
      * @ORM\Column(type="boolean", nullable=false)
      */
+    #[ORM\Column(name: 'risposta_corretta', type: 'boolean', nullable: false)]
     private bool $rispostaCorretta;
 
     /**
@@ -48,6 +56,7 @@ class EDomanda implements \JsonSerializable
      * @var string
      * @ORM\Column(type="string", length=100, nullable=false)
      */
+    #[ORM\Column(name: 'argomento', type: 'string', length: 100, nullable: false)]
     private string $argomento;
 
     /**
@@ -56,6 +65,7 @@ class EDomanda implements \JsonSerializable
      * @var EQuiz[]
      * @ORM\ManyToMany(targetEntity="EQuiz", mappedBy="domande")
      */
+    #[ORM\ManyToMany(targetEntity: EQuiz::class, mappedBy: 'domande')]
     private Collection $quizAssociati;
 
     /**
@@ -64,6 +74,7 @@ class EDomanda implements \JsonSerializable
      * @var string|null
      * @ORM\Column(name="immagine", type="string", length=255, nullable=true)
      */
+    #[ORM\Column(name: 'immagine', type: 'string', length: 255, nullable: true)]
     private ?string $immagine = null;
 
 
